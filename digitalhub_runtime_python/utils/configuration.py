@@ -60,7 +60,7 @@ def get_function_source(source_spec: dict) -> Path:
 
     # Get relevant information
     base64 = source_spec.get("base64")
-    source = source_spec.get("source")
+    source = source_spec.get("source", "main.py")
     handler = source_spec.get("handler")
 
     handler_path, _ = parse_handler(handler)
