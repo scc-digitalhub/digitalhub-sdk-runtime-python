@@ -33,7 +33,6 @@ class RunSpecPythonRun(RunSpec):
         replicas: int | None = None,
         instructions: dict | None = None,
         inputs: dict | None = None,
-        outputs: dict | None = None,
         parameters: dict | None = None,
         **kwargs,
     ) -> None:
@@ -65,7 +64,6 @@ class RunSpecPythonRun(RunSpec):
         self.replicas = replicas
         self.instructions = instructions
         self.inputs = inputs
-        self.outputs = outputs
         self.parameters = parameters
 
 
@@ -93,9 +91,6 @@ class RunValidatorPythonRun(RunValidator):
     # Run parameters
     inputs: dict = None
     """Run inputs."""
-
-    outputs: dict = None
-    """Run outputs."""
 
     parameters: dict = None
     """Run parameters."""
