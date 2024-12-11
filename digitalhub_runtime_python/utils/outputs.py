@@ -62,7 +62,7 @@ def collect_outputs(results: Any, outputs: list[str], project_name: str, run_key
 
                 # Add relationship to object, update it
                 dest = run_key + ":" + run_key.split("/")[-1]
-                obj.add_relationship(relation=Relationship.PRODUCEDBY.value, source=obj.key, dest=dest)
+                obj.add_relationship(relation=Relationship.PRODUCEDBY.value, dest=dest)
 
                 try:
                     obj.save(update=True)
