@@ -42,25 +42,27 @@ def get_function_from_source(path: Path, source_spec: dict) -> Callable:
         raise RuntimeError(msg) from e
 
 
-def get_function_source(source_spec: dict) -> Path:
+def get_function_source(path: Path, source_spec: dict, default_py: str) -> Path:
     """
     Get function source.
 
     Parameters
     ----------
-    source : dict
+    path : Path
+        Path where the function source is or must be saved.
+    source_spec : dict
         Function source.
+    default_py : str
+        Default python file.
 
     Returns
     -------
     Path
         Path to function source.
     """
-    path = Path("/shared")
-
     # Get relevant information
     base64 = source_spec.get("base64")
-    source = source_spec.get("source", "main.py")
+    source = source_spec.get("source", default_py)
     handler = source_spec.get("handler")
 
     handler_path, _ = parse_handler(handler)
@@ -150,7 +152,7 @@ def save_function_source(path: Path, source_spec: dict) -> Path:
     return path
 
 
-def import_function_and_init(source: dict) -> tuple[Callable, Union[Callable, None]]:
+def import_function_and_init(source: dict, path: Path, default_py: str) -> tuple[Callable, Union[Callable, None]]:
     """
     Import function from source.
 
@@ -158,6 +160,10 @@ def import_function_and_init(source: dict) -> tuple[Callable, Union[Callable, No
     ----------
     source : dict
         Function source.
+    path : Path
+        Path where the function source is or must be saved.
+    default_py : str
+        Default python file.
 
     Returns
     -------
@@ -166,7 +172,7 @@ def import_function_and_init(source: dict) -> tuple[Callable, Union[Callable, No
     """
 
     # Get function source
-    function_path = get_function_source(source)
+    function_path = get_function_source(path, source, default_py)
     _, handler_name = parse_handler(source.get("handler"))
 
     # Import function
