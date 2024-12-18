@@ -7,7 +7,7 @@ from digitalhub.runtimes._base import Runtime
 from digitalhub.utils.logger import LOGGER
 
 from digitalhub_runtime_python.entities._commons.enums import EntityKinds
-from digitalhub_runtime_python.utils.configuration import get_function_from_source
+from digitalhub_runtime_python.utils.configuration import import_function_from_source
 from digitalhub_runtime_python.utils.inputs import compose_inputs
 from digitalhub_runtime_python.utils.outputs import build_status, parse_outputs
 
@@ -125,7 +125,7 @@ class RuntimePython(Runtime):
         Callable
             Function to execute.
         """
-        fnc = get_function_from_source(
+        fnc = import_function_from_source(
             self.runtime_dir,
             spec.get("source", {}),
         )
