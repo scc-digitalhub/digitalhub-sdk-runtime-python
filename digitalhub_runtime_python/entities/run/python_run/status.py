@@ -17,9 +17,11 @@ class RunStatusPythonRun(RunStatus):
         outputs: dict | None = None,
         results: dict | None = None,
         service: dict | None = None,
+        metrics: dict[str, list] | None = None,
         **kwargs,
     ) -> None:
         super().__init__(state, message, transitions, k8s, **kwargs)
         self.outputs = outputs
         self.results = results
         self.service = service
+        self.metrics = metrics

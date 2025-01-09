@@ -12,6 +12,7 @@ from digitalhub.utils.logger import LOGGER
 if typing.TYPE_CHECKING:
     from digitalhub.entities._base.entity.entity import Entity
     from digitalhub.entities.project._base.entity import Project
+    from digitalhub_runtime_python.entities.run.python_run.entity import RunPythonRun
 
 
 def get_project_(project_name: str) -> Project:
@@ -33,6 +34,32 @@ def get_project_(project_name: str) -> Project:
         return get_project(project_name, local=ctx.local)
     except Exception as e:
         msg = f"Error during project collection. Exception: {e.__class__}. Error: {e.args}"
+        LOGGER.exception(msg)
+        raise RuntimeError(msg)
+
+def get_run_(project_name: str) -> RunPythonRun:
+    """
+    Get run.
+
+    Parameters
+    ----------
+    project_name : str
+        Project name.
+    run_id : str
+        Run id.
+
+    Returns
+    -------
+    Run
+        Run.
+    """
+    try:
+        ctx = get_context(project_name)
+        proj = get_project(project_name, local=ctx.local)
+        run_key = ctx.get_run_ctx()
+        return proj.get_run(run_key)
+    except Exception as e:
+        msg = f"Error during run collection. Exception: {e.__class__}. Error: {e.args}"
         LOGGER.exception(msg)
         raise RuntimeError(msg)
 
@@ -104,6 +131,7 @@ def compose_inputs(
         fnc_parameters = inspect.signature(func).parameters
 
         _has_project = "project" in fnc_parameters
+        _has_run = "run" in fnc_parameters
         _has_context = "context" in fnc_parameters
         _has_event = "event" in fnc_parameters
 
@@ -116,6 +144,19 @@ def compose_inputs(
                 fnc_args["project"] = get_project_(project)
             else:
                 fnc_args["project"] = project
+
+        if _has_context and not local_execution:
+            project_name: str = context.project.name
+        elif isinstance(project, str):
+            project_name = project
+        else:
+            project_name = project.name
+
+        if _has_run:
+            if _has_context and not local_execution:
+                fnc_args["run"] = context.run
+            else:
+                fnc_args["run"] = get_run_(project_name)
 
         # Context and event are reserved keyword arguments
         # only in remote executions

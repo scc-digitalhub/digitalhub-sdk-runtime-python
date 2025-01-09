@@ -258,3 +258,25 @@ class RunPythonRun(Run):
                 msg = "Url not specified and service not found on run status. If a service is deploying, use run.wait() or try again later."
                 raise EntityError(msg)
         return requests.request(method=method, url=url, **kwargs)
+
+    def log_metric(self, key: str, value: float) -> None:
+        """
+        Log metric.
+
+        Parameters
+        ----------
+        key : str
+            Key of the metric.
+        value : float
+            Value of the metric.
+
+        Returns
+        -------
+        None
+        """
+        if self.status.metrics is None:
+            self.status.metrics = {}
+        if key not in self.status.metrics:
+            self.status.metrics[key] = []
+        self.status.metrics[key].append(value)
+        self.save(update=True)
