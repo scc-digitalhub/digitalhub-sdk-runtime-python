@@ -12,6 +12,7 @@ from digitalhub.utils.logger import LOGGER
 if typing.TYPE_CHECKING:
     from digitalhub.entities._base.entity.entity import Entity
     from digitalhub.entities.project._base.entity import Project
+
     from digitalhub_runtime_python.entities.run.python_run.entity import RunPythonRun
 
 
@@ -36,6 +37,7 @@ def get_project_(project_name: str) -> Project:
         msg = f"Error during project collection. Exception: {e.__class__}. Error: {e.args}"
         LOGGER.exception(msg)
         raise RuntimeError(msg)
+
 
 def get_run_(project_name: str) -> RunPythonRun:
     """
