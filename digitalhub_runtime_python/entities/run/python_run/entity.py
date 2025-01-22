@@ -258,4 +258,3 @@ class RunPythonRun(Run):
                 msg = "Url not specified and service not found on run status. If a service is deploying, use run.wait() or try again later."
                 raise EntityError(msg)
         return requests.request(method=method, url=url, **kwargs)
-
