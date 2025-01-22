@@ -259,27 +259,3 @@ class RunPythonRun(Run):
                 raise EntityError(msg)
         return requests.request(method=method, url=url, **kwargs)
 
-    def log_metric(self, key: str, value: float, single_value: bool = False) -> None:
-        """
-        Log metric.
-
-        Parameters
-        ----------
-        key : str
-            Key of the metric.
-        value : float
-            Value of the metric.
-
-        Returns
-        -------
-        None
-        """
-        if self.status.metrics is None:
-            self.status.metrics = {}
-        if key not in self.status.metrics and not single_value:
-            self.status.metrics[key] = []
-        if single_value:
-            self.status.metrics[key] = value
-        else:
-            self.status.metrics[key].append(value)
-        self.save(update=True)

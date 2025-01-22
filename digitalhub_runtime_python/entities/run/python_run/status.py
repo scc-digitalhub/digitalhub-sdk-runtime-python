@@ -14,14 +14,13 @@ class RunStatusPythonRun(RunStatus):
         message: str | None = None,
         transitions: list[dict] | None = None,
         k8s: dict | None = None,
+        metrics: dict[str, list] | None = None,
         outputs: dict | None = None,
         results: dict | None = None,
         service: dict | None = None,
-        metrics: dict[str, list] | None = None,
         **kwargs,
     ) -> None:
-        super().__init__(state, message, transitions, k8s, **kwargs)
+        super().__init__(state, message, transitions, k8s, metrics, **kwargs)
         self.outputs = outputs
         self.results = results
         self.service = service
-        self.metrics = metrics
