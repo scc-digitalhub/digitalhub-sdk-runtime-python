@@ -4,10 +4,10 @@ import typing
 from pathlib import Path
 
 from digitalhub.stores.api import get_store
+from digitalhub.stores.s3.utils import get_s3_bucket_from_env
 from digitalhub.utils.exceptions import EntityError
 from digitalhub.utils.file_utils import eval_py_type, eval_zip_type
 from digitalhub.utils.generic_utils import encode_source, encode_string
-from digitalhub.utils.s3_utils import get_s3_bucket
 from digitalhub.utils.uri_utils import has_local_scheme
 
 from digitalhub_runtime_python.entities.function.python.models import Lang
@@ -143,7 +143,7 @@ def source_post_check(exec: FunctionPython) -> FunctionPython:
         # Check zip
         elif eval_zip_type(code_src):
             filename = Path(code_src).name
-            dst = f"zip+s3://{get_s3_bucket()}/{exec.project}/{exec.ENTITY_TYPE}/{exec.name}/{exec.id}/{filename}"
+            dst = f"zip+s3://{get_s3_bucket_from_env()}/{exec.project}/{exec.ENTITY_TYPE}/{exec.name}/{exec.id}/{filename}"
             get_store(exec.project, dst).upload(code_src, dst)
             exec.spec.source["source"] = dst
             if ":" not in exec.spec.source["handler"]:
