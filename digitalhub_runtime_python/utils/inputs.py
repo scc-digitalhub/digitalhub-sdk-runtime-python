@@ -174,3 +174,33 @@ def compose_inputs(
         msg = f"Error during function arguments compostion. Exception: {e.__class__}. Error: {e.args}"
         LOGGER.exception(msg)
         raise RuntimeError(msg) from e
+
+
+def compose_init(init_function: Callable, context: Any, parameters: dict) -> dict:
+    """
+    Compose init function.
+
+    Parameters
+    ----------
+    init_function : Callable
+        Init function.
+    context : Any
+        Context.
+    parameters : dict
+        Parameters.
+
+    Returns
+    -------
+    dict
+        Init parameters.
+    """
+    signature_parameters = dict(inspect.signature(init_function).parameters)
+    if "context" not in signature_parameters:
+        raise RuntimeError("Init function must have 'context' parameter.")
+    if len(parameters) != (len(signature_parameters) - 1):
+        signature_parameters.pop("context")
+        expected_parameters = list(signature_parameters.keys())
+        raise RuntimeError(
+            f"Init function parameters mismatch. Expected: {expected_parameters}, " f"Got: {list(parameters)}"
+        )
+    return {**parameters, "context": context}

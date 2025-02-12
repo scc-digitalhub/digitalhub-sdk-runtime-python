@@ -94,3 +94,6 @@ class RunValidatorPythonRun(RunValidator):
 
     parameters: dict = None
     """Run parameters."""
+
+    init_parameters: dict = None
+    """Init function parameters."""
