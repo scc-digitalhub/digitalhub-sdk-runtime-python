@@ -34,6 +34,7 @@ class RunSpecPythonRun(RunSpec):
         instructions: dict | None = None,
         inputs: dict | None = None,
         parameters: dict | None = None,
+        init_parameters: dict | None = None,
         **kwargs,
     ) -> None:
         super().__init__(
@@ -65,6 +66,7 @@ class RunSpecPythonRun(RunSpec):
         self.instructions = instructions
         self.inputs = inputs
         self.parameters = parameters
+        self.init_parameters = init_parameters
 
 
 class RunValidatorPythonRun(RunValidator):
