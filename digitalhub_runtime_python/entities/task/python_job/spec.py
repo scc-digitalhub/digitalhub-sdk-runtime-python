@@ -20,7 +20,6 @@ class TaskSpecPythonJob(TaskSpecFunction):
         profile: str | None = None,
         runtime_class: str | None = None,
         priority_class: str | None = None,
-        backoff_limit: int | None = None,
         schedule: str | None = None,
         **kwargs,
     ) -> None:
@@ -38,7 +37,7 @@ class TaskSpecPythonJob(TaskSpecFunction):
             priority_class,
             **kwargs,
         )
-        self.backoff_limit = backoff_limit
+
         self.schedule = schedule
 
 
@@ -46,9 +45,6 @@ class TaskValidatorPythonJob(TaskValidatorFunction):
     """
     TaskValidatorPythonJob validator.
     """
-
-    backoff_limit: int = Field(default=None, ge=0)
-    """Backoff limit."""
 
     schedule: str = None
     """Schedule."""
