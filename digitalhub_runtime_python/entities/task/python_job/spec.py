@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from digitalhub.entities.task._base.spec import TaskSpecFunction, TaskValidatorFunction
-from pydantic import Field
 
 
 class TaskSpecPythonJob(TaskSpecFunction):
