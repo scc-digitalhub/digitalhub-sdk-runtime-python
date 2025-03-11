@@ -463,7 +463,7 @@
               "restartPolicy": "Always",
               "schedulerName": "default-scheduler",
               "securityContext": {
-                "fsGroup": 1000,
+                "fs_group": 1000,
                 "runAsNonRoot": true
               },
               "serviceAccount": "default",
@@ -903,7 +903,7 @@
               "restartPolicy": "Always",
               "schedulerName": "default-scheduler",
               "securityContext": {
-                "fsGroup": 1000,
+                "fs_group": 1000,
                 "runAsNonRoot": true
               },
               "serviceAccount": "default",
@@ -1343,7 +1343,7 @@
               "restartPolicy": "Always",
               "schedulerName": "default-scheduler",
               "securityContext": {
-                "fsGroup": 1000,
+                "fs_group": 1000,
                 "runAsNonRoot": true
               },
               "serviceAccount": "default",
@@ -1908,7 +1908,7 @@
                 "restartPolicy": "Always",
                 "schedulerName": "default-scheduler",
                 "securityContext": {
-                  "fsGroup": 1000,
+                  "fs_group": 1000,
                   "runAsNonRoot": true
                 },
                 "terminationGracePeriodSeconds": 30,
