@@ -13,6 +13,7 @@
     "name": "8f61807d-6f25-49c2-ba36-c95899074af0",
     "project": "demo-etl",
     "spec": {
+      "init_parameters": {"test": "test"},
       "outputs": {},
       "instructions": [
         "apt-get update"

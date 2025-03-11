@@ -13,6 +13,7 @@
     "name": "3c620611-b8dc-41f2-bee6-3b21e3d35265",
     "project": "demo-etl",
     "spec": {
+      "init_parameters": {"test": "test"},
       "outputs": {},
       "image": "debian:1.22.04",
       "requirements": [
