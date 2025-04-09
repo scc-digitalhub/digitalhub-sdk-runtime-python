@@ -20,6 +20,8 @@ def handler(outputs: list[str] | None = None) -> Callable:
     Callable
         Decorated function.
     """
+    if outputs is None:
+        outputs = []
 
     def decorator(func: Callable) -> Callable:
         """
