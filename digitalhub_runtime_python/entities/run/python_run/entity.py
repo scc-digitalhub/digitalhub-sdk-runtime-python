@@ -8,7 +8,7 @@ import requests
 from digitalhub.entities._commons.enums import Relationship, State
 from digitalhub.entities._commons.utils import get_entity_type_from_key
 from digitalhub.entities.run._base.entity import Run
-from digitalhub.factory.api import get_action_from_task_kind
+from digitalhub.factory.factory import factory
 from digitalhub.utils.exceptions import EntityError
 from digitalhub.utils.logger import LOGGER
 
@@ -77,7 +77,7 @@ class RunPythonRun(Run):
             Run object.
         """
         task_kind = self.spec.task.split("://")[0]
-        action = get_action_from_task_kind(self.kind, task_kind)
+        action = factory.get_action_from_task_kind(self.kind, task_kind)
 
         if action == TaskActions.SERVE.value:
             serve_timeout = 300

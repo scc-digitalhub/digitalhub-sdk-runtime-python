@@ -6,7 +6,7 @@ from typing import Any, Callable
 
 from digitalhub.context.api import get_context
 from digitalhub.entities.project.crud import get_project
-from digitalhub.factory.api import build_entity_from_dict
+from digitalhub.factory.factory import factory
 from digitalhub.utils.logger import LOGGER
 
 if typing.TYPE_CHECKING:
@@ -85,7 +85,7 @@ def get_entity_inputs(inputs: dict) -> dict[str, Entity]:
         Dictionary of inputs.
     """
     try:
-        return {k: build_entity_from_dict(v) for k, v in inputs.items()}
+        return {k: factory.build_entity_from_dict(v) for k, v in inputs.items()}
     except Exception as e:
         msg = f"Error during inputs collection. Exception: {e.__class__}. Error: {e.args}"
         LOGGER.exception(msg)
