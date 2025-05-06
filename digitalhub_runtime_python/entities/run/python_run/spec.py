@@ -27,7 +27,6 @@ class RunSpecPythonRun(RunSpec):
         base_image: str | None = None,
         python_version: str | None = None,
         requirements: list | None = None,
-        schedule: str | None = None,
         service_type: str | None = None,
         replicas: int | None = None,
         instructions: dict | None = None,
@@ -59,7 +58,6 @@ class RunSpecPythonRun(RunSpec):
         self.python_version = python_version
         self.requirements = requirements
 
-        self.schedule = schedule
         self.service_type = service_type
         self.replicas = replicas
         self.instructions = instructions
@@ -77,9 +75,6 @@ class RunValidatorPythonRun(RunValidator):
     base_image: str = None
     python_version: str = None
     requirements: list = None
-
-    # Task job
-    schedule: str = None
 
     # Task serve
     service_type: str = None

@@ -19,7 +19,6 @@ class TaskSpecPythonJob(TaskSpecFunction):
         profile: str | None = None,
         runtime_class: str | None = None,
         priority_class: str | None = None,
-        schedule: str | None = None,
         **kwargs,
     ) -> None:
         super().__init__(
@@ -37,13 +36,8 @@ class TaskSpecPythonJob(TaskSpecFunction):
             **kwargs,
         )
 
-        self.schedule = schedule
-
 
 class TaskValidatorPythonJob(TaskValidatorFunction):
     """
     TaskValidatorPythonJob validator.
     """
-
-    schedule: str = None
-    """Schedule."""
