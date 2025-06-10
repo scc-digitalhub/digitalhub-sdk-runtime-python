@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 from digitalhub_runtime_python.entities._commons.enums import EntityKinds
 from digitalhub_runtime_python.entities.function.python.builder import FunctionPythonBuilder
 from digitalhub_runtime_python.entities.run.python_run.builder import RunPythonRunBuilder
