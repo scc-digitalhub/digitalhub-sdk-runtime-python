@@ -53,5 +53,5 @@ class TaskValidatorPythonServe(TaskValidatorFunction):
     replicas: int = Field(default=None, ge=1)
     """Number of replicas."""
 
-    service_type: CoreServiceType = Field(default=CoreServiceType.NODE_PORT.value)
+    service_type: CoreServiceType = None
     """Service type."""
