@@ -30,7 +30,7 @@
         "lang": "python"
       },
       "local_execution": false,
-      "schedule": "5 4 * * *",
+
       "task": "python+job://demo-etl/e9f4c0ef-579f-495c-9f65-4360f2181e4f",
       "base_image": "debian:1.22.04",
       "function": "python://demo-etl/func3a:e9f4c0ef-579f-495c-9f65-4360f2181e4f",
@@ -469,7 +469,7 @@
                 }
               }
             },
-            "schedule": "5 4 * * *",
+
             "successfulJobsHistoryLimit": 3,
             "suspend": false
           }
