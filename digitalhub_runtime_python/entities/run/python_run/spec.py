@@ -32,6 +32,7 @@ class RunSpecPythonRun(RunSpec):
         python_version: str | None = None,
         requirements: list | None = None,
         service_type: str | None = None,
+        service_name: str | None = None,
         replicas: int | None = None,
         instructions: dict | None = None,
         inputs: dict | None = None,
@@ -63,6 +64,7 @@ class RunSpecPythonRun(RunSpec):
         self.requirements = requirements
 
         self.service_type = service_type
+        self.service_name = service_name
         self.replicas = replicas
         self.instructions = instructions
         self.inputs = inputs
@@ -82,6 +84,7 @@ class RunValidatorPythonRun(RunValidator):
 
     # Task serve
     service_type: str = None
+    service_name: str = None
     replicas: int = None
 
     # Task build

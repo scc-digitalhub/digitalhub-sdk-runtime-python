@@ -27,6 +27,7 @@ class TaskSpecPythonServe(TaskSpecFunction):
         priority_class: str | None = None,
         replicas: int | None = None,
         service_type: str | None = None,
+        service_name: str | None = None,
         **kwargs,
     ) -> None:
         super().__init__(
@@ -45,6 +46,7 @@ class TaskSpecPythonServe(TaskSpecFunction):
         )
         self.replicas = replicas
         self.service_type = service_type
+        self.service_name = service_name
 
 
 class TaskValidatorPythonServe(TaskValidatorFunction):
@@ -57,3 +59,6 @@ class TaskValidatorPythonServe(TaskValidatorFunction):
 
     service_type: CoreServiceType = None
     """Service type."""
+
+    service_name: str = None
+    """Service name."""
