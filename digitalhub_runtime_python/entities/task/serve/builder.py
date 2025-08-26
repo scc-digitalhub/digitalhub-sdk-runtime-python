@@ -8,9 +8,9 @@ from digitalhub.entities.task._base.builder import TaskBuilder
 
 from digitalhub_runtime_python.entities._base.runtime_entity.builder import RuntimeEntityBuilderPython
 from digitalhub_runtime_python.entities._commons.enums import EntityKinds
-from digitalhub_runtime_python.entities.task.python_serve.entity import TaskPythonServe
-from digitalhub_runtime_python.entities.task.python_serve.spec import TaskSpecPythonServe, TaskValidatorPythonServe
-from digitalhub_runtime_python.entities.task.python_serve.status import TaskStatusPythonServe
+from digitalhub_runtime_python.entities.task.serve.entity import TaskPythonServe
+from digitalhub_runtime_python.entities.task.serve.spec import TaskSpecPythonServe, TaskValidatorPythonServe
+from digitalhub_runtime_python.entities.task.serve.status import TaskStatusPythonServe
 
 
 class TaskPythonServeBuilder(TaskBuilder, RuntimeEntityBuilderPython):

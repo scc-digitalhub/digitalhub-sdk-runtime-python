@@ -17,7 +17,7 @@ if typing.TYPE_CHECKING:
     from digitalhub.entities._base.entity.entity import Entity
     from digitalhub.entities.project._base.entity import Project
 
-    from digitalhub_runtime_python.entities.run.python_run.entity import RunPythonRun
+    from digitalhub_runtime_python.entities.run._base.entity import RunPythonRun
 
 
 def get_project_(project_name: str) -> Project:

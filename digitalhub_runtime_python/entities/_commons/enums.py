@@ -16,10 +16,12 @@ class EntityKinds(Enum):
     TASK_PYTHON_BUILD = "python+build"
     TASK_PYTHON_JOB = "python+job"
     TASK_PYTHON_SERVE = "python+serve"
-    RUN_PYTHON = "python+run"
+    RUN_PYTHON_BUILD = "python+build:run"
+    RUN_PYTHON_JOB = "python+job:run"
+    RUN_PYTHON_SERVE = "python+serve:run"
 
 
-class TaskActions(Enum):
+class Actions(Enum):
     """
     Task actions.
     """
