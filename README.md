@@ -5,7 +5,7 @@
 
 The Digitalhub SDK Runtime Python is a runtime extension for the [Digitalhub SDK](https://github.com/scc-digitalhub/digitalhub-sdk). It enables you to create and execute python function in the Digitalhub platform.
 
-Explore the full documentation at the [link](https://scc-digitalhub.github.io/sdk-docs/runtimes/python/overview/).
+Explore the full documentation at the [link](https://scc-digitalhub.github.io/sdk-docs/reference/runtimes/).
 
 ## Quick start
 
