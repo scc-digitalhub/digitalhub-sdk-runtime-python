@@ -100,10 +100,6 @@ class RuntimePython(Runtime):
         ----------
         run : dict
             Run object dictionary.
-
-        Returns
-        -------
-        None
         """
         task_kind = run["spec"]["task"].split(":")[0]
         if task_kind != EntityKinds.TASK_PYTHON_JOB.value and run["spec"]["local_execution"]:

@@ -50,10 +50,6 @@ class RunPythonRun(Run):
     def _setup_execution(self) -> None:
         """
         Setup run execution.
-
-        Returns
-        -------
-        None
         """
         self.refresh()
         inputs = self.inputs(as_dict=True)
