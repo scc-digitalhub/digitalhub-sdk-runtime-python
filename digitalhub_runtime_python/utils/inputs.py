@@ -205,6 +205,6 @@ def compose_init(init_function: Callable, context: Any, parameters: dict) -> dic
         signature_parameters.pop("context")
         expected_parameters = list(signature_parameters.keys())
         raise RuntimeError(
-            f"Init function parameters mismatch. Expected: {expected_parameters}, " f"Got: {list(parameters)}"
+            f"Init function parameters mismatch. Expected: {expected_parameters}, Got: {list(parameters)}"
         )
     return {**parameters, "context": context}
