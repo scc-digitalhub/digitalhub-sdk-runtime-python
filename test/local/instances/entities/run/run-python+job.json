@@ -1,7 +1,7 @@
 {
     "id": "89aa1016-376b-45e6-8db7-807b6e3f7410",
     "key": "store://demo-etl/run/python+run/89aa1016-376b-45e6-8db7-807b6e3f7410",
-    "kind": "python+run",
+    "kind": "python+job:run",
     "metadata": {
       "name": "89aa1016-376b-45e6-8db7-807b6e3f7410",
       "updated_by": "digitalhubdev",

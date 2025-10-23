@@ -1,7 +1,7 @@
 {
     "id": "8f61807d-6f25-49c2-ba36-c95899074af0",
     "key": "store://demo-etl/run/python+run/8f61807d-6f25-49c2-ba36-c95899074af0",
-    "kind": "python+run",
+    "kind": "python+build:run",
     "metadata": {
       "name": "8f61807d-6f25-49c2-ba36-c95899074af0",
       "updated_by": "digitalhubdev",
