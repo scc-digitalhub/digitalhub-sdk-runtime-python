@@ -35,8 +35,7 @@ def get_project_(project_name: str) -> Project:
         Project.
     """
     try:
-        ctx = get_context(project_name)
-        return get_project(project_name, local=ctx.local)
+        return get_project(project_name)
     except Exception as e:
         msg = f"Error during project collection. Exception: {e.__class__}. Error: {e.args}"
         LOGGER.exception(msg)
@@ -61,7 +60,7 @@ def get_run_(project_name: str) -> RunPythonRun:
     """
     try:
         ctx = get_context(project_name)
-        proj = get_project(project_name, local=ctx.local)
+        proj = get_project(project_name)
         run_key = ctx.get_run_ctx()
         return proj.get_run(run_key)
     except Exception as e:
