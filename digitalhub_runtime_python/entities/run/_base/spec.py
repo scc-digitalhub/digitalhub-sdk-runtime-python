@@ -16,16 +16,11 @@ class RunSpecPythonRun(RunSpec):
         local_execution: bool = False,
         function: str | None = None,
         workflow: str | None = None,
-        node_selector: list[dict] | None = None,
         volumes: list[dict] | None = None,
         resources: dict | None = None,
-        affinity: dict | None = None,
-        tolerations: list[dict] | None = None,
         envs: list[dict] | None = None,
         secrets: list[str] | None = None,
         profile: str | None = None,
-        runtime_class: str | None = None,
-        priority_class: str | None = None,
         source: dict | None = None,
         image: str | None = None,
         base_image: str | None = None,
@@ -45,16 +40,11 @@ class RunSpecPythonRun(RunSpec):
             local_execution,
             function,
             workflow,
-            node_selector,
             volumes,
             resources,
-            affinity,
-            tolerations,
             envs,
             secrets,
             profile,
-            runtime_class,
-            priority_class,
             **kwargs,
         )
         self.source = source
@@ -62,7 +52,6 @@ class RunSpecPythonRun(RunSpec):
         self.base_image = base_image
         self.python_version = python_version
         self.requirements = requirements
-
         self.service_type = service_type
         self.service_name = service_name
         self.replicas = replicas
