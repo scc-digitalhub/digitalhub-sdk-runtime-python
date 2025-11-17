@@ -25,6 +25,188 @@ from digitalhub.utils.uri_utils import (
     has_zip_scheme,
 )
 
+DEFAULT_PY_FILE = "main.py"
+
+
+def _parse_handler(handler: str) -> tuple[Path, str]:
+    """
+    Parse handler string into path and function name.
+
+    Parameters
+    ----------
+    handler : str
+        Function handler in format 'module:function' or 'path.to.module:function'.
+
+    Returns
+    -------
+    tuple[Path, str]
+        Handler path and function name.
+    """
+    parsed = handler.split(":")
+    if len(parsed) == 1:
+        return Path(""), parsed[0]
+    return Path(*parsed[0].split(".")), parsed[1]
+
+
+def _get_function_path(source_path: Path, handler: str) -> tuple[Path, str]:
+    """
+    Get function path and name from handler.
+
+    Parameters
+    ----------
+    source_path : Path
+        Root path where the function source is located.
+    handler : str
+        Function handler.
+
+    Returns
+    -------
+    tuple[Path, str]
+        Function path and function name.
+    """
+    handler_path, function_name = _parse_handler(handler)
+    if handler_path == Path(""):
+        handler_path = Path(DEFAULT_PY_FILE)
+    function_path = (source_path / handler_path).with_suffix(".py")
+    return function_path, function_name
+
+
+def _download_and_extract_archive(source: str, path: Path) -> None:
+    """
+    Download and extract an archive from a URL or S3.
+
+    Parameters
+    ----------
+    source : str
+        Source URL (with zip+ scheme).
+    path : Path
+        Destination path.
+    """
+    clean_source = source.removeprefix("zip+")
+    filename = path / get_filename_from_uri(source)
+
+    if has_s3_scheme(clean_source):
+        store = get_store(clean_source)
+        store.get_s3_source(source, filename)
+    else:
+        requests_chunk_download(clean_source, filename)
+
+    extract_archive(path, filename)
+    filename.unlink()
+
+
+def _save_base64_source(path: Path, base64_content: str) -> Path:
+    """
+    Save base64-encoded source to file.
+
+    Parameters
+    ----------
+    path : Path
+        Destination directory.
+    base64_content : str
+        Base64-encoded source code.
+
+    Returns
+    -------
+    Path
+        Path to the saved file (directory/main.py).
+    """
+    path.mkdir(parents=True, exist_ok=True)
+    file_path = path / DEFAULT_PY_FILE
+    file_path.write_text(decode_base64_string(base64_content))
+    return path
+
+
+def _download_remote_source(path: Path, source: str) -> Path:
+    """
+    Download source from remote URL (http/https).
+
+    Parameters
+    ----------
+    path : Path
+        Destination directory.
+    source : str
+        Remote source URL.
+
+    Returns
+    -------
+    Path
+        Path to the destination directory.
+    """
+    path.mkdir(parents=True, exist_ok=True)
+
+    if has_zip_scheme(source):
+        _download_and_extract_archive(source, path)
+    else:
+        filename = path / get_filename_from_uri(source)
+        requests_chunk_download(source, filename)
+
+    return path
+
+
+def _download_s3_source(path: Path, source: str) -> Path:
+    """
+    Download source from S3.
+
+    Parameters
+    ----------
+    path : Path
+        Destination directory.
+    source : str
+        S3 source URL (must be zip+s3:// scheme).
+
+    Returns
+    -------
+    Path
+        Path to the destination directory.
+    """
+    if not has_zip_scheme(source):
+        raise RuntimeError("S3 source must be a zip file with scheme zip+s3://.")
+
+    path.mkdir(parents=True, exist_ok=True)
+    _download_and_extract_archive(source, path)
+    return path
+
+
+def _clone_git_source(path: Path, source: str) -> Path:
+    """
+    Clone git repository.
+
+    Parameters
+    ----------
+    path : Path
+        Destination directory.
+    source : str
+        Git repository URL.
+
+    Returns
+    -------
+    Path
+        Path to the destination directory.
+    """
+    path.mkdir(parents=True, exist_ok=True)
+    clone_repository(path, source)
+    return path
+
+
+def _import_function_from_path(function_path: Path, function_name: str) -> Callable:
+    """
+    Import a function from a file path.
+
+    Parameters
+    ----------
+    function_path : Path
+        Path to the Python file.
+    function_name : str
+        Name of the function to import.
+
+    Returns
+    -------
+    Callable
+        Imported function.
+    """
+    return import_function(function_path, function_name)
+
 
 def import_function_from_source(path: Path, source_spec: dict) -> Callable:
     """
@@ -35,7 +217,7 @@ def import_function_from_source(path: Path, source_spec: dict) -> Callable:
     path : Path
         Path where to save the function source.
     source_spec : dict
-        Funcrion source spec.
+        Function source spec.
 
     Returns
     -------
@@ -44,9 +226,8 @@ def import_function_from_source(path: Path, source_spec: dict) -> Callable:
     """
     try:
         source_path = save_function_source(path, source_spec)
-        handler_path, function_name = parse_handler(source_spec["handler"])
-        function_path = (source_path / handler_path).with_suffix(".py")
-        return import_function(function_path, function_name)
+        function_path, function_name = _get_function_path(source_path, source_spec["handler"])
+        return _import_function_from_path(function_path, function_name)
     except Exception as e:
         msg = f"Some error occurred while getting function. Exception: {e.__class__}. Error: {e.args}"
         LOGGER.exception(msg)
@@ -55,7 +236,7 @@ def import_function_from_source(path: Path, source_spec: dict) -> Callable:
 
 def save_function_source(path: Path, source_spec: dict) -> Path:
     """
-    Save function source.
+    Save function source from various sources.
 
     Parameters
     ----------
@@ -67,146 +248,98 @@ def save_function_source(path: Path, source_spec: dict) -> Path:
     Returns
     -------
     Path
-        Path to the function source.
+        Path to the function source directory.
     """
-    # Prepare path
-    path.mkdir(parents=True, exist_ok=True)
-
-    # Get relevant information
     base64 = source_spec.get("base64")
     source = source_spec.get("source")
 
-    # Base64
+    # Base64-encoded source
     if base64 is not None:
-        base64_path = path / "main.py"
-        base64_path.write_text(decode_base64_string(base64))
-        return base64_path
+        return _save_base64_source(path, base64)
 
     if source is None:
         raise RuntimeError("Function source not found in spec.")
 
-    # Git repo
+    # Git repository
     if has_git_scheme(source):
-        clone_repository(path, source)
+        return _clone_git_source(path, source)
 
-    # Http(s) or s3 presigned urls
-    elif has_remote_scheme(source):
-        filename = path / get_filename_from_uri(source)
-        if has_zip_scheme(source):
-            requests_chunk_download(source.removeprefix("zip+"), filename)
-            extract_archive(path, filename)
-            filename.unlink()
-        else:
-            requests_chunk_download(source, filename)
+    # Remote HTTP(S) source
+    if has_remote_scheme(source):
+        return _download_remote_source(path, source)
 
-    # S3 path
-    elif has_s3_scheme(source):
-        if not has_zip_scheme(source):
-            raise RuntimeError("S3 source must be a zip file with scheme zip+s3://.")
-        filename = path / get_filename_from_uri(source)
-        store = get_store(source.removeprefix("zip+"))
-        store.get_s3_source(source, filename)
-        extract_archive(path, filename)
-        filename.unlink()
+    # S3 source
+    if has_s3_scheme(source):
+        return _download_s3_source(path, source)
 
     # Unsupported scheme
-    else:
-        raise RuntimeError("Unable to collect source.")
-
-    return path
+    raise RuntimeError(f"Unable to collect source from: {source}")
 
 
 def import_function_and_init_from_source(
     path: Path,
     source_spec: dict,
-    default_py: str,
 ) -> tuple[Callable, Union[Callable, None]]:
     """
-    Import function and init from source.
+    Import main function and optional init function from source.
 
     Parameters
     ----------
     path : Path
-        Path where the function source is or must be saved.
+        Root path where the function source is downloaded.
     source_spec : dict
-        Function source.
-    default_py : str
-        Default python file.
+        Function source spec.
 
     Returns
     -------
     tuple
-        Function and init function.
+        Main function and optional init function.
     """
+    # Get function path and import main function
+    function_path, handler_name = _get_function_path(path, source_spec.get("handler"))
+    main_function = _import_function_from_path(function_path, handler_name)
 
-    # Get function source
-    function_path = get_function_source(path, source_spec, default_py)
-    _, handler_name = parse_handler(source_spec.get("handler"))
-
-    # Import function
-    fnc = import_function(function_path, handler_name)
-
-    # Get init function
-    init_fnc: Callable | None = None
+    # Import init function if specified
+    init_function: Callable | None = None
     init_handler: str | None = source_spec.get("init_function")
     if init_handler is not None:
-        init_fnc = import_function(function_path, init_handler)
+        init_function = _import_function_from_path(function_path, init_handler)
 
-    return fnc, init_fnc
+    return main_function, init_function
 
 
 def get_function_source(path: Path, source_spec: dict, default_py: str) -> Path:
     """
-    Get function source.
+    Get path to function source file.
 
     Parameters
     ----------
     path : Path
         Path where the function source is or must be saved.
     source_spec : dict
-        Function source.
+        Function source spec.
     default_py : str
-        Default python file.
+        Default python file name.
 
     Returns
     -------
     Path
-        Path to function source.
+        Path to function source file.
     """
-    # Get relevant information
     base64 = source_spec.get("base64")
     source = source_spec.get("source", default_py)
     handler = source_spec.get("handler")
 
-    handler_path, _ = parse_handler(handler)
-
-    # Check base64. If it is set, it means
-    # that the source comes from a local file
+    # For base64-encoded sources from local files
     if base64 is not None:
-        if has_local_scheme(source):
-            return path / handler_path / Path(source)
-        raise RuntimeError("Source is not a local file.")
+        if not has_local_scheme(source):
+            raise RuntimeError("Base64 source must have a local file scheme.")
+        handler_path, _ = _parse_handler(handler)
+        return path / handler_path / Path(source)
 
-    if handler_path != Path(""):
-        return path / handler_path.with_suffix(".py")
-    raise RuntimeError("Must provide handler path in handler in form <root>.<dir>.<module>:<function_name>.")
+    # For other sources, construct path from handler
+    handler_path, _ = _parse_handler(handler)
+    if handler_path == Path(""):
+        raise RuntimeError("Must provide handler path in handler in form <root>.<dir>.<module>:<function_name>.")
 
-
-def parse_handler(handler: str) -> tuple[Path, str]:
-    """
-    Parse handler.
-
-    Parameters
-    ----------
-    handler : str
-        Function handler.
-
-    Returns
-    -------
-    tuple[Path, str]
-        Handler path and function name.
-    """
-    parsed = handler.split(":")
-    if len(parsed) == 1:
-        return Path(""), parsed[0]
-    return Path(*parsed[0].split(".")), parsed[1]
+    return path / handler_path.with_suffix(".py")
