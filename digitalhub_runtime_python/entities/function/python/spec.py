@@ -42,11 +42,11 @@ class FunctionValidatorPython(FunctionValidator):
     python_version: PythonVersion
     "Python version"
 
-    image: str = None
+    image: str | None = None
     "Image where the function will be executed"
 
-    base_image: str = None
+    base_image: str | None = None
     "Base image used to build the image where the function will be executed"
 
-    requirements: list[str] = None
+    requirements: list[str] | None = None
     "Requirements list to be installed in the image where the function will be executed"

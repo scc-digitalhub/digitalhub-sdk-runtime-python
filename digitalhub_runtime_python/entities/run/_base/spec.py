@@ -65,26 +65,26 @@ class RunValidatorPythonRun(RunValidator):
     """RunValidatorPythonRun validator."""
 
     # Function parameters
-    source: dict = None
-    image: str = None
-    base_image: str = None
-    python_version: str = None
-    requirements: list = None
+    source: dict | None = None
+    image: str | None = None
+    base_image: str | None = None
+    python_version: str | None = None
+    requirements: list | None = None
 
     # Task serve
-    service_type: str = None
-    service_name: str = None
-    replicas: int = None
+    service_type: str | None = None
+    service_name: str | None = None
+    replicas: int | None = None
 
     # Task build
-    instructions: list[str] = None
+    instructions: list[str] | None = None
 
     # Run parameters
-    inputs: dict = None
+    inputs: dict | None = None
     """Run inputs."""
 
-    parameters: dict = None
+    parameters: dict | None = None
     """Run parameters."""
 
-    init_parameters: dict = None
+    init_parameters: dict | None = None
     """Init function parameters."""

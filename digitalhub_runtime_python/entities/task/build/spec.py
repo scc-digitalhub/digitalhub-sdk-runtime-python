@@ -38,5 +38,5 @@ class TaskValidatorPythonBuild(TaskValidatorFunction):
     TaskValidatorPythonBuild validator.
     """
 
-    instructions: list[str] = None
+    instructions: list[str] | None = None
     """Build instructions."""

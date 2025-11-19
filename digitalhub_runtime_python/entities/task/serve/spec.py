@@ -44,11 +44,11 @@ class TaskValidatorPythonServe(TaskValidatorFunction):
     TaskValidatorPythonServe validator.
     """
 
-    replicas: int = Field(default=None, ge=1)
+    replicas: int | None = Field(default=None, ge=1)
     """Number of replicas."""
 
-    service_type: CoreServiceType = None
+    service_type: CoreServiceType | None = None
     """Service type."""
 
-    service_name: str = None
+    service_name: str | None = None
     """Service name."""
