@@ -14,10 +14,10 @@ class PythonVersion(Enum):
     Python version supported.
     """
 
-    PYTHON3_9 = "PYTHON3_9"
     PYTHON3_10 = "PYTHON3_10"
     PYTHON3_11 = "PYTHON3_11"
     PYTHON3_12 = "PYTHON3_12"
+    PYTHON3_13 = "PYTHON3_13"
 
 
 class Lang(Enum):
