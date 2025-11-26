@@ -8,12 +8,10 @@ import time
 import typing
 from typing import Any
 
-import requests
 from digitalhub.entities._commons.enums import Relationship, State
 from digitalhub.entities._commons.utils import get_entity_type_from_key
 from digitalhub.entities.run._base.entity import Run
 from digitalhub.factory.entity import entity_factory
-from digitalhub.utils.exceptions import EntityError
 from digitalhub.utils.logger import LOGGER
 
 from digitalhub_runtime_python.entities._commons.enums import Actions
@@ -225,45 +223,3 @@ class RunPythonRun(Run):
         if self.status.results is None:
             return {}
         return self.status.results
-
-    def invoke(
-        self,
-        method: str = "POST",
-        url: str | None = None,
-        **kwargs,
-    ) -> requests.Response:
-        """
-        Invoke run.
-
-        Parameters
-        ----------
-        method : str
-            Method of the request.
-        url : str
-            URL of the request.
-        **kwargs : dict
-            Keyword arguments to pass to the request.
-
-        Returns
-        -------
-        requests.Response
-            Response from service.
-        """
-        try:
-            base_url: str = self.status.service.get("url")
-        except AttributeError:
-            raise EntityError(
-                "Url not specified and service not found on run status."
-                " If a service is deploying, use run.wait() or try again later."
-            )
-
-        if url is not None and not url.removeprefix("http://").removeprefix("https://").startswith(base_url):
-            raise EntityError(f"Invalid URL: {url}. It must start with the service URL: {base_url}")
-
-        if url is None:
-            url = f"http://{base_url}"
-
-        if "data" not in kwargs and "json" not in kwargs:
-            method = "GET"
-
-        return requests.request(method=method, url=url, **kwargs)
