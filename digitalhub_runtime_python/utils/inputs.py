@@ -61,8 +61,7 @@ def get_run_(project_name: str) -> RunPythonRun:
     try:
         ctx = get_context(project_name)
         proj = get_project(project_name)
-        run_key = ctx.get_run_ctx()
-        return proj.get_run(run_key)
+        return proj.get_run(ctx.run.key)
     except Exception as e:
         msg = f"Error during run collection. Exception: {e.__class__}. Error: {e.args}"
         LOGGER.exception(msg)

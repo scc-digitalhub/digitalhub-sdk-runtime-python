@@ -85,7 +85,7 @@ class RuntimePython(Runtime):
             LOGGER.info("Collecting outputs.")
             results = parse_outputs(exec_result, list(spec.get("outputs", {})), project, run_key)
 
-        status = build_status(results, spec.get("outputs"))
+        status = build_status(project, results, spec.get("outputs"))
 
         # Return run status
         LOGGER.info("Task completed, returning run status.")

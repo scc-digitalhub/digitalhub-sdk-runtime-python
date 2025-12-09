@@ -8,6 +8,7 @@ import pickle
 import typing
 from typing import Any
 
+from digitalhub.context.api import get_context
 from digitalhub.entities._commons.enums import EntityKinds, Relationship, State
 from digitalhub.entities.artifact._base.entity import Artifact
 from digitalhub.entities.artifact.crud import log_artifact
@@ -203,6 +204,7 @@ def _log_artifact(name: str, project_name: str, data: Any) -> Artifact:
 
 
 def build_status(
+    project_name: str,
     parsed_execution: dict,
     mapped_outputs: dict | None = None,
 ) -> dict:
@@ -222,7 +224,7 @@ def build_status(
         Status dict.
     """
     results = {}
-    outputs = {}
+    outputs = {**get_context(project_name).logged}
     if mapped_outputs is None:
         mapped_outputs = {}
 
@@ -232,6 +234,7 @@ def build_status(
                 outputs[key] = value.key
             else:
                 results[key] = value
+
         return {
             "state": State.COMPLETED.value,
             "outputs": outputs,
