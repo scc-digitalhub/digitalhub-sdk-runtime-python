@@ -11,6 +11,8 @@ from digitalhub.utils.generic_utils import decode_base64_string
 from digitalhub.utils.io_utils import write_text
 from digitalhub.utils.uri_utils import has_local_scheme
 
+from digitalhub_runtime_python.entities.function.python.utils import read_installed_packages
+
 if typing.TYPE_CHECKING:
     from digitalhub.entities._base.entity.metadata import Metadata
 
@@ -69,3 +71,12 @@ class FunctionPython(Function):
                 return pth
 
         return super().export()
+
+    def _post_create_hook_before_save(self) -> None:
+        """
+        Hook method called after the creation of the entity but before saving
+        in Core.
+        Can be overridden in subclasses to implement custom behavior.
+        """
+        if self.spec.requirements is None:
+            self.spec.requirements = read_installed_packages()

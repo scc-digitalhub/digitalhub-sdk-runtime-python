@@ -12,6 +12,7 @@ from digitalhub.utils.exceptions import EntityError
 from digitalhub.utils.file_utils import eval_py_type, eval_zip_type
 from digitalhub.utils.generic_utils import encode_string, read_source
 from digitalhub.utils.uri_utils import has_local_scheme
+from pip._internal.operations import freeze
 
 from digitalhub_runtime_python.entities.function.python.models import Lang
 
@@ -156,3 +157,19 @@ def source_post_check(exec: FunctionPython) -> FunctionPython:
                 exec.spec.source["handler"] = f"{Path(code_src).stem}:{exec.spec.source['handler']}"
 
     return exec
+
+
+def read_installed_packages() -> list[str]:
+    """
+    Read installed packages in execution context.
+
+    Behaves like 'pip freeze' - returns a list of installed packages
+    with their versions in the format 'package==version'.
+
+    Returns
+    -------
+    list[str]
+        List of installed packages in pip freeze format (e.g., ['numpy==1.24.0', 'pandas==2.0.0']).
+    """
+    packages = list(freeze.freeze())
+    return packages
