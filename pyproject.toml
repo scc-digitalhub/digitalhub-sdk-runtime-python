@@ -25,6 +25,7 @@ dependencies = [
 "digitalhub[full]>=0.15.0b, <0.16",
 "nuclio-sdk",
 "msgpack",
+"pip",
 ]
 
 [project.optional-dependencies]

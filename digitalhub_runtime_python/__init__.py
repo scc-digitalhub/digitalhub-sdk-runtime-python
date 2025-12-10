@@ -9,7 +9,7 @@ from digitalhub_runtime_python.entities.run.serve.builder import RunPythonRunSer
 from digitalhub_runtime_python.entities.task.build.builder import TaskPythonBuildBuilder
 from digitalhub_runtime_python.entities.task.job.builder import TaskPythonJobBuilder
 from digitalhub_runtime_python.entities.task.serve.builder import TaskPythonServeBuilder
-from digitalhub_runtime_python.utils.utils import handler
+from digitalhub_runtime_python.utils.utils import handler, parse_requirements
 
 entity_builders = (
     (EntityKinds.FUNCTION_PYTHON.value, FunctionPythonBuilder),
