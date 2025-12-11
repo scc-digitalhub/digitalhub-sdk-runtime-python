@@ -83,16 +83,14 @@ def collect_outputs(results: Any, outputs: list[str], project_name: str, run_key
     return objects
 
 
-def parse_outputs(results: Any, run_outputs: list, project_name: str, run_key: str) -> dict:
+def parse_outputs(results: list, project_name: str, run_key: str) -> dict:
     """
     Parse outputs.
 
     Parameters
     ----------
-    results : Any
-        Function outputs.
-    run_outputs : list
-        Run outputs.
+    results : list
+        Function outputs list.
     project_name : str
         Project name.
     run_key : str
@@ -103,13 +101,7 @@ def parse_outputs(results: Any, run_outputs: list, project_name: str, run_key: s
     dict
         Function outputs.
     """
-    results_list = listify_results(results)
-    out_list = []
-    for idx, _ in enumerate(results_list):
-        try:
-            out_list.append(run_outputs.pop(0))
-        except IndexError:
-            out_list.append(f"output_{idx}")
+    out_list = [f"output_{idx}" for idx in range(len(listify_results(results)))]
     return collect_outputs(results, out_list, project_name, run_key)
 
 
@@ -203,20 +195,19 @@ def _log_artifact(name: str, project_name: str, data: Any) -> Artifact:
         raise RuntimeError(msg)
 
 
-def build_status(
+def build_new_status(
     project_name: str,
     parsed_execution: dict,
-    mapped_outputs: dict | None = None,
 ) -> dict:
     """
-    Collect outputs.
+    Build run status after execution.
 
     Parameters
     ----------
+    project_name : str
+        Project name.
     parsed_execution : dict
         Parsed execution dict.
-    mapped_outputs : dict
-        Mapped outputs.
 
     Returns
     -------
@@ -225,9 +216,6 @@ def build_status(
     """
     results = {}
     outputs = {**get_context(project_name).logged}
-    if mapped_outputs is None:
-        mapped_outputs = {}
-
     try:
         for key, value in parsed_execution.items():
             if isinstance(value, (Dataitem, Artifact, Model)):

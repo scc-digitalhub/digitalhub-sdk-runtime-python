@@ -16,6 +16,7 @@ from digitalhub.utils.logger import LOGGER
 if typing.TYPE_CHECKING:
     from digitalhub.entities._base.entity.entity import Entity
     from digitalhub.entities.project._base.entity import Project
+    from nuclio_sdk import Context, Event
 
     from digitalhub_runtime_python.entities.run._base.entity import RunPythonRun
 
@@ -100,8 +101,8 @@ def compose_inputs(
     local_execution: bool,
     func: Callable,
     project: str | Project,
-    context: Any | None = None,
-    event: Any | None = None,
+    context: Context | None = None,
+    event: Event | None = None,
 ) -> dict:
     """
     Compose inputs.
@@ -118,9 +119,9 @@ def compose_inputs(
         Function to execute.
     project : str
         Project name.
-    context : nuclio_sdk.Context
+    context : Context
         Nuclio context.
-    event : nuclio_sdk.Event
+    event : Event
         Nuclio event.
 
     Returns

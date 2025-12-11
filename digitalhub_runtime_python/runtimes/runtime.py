@@ -13,7 +13,7 @@ from digitalhub.utils.logger import LOGGER
 from digitalhub_runtime_python.entities._commons.enums import EntityKinds
 from digitalhub_runtime_python.utils.configuration import import_function_from_source
 from digitalhub_runtime_python.utils.inputs import compose_inputs
-from digitalhub_runtime_python.utils.outputs import build_status, parse_outputs
+from digitalhub_runtime_python.utils.outputs import build_new_status, parse_outputs
 
 
 class RuntimePython(Runtime):
@@ -83,9 +83,9 @@ class RuntimePython(Runtime):
         else:
             exec_result = self._execute(fnc, **fnc_args)
             LOGGER.info("Collecting outputs.")
-            results = parse_outputs(exec_result, list(spec.get("outputs", {})), project, run_key)
+            results = parse_outputs(exec_result, project, run_key)
 
-        status = build_status(project, results, spec.get("outputs"))
+        status = build_new_status(project, results)
 
         # Return run status
         LOGGER.info("Task completed, returning run status.")

@@ -50,7 +50,7 @@ class RunPythonRunJob(RunPythonRun):
             self.status.outputs = {}
         self.status.outputs[name] = value
 
-    def _set_status(self, status: dict) -> None:
+    def set_status(self, status: dict) -> None:
         """
         Patch to merge outputs when updating status.
 
@@ -66,4 +66,4 @@ class RunPythonRunJob(RunPythonRun):
                 **self.status.outputs,
                 **status["outputs"],
             }
-        return super()._set_status(status)
+        return super().set_status(status)
