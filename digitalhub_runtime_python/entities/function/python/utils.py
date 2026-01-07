@@ -20,6 +20,9 @@ if typing.TYPE_CHECKING:
     from digitalhub_runtime_python.entities.function.python.entity import FunctionPython
 
 
+SEPARATORS = ["==", ">=", "<=", ">", "<", "~=", "!="]
+
+
 def source_check(**kwargs) -> dict:
     """
     Check source code.
@@ -159,17 +162,55 @@ def source_post_check(exec: FunctionPython) -> FunctionPython:
     return exec
 
 
-def read_installed_packages() -> list[str]:
+def read_installed_packages(requirements: list[str] | None = None) -> list[str] | None:
     """
     Read installed packages in execution context.
 
-    Behaves like 'pip freeze' - returns a list of installed packages
-    with their versions in the format 'package==version'.
+    If requirements is provided, returns only those packages with their
+    versions filled in from the environment. Package names without versions
+    in the requirements list will have their versions added if found.
+
+    Parameters
+    ----------
+    requirements : list[str]
+        Optional list of package names (e.g., ['pandas', 'torch']) or
+        requirements with versions (e.g., ['pandas==2.0.0']).
 
     Returns
     -------
     list[str]
         List of installed packages in pip freeze format (e.g., ['numpy==1.24.0', 'pandas==2.0.0']).
     """
-    packages = list(freeze.freeze())
-    return packages
+    if requirements is None:
+        return
+
+    # Build a mapping of normalized package names to their installed versions
+    installed_map: dict[str, str] = {}
+    for pkg in freeze.freeze():
+        # Handle different separators
+        for sep in SEPARATORS:
+            if sep in pkg:
+                name, version = pkg.split(sep, 1)
+                # Normalize package name (lowercase, replace _ with -)
+                installed_map[name.lower().replace("_", "-")] = f"{name}{sep}{version}"
+                break
+
+    result = []
+    for req in requirements:
+        # Check if requirement already has a version specifier
+        has_version = any(sep in req for sep in SEPARATORS)
+
+        if has_version:
+            # Keep as-is if version is already specified
+            result.append(req)
+        else:
+            # Normalize the requirement name for lookup
+            normalized_name = req.lower().replace("_", "-")
+            if normalized_name in installed_map:
+                # Use the installed version
+                result.append(installed_map[normalized_name])
+            else:
+                # Package not found in environment, keep without version
+                result.append(req)
+
+    return result

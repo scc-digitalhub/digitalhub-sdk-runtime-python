@@ -78,5 +78,4 @@ class FunctionPython(Function):
         in Core.
         Can be overridden in subclasses to implement custom behavior.
         """
-        if self.spec.requirements is None:
-            self.spec.requirements = read_installed_packages()
+        self.spec.requirements = read_installed_packages(self.spec.requirements)
