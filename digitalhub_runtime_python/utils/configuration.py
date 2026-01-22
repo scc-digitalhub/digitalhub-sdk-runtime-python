@@ -276,6 +276,41 @@ def save_function_source(path: Path, source_spec: dict) -> Path:
     raise RuntimeError(f"Unable to collect source from: {source}")
 
 
+def _get_func_path_remote(source_path: Path, source_spec: dict) -> tuple[Path, str]:
+    """
+    Get function path and name from handler for remote execution.
+
+    Parameters
+    ----------
+    source_path : Path
+        Root path where the function source is located.
+    source_spec : dict
+        Function source spec.
+
+    Returns
+    -------
+    tuple[Path, str]
+        Function path and function name.
+    """
+    handler_path, function_name = _parse_handler(source_spec.get("handler"))
+
+    # If no handler path, try to get from source
+    if handler_path == Path(""):
+        # If source is None (e.g. whan code is inline), use default main.py
+        if (source := source_spec.get("source")) is None:
+            return source_path / Path(DEFAULT_PY_FILE), function_name
+
+        # If source has local scheme, use it directly
+        if has_local_scheme(source):
+            return source_path / Path(source), function_name
+
+        # Otherwise, use default main.py
+        return source_path / Path(DEFAULT_PY_FILE), function_name
+
+    # If handler path is given, use it
+    return (source_path / handler_path).with_suffix(".py"), function_name
+
+
 def import_function_and_init_from_source(
     path: Path,
     source_spec: dict,
@@ -296,7 +331,7 @@ def import_function_and_init_from_source(
         Main function and optional init function.
     """
     # Get function path and import main function
-    function_path, handler_name = _get_function_path(path, source_spec.get("handler"))
+    function_path, handler_name = _get_func_path_remote(path, source_spec)
     main_function = _import_function_from_path(function_path, handler_name)
 
     # Import init function if specified
@@ -306,40 +341,3 @@ def import_function_and_init_from_source(
         init_function = _import_function_from_path(function_path, init_handler)
 
     return main_function, init_function
-
-
-def get_function_source(path: Path, source_spec: dict, default_py: str) -> Path:
-    """
-    Get path to function source file.
-
-    Parameters
-    ----------
-    path : Path
-        Path where the function source is or must be saved.
-    source_spec : dict
-        Function source spec.
-    default_py : str
-        Default python file name.
-
-    Returns
-    -------
-    Path
-        Path to function source file.
-    """
-    base64 = source_spec.get("base64")
-    source = source_spec.get("source", default_py)
-    handler = source_spec.get("handler")
-
-    # For base64-encoded sources from local files
-    if base64 is not None:
-        if not has_local_scheme(source):
-            raise RuntimeError("Base64 source must have a local file scheme.")
-        handler_path, _ = _parse_handler(handler)
-        return path / handler_path / Path(source)
-
-    # For other sources, construct path from handler
-    handler_path, _ = _parse_handler(handler)
-    if handler_path == Path(""):
-        raise RuntimeError("Must provide handler path in handler in form <root>.<dir>.<module>:<function_name>.")
-
-    return path / handler_path.with_suffix(".py")
