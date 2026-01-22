@@ -57,26 +57,28 @@ def collect_outputs(results: Any, outputs: list[str], project_name: str, run_key
             objects[name] = item
 
         else:
-            # Recieve a dataframe object
-            if f"{item.__class__.__module__}.{item.__class__.__name__}" in get_supported_dataframes():
-                obj = _log_dataitem(name, project_name, item)
-
             # Recieve a digitalhub object
-            elif isinstance(item, (Dataitem, Artifact, Model)):
+            if isinstance(item, (Dataitem, Artifact, Model)):
                 obj = item
 
                 # Add relationship to object, update it
                 dest = run_key + ":" + run_key.split("/")[-1]
                 obj.add_relationship(relation=Relationship.PRODUCEDBY.value, dest=dest)
 
+                # Save or update object
                 try:
                     obj.save(update=True)
                 except EntityNotExistsError:
                     obj.save()
 
-            # Recieve a generic python object
             else:
-                obj = _log_artifact(name, project_name, item)
+                # Recieve a dataframe object
+                for df_class in get_supported_dataframes():
+                    if isinstance(item, df_class):
+                        obj = _log_dataitem(name, project_name, item)
+                # Recieve a generic python object
+                else:
+                    obj = _log_artifact(name, project_name, item)
 
             objects[name] = obj
 
