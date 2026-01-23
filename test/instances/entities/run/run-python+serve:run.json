@@ -42,7 +42,8 @@
       "resources": {
         "cpu": "1",
         "mem": "1Gi",
-        "gpu": "1"
+        "gpu": "1",
+        "disk": "1Gi"
       },
       "envs": [
         {
@@ -63,12 +64,6 @@
           "name": "volume2",
           "volume_type": "persistent_volume_claim",
           "mount_path": "/volume2"
-        }
-      ],
-      "node_selector": [
-        {
-          "key": "node1",
-          "value": "value1"
         }
       ]
     },
