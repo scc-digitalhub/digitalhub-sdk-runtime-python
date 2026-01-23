@@ -1,6 +1,6 @@
 {
     "id": "3c620611-b8dc-41f2-bee6-3b21e3d35265",
-    "key": "store://demo-etl/run/python+run/3c620611-b8dc-41f2-bee6-3b21e3d35265",
+    "key": "store://demo-etl/run/python+serve:run/3c620611-b8dc-41f2-bee6-3b21e3d35265",
     "kind": "python+serve:run",
     "metadata": {
       "name": "3c620611-b8dc-41f2-bee6-3b21e3d35265",
