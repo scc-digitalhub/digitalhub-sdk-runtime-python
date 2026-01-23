@@ -76,6 +76,7 @@ def collect_outputs(results: Any, outputs: list[str], project_name: str, run_key
                 for df_class in get_supported_dataframes():
                     if isinstance(item, df_class):
                         obj = _log_dataitem(name, project_name, item)
+                        break
                 # Recieve a generic python object
                 else:
                     obj = _log_artifact(name, project_name, item)
