@@ -72,8 +72,6 @@ class FunctionPythonBuilder(FunctionBuilder, RuntimeEntityBuilderPython):
 
         Parameters
         ----------
-        entity : str
-            Entity type.
         obj : dict
             Dictionary to parse.
 
