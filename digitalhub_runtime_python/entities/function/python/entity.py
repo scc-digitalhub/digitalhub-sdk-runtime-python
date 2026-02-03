@@ -14,8 +14,6 @@ from digitalhub.utils.uri_utils import has_local_scheme
 from digitalhub_runtime_python.entities.function.python.utils import read_installed_packages
 
 if typing.TYPE_CHECKING:
-    from digitalhub.entities._base.entity.metadata import Metadata
-
     from digitalhub_runtime_python.entities.function.python.spec import FunctionSpecPython
     from digitalhub_runtime_python.entities.function.python.status import FunctionStatusPython
 
@@ -25,18 +23,8 @@ class FunctionPython(Function):
     FunctionPython class.
     """
 
-    def __init__(
-        self,
-        project: str,
-        name: str,
-        uuid: str,
-        kind: str,
-        metadata: Metadata,
-        spec: FunctionSpecPython,
-        status: FunctionStatusPython,
-        user: str | None = None,
-    ) -> None:
-        super().__init__(project, name, uuid, kind, metadata, spec, status, user)
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
 
         self.spec: FunctionSpecPython
         self.status: FunctionStatusPython

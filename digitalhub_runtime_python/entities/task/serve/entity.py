@@ -9,7 +9,7 @@ import typing
 from digitalhub.entities.task._base.entity import Task
 
 if typing.TYPE_CHECKING:
-    from digitalhub.entities._base.entity.metadata import Metadata
+    from digitalhub.entities._base.metadata.entity import Metadata
 
     from digitalhub_runtime_python.entities.task.serve.spec import TaskSpecPythonServe
     from digitalhub_runtime_python.entities.task.serve.status import TaskStatusPythonServe

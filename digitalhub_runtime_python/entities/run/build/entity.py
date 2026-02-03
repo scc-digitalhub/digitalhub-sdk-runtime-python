@@ -9,7 +9,7 @@ import typing
 from digitalhub_runtime_python.entities.run._base.entity import RunPythonRun
 
 if typing.TYPE_CHECKING:
-    from digitalhub.entities._base.entity.metadata import Metadata
+    from digitalhub.entities._base.metadata.entity import Metadata
 
     from digitalhub_runtime_python.entities.run.build.spec import RunSpecPythonRunBuild
     from digitalhub_runtime_python.entities.run.build.status import RunStatusPythonRunBuild
