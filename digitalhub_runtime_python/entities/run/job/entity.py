@@ -9,7 +9,6 @@ import typing
 from digitalhub_runtime_python.entities.run._base.entity import RunPythonRun
 
 if typing.TYPE_CHECKING:
-
     from digitalhub_runtime_python.entities.run.job.spec import RunSpecPythonRunJob
     from digitalhub_runtime_python.entities.run.job.status import RunStatusPythonRunJob
 
