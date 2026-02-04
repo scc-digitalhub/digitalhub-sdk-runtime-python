@@ -9,7 +9,6 @@ import typing
 from digitalhub.entities.task._base.entity import Task
 
 if typing.TYPE_CHECKING:
-    from digitalhub.entities._base.metadata.entity import Metadata
 
     from digitalhub_runtime_python.entities.task.build.spec import TaskSpecPythonBuild
     from digitalhub_runtime_python.entities.task.build.status import TaskStatusPythonBuild
@@ -20,17 +19,8 @@ class TaskPythonBuild(Task):
     TaskPythonBuild class.
     """
 
-    def __init__(
-        self,
-        project: str,
-        uuid: str,
-        kind: str,
-        metadata: Metadata,
-        spec: TaskSpecPythonBuild,
-        status: TaskStatusPythonBuild,
-        user: str | None = None,
-    ) -> None:
-        super().__init__(project, uuid, kind, metadata, spec, status, user)
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
 
         self.spec: TaskSpecPythonBuild
         self.status: TaskStatusPythonBuild
