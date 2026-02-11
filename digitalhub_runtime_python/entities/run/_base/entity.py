@@ -41,7 +41,7 @@ class RunPythonRun(Run):
         """
         self.refresh()
         inputs = self.inputs(as_dict=True)
-        if self.spec.local_execution:
+        if self.local_execution():
             for _, v in inputs.items():
                 self.add_relationship(
                     relation=Relationship.CONSUMES.value,

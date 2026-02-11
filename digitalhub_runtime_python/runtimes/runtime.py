@@ -10,7 +10,6 @@ from digitalhub.context.api import get_context
 from digitalhub.runtimes._base import Runtime
 from digitalhub.utils.logger import LOGGER
 
-from digitalhub_runtime_python.entities._commons.enums import EntityKinds
 from digitalhub_runtime_python.utils.configuration import import_function_from_source
 from digitalhub_runtime_python.utils.inputs import compose_inputs
 from digitalhub_runtime_python.utils.outputs import build_new_status, parse_outputs
@@ -21,35 +20,29 @@ class RuntimePython(Runtime):
     Runtime Python class.
     """
 
+    def run(self, run: dict) -> dict:
+        """
+        Run function.
+
+        Returns
+        -------
+        dict
+            Status of the executed run.
+        """
+        task_kind = run["spec"]["task"].split(":")[0]
+        raise NotImplementedError(f"Local execution not implemented for task kind: {task_kind}")
+
+
+class RuntimePythonJob(RuntimePython):
+    """
+    Runtime Python Job class.
+    """
+
     def __init__(self, project: str) -> None:
         super().__init__(project)
         ctx = get_context(self.project)
         self.runtime_dir = ctx.root / "runtime_python"
         self.runtime_dir.mkdir(parents=True, exist_ok=True)
-
-    def build(self, function: dict, task: dict, run: dict) -> dict:
-        """
-        Build run spec.
-
-        Parameters
-        ----------
-        function : dict
-            The function.
-        task : dict
-            The task.
-        run : dict
-            The run.
-
-        Returns
-        -------
-        dict
-            The run spec.
-        """
-        return {
-            **function.get("spec", {}),
-            **task.get("spec", {}),
-            **run.get("spec", {}),
-        }
 
     def run(self, run: dict) -> dict:
         """
@@ -62,9 +55,6 @@ class RuntimePython(Runtime):
         """
         LOGGER.info("Validating task.")
         self._validate_task(run)
-
-        LOGGER.info("Validating run.")
-        self._validate_run(run)
 
         LOGGER.info("Starting task.")
         spec = run.get("spec")
@@ -90,22 +80,6 @@ class RuntimePython(Runtime):
         # Return run status
         LOGGER.info("Task completed, returning run status.")
         return status
-
-    @staticmethod
-    def _validate_run(run: dict) -> None:
-        """
-        Check if run is locally allowed.
-
-        Parameters
-        ----------
-        run : dict
-            Run object dictionary.
-        """
-        task_kind = run["spec"]["task"].split(":")[0]
-        if task_kind != EntityKinds.TASK_PYTHON_JOB.value and run["spec"]["local_execution"]:
-            msg = f"Local execution not allowed for task kind {task_kind}."
-            LOGGER.exception(msg)
-            raise RuntimeError(msg)
 
     ##############################
     # Configuration

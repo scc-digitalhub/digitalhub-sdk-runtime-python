@@ -24,6 +24,17 @@ class RunPythonRunJob(RunPythonRun):
         self.spec: RunSpecPythonRunJob
         self.status: RunStatusPythonRunJob
 
+    def local_execution(self) -> bool:
+        """
+        Check if run has local execution.
+
+        Returns
+        -------
+        bool
+            True if run has local execution, False otherwise.
+        """
+        return self.spec.local_execution
+
     def add_output(self, name: str, value: str) -> None:
         """
         Add an output to the run job.

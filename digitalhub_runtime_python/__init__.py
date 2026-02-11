@@ -22,8 +22,22 @@ entity_builders = (
 )
 
 try:
-    from digitalhub_runtime_python.runtimes.builder import RuntimePythonBuilder
+    from digitalhub_runtime_python.runtimes.builder import RuntimePythonBuilder, RuntimePythonJobBuilder
 
-    runtime_builders = ((kind, RuntimePythonBuilder) for kind in [e.value for e in EntityKinds])
+    runtime_builders = tuple(
+        (
+            e.value,
+            RuntimePythonJobBuilder
+            if e
+            in (
+                EntityKinds.FUNCTION_PYTHON.value,
+                EntityKinds.TASK_PYTHON_JOB.value,
+                EntityKinds.RUN_PYTHON_JOB.value,
+            )
+            else RuntimePythonBuilder,
+        )
+        for e in EntityKinds
+    )
+
 except ImportError:
     runtime_builders = tuple()
