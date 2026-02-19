@@ -4,8 +4,9 @@
 
 from __future__ import annotations
 
+from importlib import import_module
 from pathlib import Path
-from typing import Callable, Union
+from typing import Callable
 
 from digitalhub.stores.data.api import get_store
 from digitalhub.utils.generic_utils import (
@@ -19,10 +20,10 @@ from digitalhub.utils.logger import LOGGER
 from digitalhub.utils.uri_utils import (
     get_filename_from_uri,
     has_git_scheme,
-    has_local_scheme,
     has_remote_scheme,
     has_s3_scheme,
     has_zip_scheme,
+    has_local_scheme
 )
 
 DEFAULT_PY_FILE = "main.py"
@@ -276,52 +277,43 @@ def save_function_source(path: Path, source_spec: dict) -> Path:
     raise RuntimeError(f"Unable to collect source from: {source}")
 
 
-def _get_func_path_remote(source_path: Path, source_spec: dict) -> tuple[Path, str]:
+def _get_function_to_import(handler: str, source_code: str | None) -> tuple[str, str]:
     """
-    Get function path and name from handler for remote execution.
+    Get function name from handler string.
 
     Parameters
     ----------
-    source_path : Path
-        Root path where the function source is located.
-    source_spec : dict
-        Function source spec.
+    handler : str
+        Function handler in format 'module:function' or 'path.to.module:function'.
+    source_code : str | None
+        Source code (used to infer function name if handler is just a function name).
 
     Returns
     -------
-    tuple[Path, str]
-        Function path and function name.
+    tuple
+        Function module and function name.
     """
-    handler_path, function_name = _parse_handler(source_spec.get("handler"))
+    # If handler is not specified, assume function module is in main
+    try:
+        function_module, function_name = handler.split(":")
+    except ValueError:
+        function_name = handler
+        if source_code is not None and has_local_scheme(source_code):
+            function_module = get_filename_from_uri(source_code).removesuffix(".py")
+        else:
+            function_module = DEFAULT_PY_FILE.removesuffix(".py")
 
-    # If no handler path, try to get from source
-    if handler_path == Path(""):
-        # If source is None (e.g. whan code is inline), use default main.py
-        if (source := source_spec.get("source")) is None:
-            return source_path / Path(DEFAULT_PY_FILE), function_name
-
-        # If source has local scheme, use it directly
-        if has_local_scheme(source):
-            return source_path / Path(source), function_name
-
-        # Otherwise, use default main.py
-        return source_path / Path(DEFAULT_PY_FILE), function_name
-
-    # If handler path is given, use it
-    return (source_path / handler_path).with_suffix(".py"), function_name
+    return function_module, function_name
 
 
 def import_function_and_init_from_source(
-    path: Path,
     source_spec: dict,
-) -> tuple[Callable, Union[Callable, None]]:
+) -> tuple[Callable, Callable | None]:
     """
     Import main function and optional init function from source.
 
     Parameters
     ----------
-    path : Path
-        Root path where the function source is downloaded.
     source_spec : dict
         Function source spec.
 
@@ -330,14 +322,19 @@ def import_function_and_init_from_source(
     tuple
         Main function and optional init function.
     """
-    # Get function path and import main function
-    function_path, handler_name = _get_func_path_remote(path, source_spec)
-    main_function = _import_function_from_path(function_path, handler_name)
+    handler = source_spec.get("handler")
+    source_code = source_spec.get("source")
+
+    function_module, function_name = _get_function_to_import(handler, source_code)
+
+    # Import module and get main function
+    module = import_module(function_module)
+    main_function = getattr(module, function_name)
 
     # Import init function if specified
     init_function: Callable | None = None
     init_handler: str | None = source_spec.get("init_function")
     if init_handler is not None:
-        init_function = _import_function_from_path(function_path, init_handler)
+        init_function = getattr(module, init_handler)
 
     return main_function, init_function
