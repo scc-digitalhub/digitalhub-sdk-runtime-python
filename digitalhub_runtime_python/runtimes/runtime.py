@@ -33,7 +33,7 @@ class RuntimePython(Runtime):
         raise NotImplementedError(f"Local execution not implemented for task kind: {task_kind}")
 
 
-class RuntimePythonJob(RuntimePython):
+class RuntimePythonJob(Runtime):
     """
     Runtime Python Job class.
     """

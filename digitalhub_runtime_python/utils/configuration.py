@@ -20,10 +20,10 @@ from digitalhub.utils.logger import LOGGER
 from digitalhub.utils.uri_utils import (
     get_filename_from_uri,
     has_git_scheme,
+    has_local_scheme,
     has_remote_scheme,
     has_s3_scheme,
     has_zip_scheme,
-    has_local_scheme
 )
 
 DEFAULT_PY_FILE = "main.py"
@@ -299,7 +299,7 @@ def _get_function_to_import(handler: str, source_code: str | None) -> tuple[str,
     except ValueError:
         function_name = handler
         if source_code is not None and has_local_scheme(source_code):
-            function_module = get_filename_from_uri(source_code).removesuffix(".py")
+            function_module = ".".join(Path(source_code.removesuffix(".py")).parts)
         else:
             function_module = DEFAULT_PY_FILE.removesuffix(".py")
 
