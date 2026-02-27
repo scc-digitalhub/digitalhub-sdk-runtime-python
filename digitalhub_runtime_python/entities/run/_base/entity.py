@@ -47,7 +47,7 @@ class RunPythonRun(Run):
                     relation=Relationship.CONSUMES.value,
                     dest=v.get("key"),
                 )
-        self.save(update=True)
+            self.save(update=True)
         self.spec.inputs = inputs
 
     def wait(self, log_info: bool = True) -> Run:
