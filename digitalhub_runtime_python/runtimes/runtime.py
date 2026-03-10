@@ -8,29 +8,19 @@ from typing import Callable
 
 from digitalhub.context.api import get_context
 from digitalhub.runtimes._base import Runtime
-from digitalhub.utils.logger import LOGGER
+from digitalhub.utils.logger.logger import get_logger
 
 from digitalhub_runtime_python.utils.configuration import import_function_from_source
 from digitalhub_runtime_python.utils.inputs import compose_inputs
 from digitalhub_runtime_python.utils.outputs import build_new_status, parse_outputs
+
+logger = get_logger(__file__)
 
 
 class RuntimePython(Runtime):
     """
     Runtime Python class.
     """
-
-    def run(self, run: dict) -> dict:
-        """
-        Run function.
-
-        Returns
-        -------
-        dict
-            Status of the executed run.
-        """
-        task_kind = run["spec"]["task"].split(":")[0]
-        raise NotImplementedError(f"Local execution not implemented for task kind: {task_kind}")
 
 
 class RuntimePythonJob(Runtime):
@@ -53,32 +43,32 @@ class RuntimePythonJob(Runtime):
         dict
             Status of the executed run.
         """
-        LOGGER.info("Validating task.")
+        logger.info("Validating task.")
         self._validate_task(run)
 
-        LOGGER.info("Starting task.")
+        logger.info("Starting task.")
         spec = run.get("spec")
         project = run.get("project")
         run_key = run.get("key")
 
-        LOGGER.info("Configuring execution.")
+        logger.info("Configuring execution.")
         fnc, wrapped = self._configure_execution(spec)
 
-        LOGGER.info("Composing function arguments.")
+        logger.info("Composing function arguments.")
         fnc_args = self._compose_args(fnc, spec, project)
 
-        LOGGER.info("Executing run.")
+        logger.info("Executing run.")
         if wrapped:
             results: dict = self._execute(fnc, project, run_key, **fnc_args)
         else:
             exec_result = self._execute(fnc, **fnc_args)
-            LOGGER.info("Collecting outputs.")
+            logger.info("Collecting outputs.")
             results = parse_outputs(exec_result, project, run_key)
 
         status = build_new_status(project, results)
 
         # Return run status
-        LOGGER.info("Task completed, returning run status.")
+        logger.info("Task completed, returning run status.")
         return status
 
     ##############################
@@ -127,3 +117,15 @@ class RuntimePythonJob(Runtime):
         parameters = spec.get("parameters", {})
         local_execution = spec.get("local_execution")
         return compose_inputs(inputs, parameters, local_execution, func, project)
+
+
+class RuntimeOpeninference(RuntimePython):
+    """
+    Runtime Openinference class.
+    """
+
+
+class RuntimeGuardrail(RuntimePython):
+    """
+    Runtime Guardrail class.
+    """

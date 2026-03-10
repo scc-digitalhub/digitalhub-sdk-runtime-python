@@ -44,3 +44,59 @@ class RuntimeEntityBuilderPython(RuntimeEntityBuilder):
             ),
         ]
     )
+
+
+class RuntimeEntityBuilderOpeninference(RuntimeEntityBuilder):
+    EXECUTABLE_KIND = EntityKinds.FUNCTION_OPENINFERENCE.value
+    TASKS_KINDS = map_actions(
+        [
+            (
+                EntityKinds.TASK_OPENINFERENCE_BUILD.value,
+                Actions.BUILD.value,
+            ),
+            (
+                EntityKinds.TASK_OPENINFERENCE_SERVE.value,
+                Actions.SERVE.value,
+            ),
+        ]
+    )
+    RUN_KINDS = map_actions(
+        [
+            (
+                EntityKinds.RUN_OPENINFERENCE_BUILD.value,
+                Actions.BUILD.value,
+            ),
+            (
+                EntityKinds.RUN_OPENINFERENCE_SERVE.value,
+                Actions.SERVE.value,
+            ),
+        ]
+    )
+
+
+class RuntimeEntityBuilderGuardrail(RuntimeEntityBuilder):
+    EXECUTABLE_KIND = EntityKinds.FUNCTION_GUARDRAIL.value
+    TASKS_KINDS = map_actions(
+        [
+            (
+                EntityKinds.TASK_GUARDRAIL_BUILD.value,
+                Actions.BUILD.value,
+            ),
+            (
+                EntityKinds.TASK_GUARDRAIL_SERVE.value,
+                Actions.SERVE.value,
+            ),
+        ]
+    )
+    RUN_KINDS = map_actions(
+        [
+            (
+                EntityKinds.RUN_GUARDRAIL_BUILD.value,
+                Actions.BUILD.value,
+            ),
+            (
+                EntityKinds.RUN_GUARDRAIL_SERVE.value,
+                Actions.SERVE.value,
+            ),
+        ]
+    )

@@ -11,7 +11,7 @@ from typing import Any, Callable
 from digitalhub.context.api import get_context
 from digitalhub.entities.project.crud import get_project
 from digitalhub.factory.entity import entity_factory
-from digitalhub.utils.logger import LOGGER
+from digitalhub.utils.logger.logger import get_logger
 
 if typing.TYPE_CHECKING:
     from digitalhub.entities._base.entity.entity import Entity
@@ -19,6 +19,8 @@ if typing.TYPE_CHECKING:
     from nuclio_sdk import Context, Event
 
     from digitalhub_runtime_python.entities.run._base.entity import RunPythonRun
+
+logger = get_logger(__file__)
 
 
 def get_project_(project_name: str) -> Project:
@@ -39,7 +41,7 @@ def get_project_(project_name: str) -> Project:
         return get_project(project_name)
     except Exception as e:
         msg = f"Error during project collection. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.exception(msg)
+        logger.exception(msg)
         raise RuntimeError(msg)
 
 
@@ -65,7 +67,7 @@ def get_run_(project_name: str) -> RunPythonRun:
         return proj.get_run(ctx.run.key)
     except Exception as e:
         msg = f"Error during run collection. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.exception(msg)
+        logger.exception(msg)
         raise RuntimeError(msg)
 
 
@@ -91,7 +93,7 @@ def get_entity_inputs(inputs: dict) -> dict[str, Entity]:
         return {k: entity_factory.build_entity_from_dict(v) for k, v in inputs.items()}
     except Exception as e:
         msg = f"Error during inputs collection. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.exception(msg)
+        logger.exception(msg)
         raise RuntimeError(msg) from e
 
 
@@ -175,7 +177,7 @@ def compose_inputs(
 
     except Exception as e:
         msg = f"Error during function arguments compostion. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.exception(msg)
+        logger.exception(msg)
         raise RuntimeError(msg) from e
 
 

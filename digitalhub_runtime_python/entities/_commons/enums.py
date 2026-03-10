@@ -20,6 +20,18 @@ class EntityKinds(Enum):
     RUN_PYTHON_JOB = "python+job:run"
     RUN_PYTHON_SERVE = "python+serve:run"
 
+    FUNCTION_OPENINFERENCE = "openinference"
+    TASK_OPENINFERENCE_BUILD = "openinference+build"
+    TASK_OPENINFERENCE_SERVE = "openinference+serve"
+    RUN_OPENINFERENCE_BUILD = "openinference+build:run"
+    RUN_OPENINFERENCE_SERVE = "openinference+serve:run"
+
+    FUNCTION_GUARDRAIL = "guardrail"
+    TASK_GUARDRAIL_BUILD = "guardrail+build"
+    TASK_GUARDRAIL_SERVE = "guardrail+serve"
+    RUN_GUARDRAIL_BUILD = "guardrail+build:run"
+    RUN_GUARDRAIL_SERVE = "guardrail+serve:run"
+
 
 class Actions(Enum):
     """

@@ -16,7 +16,7 @@ from digitalhub.utils.generic_utils import (
     requests_chunk_download,
 )
 from digitalhub.utils.git_utils import clone_repository
-from digitalhub.utils.logger import LOGGER
+from digitalhub.utils.logger.logger import get_logger
 from digitalhub.utils.uri_utils import (
     get_filename_from_uri,
     has_git_scheme,
@@ -26,6 +26,7 @@ from digitalhub.utils.uri_utils import (
     has_zip_scheme,
 )
 
+logger = get_logger(__file__)
 DEFAULT_PY_FILE = "main.py"
 
 
@@ -231,7 +232,7 @@ def import_function_from_source(path: Path, source_spec: dict) -> Callable:
         return _import_function_from_path(function_path, function_name)
     except Exception as e:
         msg = f"Some error occurred while getting function. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.exception(msg)
+        logger.exception(msg)
         raise RuntimeError(msg) from e
 
 

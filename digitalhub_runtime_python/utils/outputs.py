@@ -17,10 +17,12 @@ from digitalhub.entities.dataitem.crud import log_dataitem
 from digitalhub.entities.model._base.entity import Model
 from digitalhub.stores.readers.data.api import get_supported_dataframes
 from digitalhub.utils.exceptions import EntityNotExistsError
-from digitalhub.utils.logger import LOGGER
+from digitalhub.utils.logger.logger import get_logger
 
 if typing.TYPE_CHECKING:
     from digitalhub.entities.dataitem.table.entity import DataitemTable
+
+logger = get_logger(__file__)
 
 
 def collect_outputs(results: Any, outputs: list[str], project_name: str, run_key: str) -> dict:
@@ -158,7 +160,7 @@ def _log_dataitem(name: str, project_name: str, data: Any) -> DataitemTable:
         )
     except Exception as e:
         msg = f"Some error occurred while logging dataitem. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.exception(msg)
+        logger.exception(msg)
         raise RuntimeError(msg)
 
 
@@ -194,7 +196,7 @@ def _log_artifact(name: str, project_name: str, data: Any) -> Artifact:
 
     except Exception as e:
         msg = f"Some error occurred while logging artifact. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.exception(msg)
+        logger.exception(msg)
         raise RuntimeError(msg)
 
 
@@ -233,5 +235,5 @@ def build_new_status(
         }
     except Exception as e:
         msg = f"Something got wrong during run status building. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.exception(msg)
+        logger.exception(msg)
         raise RuntimeError(msg) from e

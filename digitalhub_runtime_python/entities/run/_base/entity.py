@@ -12,7 +12,7 @@ from digitalhub.entities._commons.enums import Relationship, State
 from digitalhub.entities._commons.utils import get_entity_type_from_key
 from digitalhub.entities.run._base.entity import Run
 from digitalhub.factory.entity import entity_factory
-from digitalhub.utils.logger import LOGGER
+from digitalhub.utils.logger.logger import get_logger
 
 from digitalhub_runtime_python.entities._commons.enums import Actions
 from digitalhub_runtime_python.entities.run._base.utils import get_getter_for_material
@@ -22,6 +22,8 @@ if typing.TYPE_CHECKING:
 
     from digitalhub_runtime_python.entities.run._base.spec import RunSpecPythonRun
     from digitalhub_runtime_python.entities.run._base.status import RunStatusPythonRun
+
+logger = get_logger(__file__)
 
 
 class RunPythonRun(Run):
@@ -73,26 +75,26 @@ class RunPythonRun(Run):
 
             while time.time() - start < serve_timeout:
                 if log_info:
-                    LOGGER.info(f"Waiting for run {self.id} to deploy service.")
+                    logger.info(f"Waiting for run {self.id} to deploy service.")
 
                 self.refresh()
                 if self.status.service is not None:
                     if log_info:
                         msg = f"Run {self.id} service deployed."
-                        LOGGER.info(msg)
+                        logger.info(msg)
                     return self
 
                 elif self.status.state == State.ERROR.value:
                     if log_info:
                         msg = f"Run {self.id} serving failed."
-                        LOGGER.info(msg)
+                        logger.info(msg)
                     return self
 
                 time.sleep(5)
 
             if log_info:
                 msg = f"Waiting for run {self.id} service timed out. Check logs for more information."
-                LOGGER.info(msg)
+                logger.info(msg)
 
             return self
 
