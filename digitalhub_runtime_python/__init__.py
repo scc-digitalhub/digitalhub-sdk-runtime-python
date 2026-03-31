@@ -19,7 +19,7 @@ from digitalhub_runtime_python.entities.task.openinference_serve.builder import 
 from digitalhub_runtime_python.entities.task.python_build.builder import TaskPythonBuildBuilder
 from digitalhub_runtime_python.entities.task.python_job.builder import TaskPythonJobBuilder
 from digitalhub_runtime_python.entities.task.python_serve.builder import TaskPythonServeBuilder
-from digitalhub_runtime_python.utils.utils import handler, parse_requirements
+from digitalhub_runtime_python.utils.utils import handler
 
 entity_builders = (
     (EntityKinds.FUNCTION_GUARDRAIL.value, FunctionGuardrailBuilder),

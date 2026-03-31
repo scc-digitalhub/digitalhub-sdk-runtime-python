@@ -48,5 +48,5 @@ class FunctionValidatorPython(FunctionValidator):
     base_image: str | None = None
     "Base image used to build the image where the function will be executed"
 
-    requirements: list[str] | None = None
+    requirements: list[str] | str | None = None
     "Requirements list to be installed in the image where the function will be executed"

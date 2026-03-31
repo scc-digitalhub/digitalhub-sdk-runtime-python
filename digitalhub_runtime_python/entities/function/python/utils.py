@@ -12,7 +12,9 @@ from digitalhub.utils.exceptions import EntityError
 from digitalhub.utils.file_utils import eval_py_type, eval_zip_type
 from digitalhub.utils.generic_utils import encode_string, read_source
 from digitalhub.utils.uri_utils import has_local_scheme
+from pip._internal.network.session import PipSession
 from pip._internal.operations import freeze
+from pip._internal.req import parse_requirements as pip_parse
 
 from digitalhub_runtime_python.entities.function.python.models import Lang
 
@@ -214,3 +216,36 @@ def read_installed_packages(requirements: list[str] | None = None) -> list[str] 
                 result.append(req)
 
     return result
+
+
+def parse_requirements(source: str) -> list[str]:
+    """
+    Parse a requirements.txt file using pip's internal parser.
+
+    Parameters
+    ----------
+    source : str
+        Path to a requirements.txt file.
+
+    Returns
+    -------
+    list[str]
+        A list of requirement strings as they would be understood by pip.
+
+    Examples
+    --------
+    >>> requirements = parse_requirements_with_pip("/path/to/requirements.txt")
+    >>> print(requirements)
+    ['numpy>=1.0', 'pandas==2.0.0', 'git+https://github.com/user/repo.git@main']
+    """
+    # Parse using pip's internal parser
+    session = PipSession()
+    parsed = pip_parse(source, session=session)
+
+    # Extract requirement strings
+    requirements = []
+    for req in parsed:
+        if req.requirement:
+            requirements.append(str(req.requirement))
+
+    return requirements
