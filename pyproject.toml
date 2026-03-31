@@ -27,6 +27,8 @@ dependencies = [
 "nuclio-sdk",
 "msgpack",
 "pip",
+"tomli; python_version < '3.11'",
+"pyyaml",
 ]
 
 [project.optional-dependencies]
