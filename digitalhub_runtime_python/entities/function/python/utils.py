@@ -12,17 +12,11 @@ from digitalhub.utils.exceptions import EntityError
 from digitalhub.utils.file_utils import eval_py_type, eval_zip_type
 from digitalhub.utils.generic_utils import encode_string, read_source
 from digitalhub.utils.uri_utils import has_local_scheme
-from pip._internal.network.session import PipSession
-from pip._internal.operations import freeze
-from pip._internal.req import parse_requirements as pip_parse
 
 from digitalhub_runtime_python.entities.function.python.models import Lang
 
 if typing.TYPE_CHECKING:
     from digitalhub_runtime_python.entities.function.python.entity import FunctionPython
-
-
-SEPARATORS = ["==", ">=", "<=", ">", "<", "~=", "!="]
 
 
 def source_check(**kwargs) -> dict:
@@ -162,90 +156,3 @@ def source_post_check(exec: FunctionPython) -> FunctionPython:
                 exec.spec.source["handler"] = f"{Path(code_src).stem}:{exec.spec.source['handler']}"
 
     return exec
-
-
-def read_installed_packages(requirements: list[str] | None = None) -> list[str] | None:
-    """
-    Read installed packages in execution context.
-
-    If requirements is provided, returns only those packages with their
-    versions filled in from the environment. Package names without versions
-    in the requirements list will have their versions added if found.
-
-    Parameters
-    ----------
-    requirements : list[str]
-        Optional list of package names (e.g., ['pandas', 'torch']) or
-        requirements with versions (e.g., ['pandas==2.0.0']).
-
-    Returns
-    -------
-    list[str]
-        List of installed packages in pip freeze format (e.g., ['numpy==1.24.0', 'pandas==2.0.0']).
-    """
-    if requirements is None:
-        return
-
-    # Build a mapping of normalized package names to their installed versions
-    installed_map: dict[str, str] = {}
-    for pkg in freeze.freeze():
-        # Handle different separators
-        for sep in SEPARATORS:
-            if sep in pkg:
-                name, version = pkg.split(sep, 1)
-                # Normalize package name (lowercase, replace _ with -)
-                installed_map[name.lower().replace("_", "-")] = f"{name}{sep}{version}"
-                break
-
-    result = []
-    for req in requirements:
-        # Check if requirement already has a version specifier
-        has_version = any(sep in req for sep in SEPARATORS)
-
-        if has_version:
-            # Keep as-is if version is already specified
-            result.append(req)
-        else:
-            # Normalize the requirement name for lookup
-            normalized_name = req.lower().replace("_", "-")
-            if normalized_name in installed_map:
-                # Use the installed version
-                result.append(installed_map[normalized_name])
-            else:
-                # Package not found in environment, keep without version
-                result.append(req)
-
-    return result
-
-
-def parse_requirements(source: str) -> list[str]:
-    """
-    Parse a requirements.txt file using pip's internal parser.
-
-    Parameters
-    ----------
-    source : str
-        Path to a requirements.txt file.
-
-    Returns
-    -------
-    list[str]
-        A list of requirement strings as they would be understood by pip.
-
-    Examples
-    --------
-    >>> requirements = parse_requirements_with_pip("/path/to/requirements.txt")
-    >>> print(requirements)
-    ['numpy>=1.0', 'pandas==2.0.0', 'git+https://github.com/user/repo.git@main']
-    """
-    # Parse using pip's internal parser
-    session = PipSession()
-    parsed = pip_parse(source, session=session)
-
-    # Extract requirement strings
-    requirements = []
-    for req in parsed:
-        if req.requirement:
-            requirements.append(str(req.requirement))
-
-    return requirements

@@ -11,7 +11,7 @@ from digitalhub.utils.generic_utils import decode_base64_string
 from digitalhub.utils.io_utils import write_text
 from digitalhub.utils.uri_utils import has_local_scheme
 
-from digitalhub_runtime_python.entities.function.python.utils import parse_requirements, read_installed_packages
+from digitalhub_runtime_python.entities._commons.requirement_parser.parser import RequirementParser
 
 if typing.TYPE_CHECKING:
     from digitalhub_runtime_python.entities.function.python.spec import FunctionSpecPython
@@ -66,6 +66,4 @@ class FunctionPython(Function):
         in Core.
         Can be overridden in subclasses to implement custom behavior.
         """
-        if isinstance(self.spec.requirements, str):
-            self.spec.requirements = parse_requirements(self.spec.requirements)
-        self.spec.requirements = read_installed_packages(self.spec.requirements)
+        self.spec.requirements = RequirementParser().parse(self.spec.requirements)
