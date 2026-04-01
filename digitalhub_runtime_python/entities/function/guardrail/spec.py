@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from digitalhub.entities.function._base.spec import FunctionSpec, FunctionValidator
 
+from digitalhub_runtime_python.entities.function.guardrail.models import ProcessingMode
 from digitalhub_runtime_python.entities.function.python.models import PythonVersion, SourceValidator
 
 
@@ -21,6 +22,7 @@ class FunctionSpecGuardrail(FunctionSpec):
         base_image: str | None = None,
         python_version: str | None = None,
         requirements: list | None = None,
+        processing_mode: str | None = None,
     ) -> None:
         super().__init__()
 
@@ -29,6 +31,7 @@ class FunctionSpecGuardrail(FunctionSpec):
         self.python_version = python_version
         self.requirements = requirements
         self.source = source
+        self.processing_mode = processing_mode
 
 
 class FunctionValidatorGuardrail(FunctionValidator):
@@ -50,3 +53,6 @@ class FunctionValidatorGuardrail(FunctionValidator):
 
     requirements: list[str] | None = None
     "Requirements list to be installed in the image where the function will be executed"
+
+    processing_mode: ProcessingMode
+    """Processing mode"""

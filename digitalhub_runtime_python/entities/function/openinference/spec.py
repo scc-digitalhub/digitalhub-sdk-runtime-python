@@ -23,6 +23,9 @@ class FunctionSpecOpeninference(FunctionSpec):
         base_image: str | None = None,
         python_version: str | None = None,
         requirements: list | None = None,
+        model_name: str | None = None,
+        inputs: list | None = None,
+        outputs: list | None = None,
     ) -> None:
         super().__init__()
 
@@ -31,6 +34,9 @@ class FunctionSpecOpeninference(FunctionSpec):
         self.python_version = python_version
         self.requirements = requirements
         self.source = source
+        self.model_name = model_name
+        self.inputs = inputs
+        self.outputs = outputs
 
 
 class FunctionValidatorOpeninference(FunctionValidator):
