@@ -26,8 +26,8 @@ class RunSpecOpeninferenceRunBuild(RunSpec):
         python_version: str | None = None,
         requirements: list | None = None,
         model_name: str | None = None,
-        inputs: dict | None = None,
-        outputs: dict | None = None,
+        inputs: list | None = None,
+        outputs: list | None = None,
         instructions: dict | None = None,
         init_parameters: dict | None = None,
         **kwargs,
@@ -65,8 +65,8 @@ class RunValidatorOpeninferenceRunBuild(RunValidator):
     python_version: str | None = None
     requirements: list | None = None
     model_name: str | None = None
-    inputs: dict | None = None
-    outputs: dict | None = None
+    inputs: list | None = None
+    outputs: list | None = None
 
     # Task parameters
     instructions: dict | None = None

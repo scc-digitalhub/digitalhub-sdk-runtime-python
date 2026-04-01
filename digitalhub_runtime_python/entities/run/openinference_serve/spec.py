@@ -26,8 +26,8 @@ class RunSpecOpeninferenceRunServe(RunSpec):
         python_version: str | None = None,
         requirements: list | None = None,
         model_name: str | None = None,
-        inputs: dict | None = None,
-        outputs: dict | None = None,
+        inputs: list | None = None,
+        outputs: list | None = None,
         service_type: str | None = None,
         service_name: str | None = None,
         replicas: int | None = None,
@@ -69,8 +69,8 @@ class RunValidatorOpeninferenceRunServe(RunValidator):
     python_version: str | None = None
     requirements: list | None = None
     model_name: str | None = None
-    inputs: dict | None = None
-    outputs: dict | None = None
+    inputs: list | None = None
+    outputs: list | None = None
 
     # Task parameters
     service_type: str | None = None
