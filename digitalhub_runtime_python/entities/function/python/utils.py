@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import typing
 from pathlib import Path
+from zipfile import ZipFile
 
 from digitalhub.stores.data.api import get_default_store, get_store
 from digitalhub.utils.exceptions import EntityError
@@ -139,20 +140,63 @@ def source_post_check(exec: FunctionPython) -> FunctionPython:
 
     # Check local source
     if has_local_scheme(code_src):
-        if not Path(code_src).is_file():
-            raise EntityError(f"Source file {code_src} does not exist.")
+        path_src = Path(code_src)
 
-        # Check py
-        if eval_py_type(code_src):
+        if not path_src.exists():
+            raise EntityError(f"Source {code_src} does not exist.")
+
+        # If source is a folder, zip it and upload it
+        if not path_src.is_file():
+            archive_path = path_src.parent / f"{path_src.name}.zip"
+            create_archive(path_src, archive_path)
+            dst = _get_dst(exec, archive_path.name)
+            get_store(dst).upload(str(archive_path), dst)
+            exec.spec.source["source"] = dst
+            archive_path.unlink()
+
+        # If source is a file, read it and encode it in base64
+        elif eval_py_type(code_src):
             exec.spec.source["base64"] = read_source(code_src)
 
-        # Check zip
+        # If source is a zip file, upload it and update the source
         elif eval_zip_type(code_src):
-            filename = Path(code_src).name
-            dst = f"zip+{get_default_store(exec.project)}/{exec.project}/{exec.ENTITY_TYPE}/{exec.name}/{exec.id}/{filename}"
+            dst = _get_dst(exec, path_src.name)
             get_store(dst).upload(code_src, dst)
             exec.spec.source["source"] = dst
-            if ":" not in exec.spec.source["handler"]:
-                exec.spec.source["handler"] = f"{Path(code_src).stem}:{exec.spec.source['handler']}"
 
     return exec
+
+
+def _get_dst(exec: FunctionPython, filename: str) -> str:
+    """
+    Get destination path.
+
+    Parameters
+    ----------
+    exec : FunctionPython
+        Executable.
+    filename : str
+        Filename.
+
+    Returns
+    -------
+    str
+        Destination path.
+    """
+    return f"zip+{get_default_store(exec.project)}/{exec.project}/{exec.ENTITY_TYPE}/{exec.name}/{exec.id}/{filename}"
+
+
+def create_archive(path: Path, filename: Path) -> None:
+    """
+    Create a zip archive from a specified directory.
+
+    Parameters
+    ----------
+    path : Path
+        Directory to archive.
+    filename : Path
+        Path where to save the zip archive.
+    """
+    with ZipFile(filename, "w") as zip_file:
+        for file in path.rglob("*"):
+            zip_file.write(file, file.relative_to(path))
