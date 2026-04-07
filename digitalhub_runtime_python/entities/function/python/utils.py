@@ -6,12 +6,12 @@ from __future__ import annotations
 
 import typing
 from pathlib import Path
-from zipfile import ZipFile
 
-from digitalhub.stores.data.api import get_default_store, get_store
+from digitalhub.entities._commons.utils import build_zip_path
+from digitalhub.stores.data.api import get_store
 from digitalhub.utils.exceptions import EntityError
 from digitalhub.utils.file_utils import eval_py_type, eval_zip_type
-from digitalhub.utils.generic_utils import encode_string, read_source
+from digitalhub.utils.generic_utils import create_archive, encode_string, read_source
 from digitalhub.utils.uri_utils import has_local_scheme
 
 from digitalhub_runtime_python.entities.function.python.models import Lang
@@ -149,7 +149,7 @@ def source_post_check(exec: FunctionPython) -> FunctionPython:
         if not path_src.is_file():
             archive_path = path_src.parent / f"{path_src.name}.zip"
             create_archive(path_src, archive_path)
-            dst = _get_dst(exec, archive_path.name)
+            dst = build_zip_path(exec, archive_path.name)
             get_store(dst).upload(str(archive_path), dst)
             exec.spec.source["source"] = dst
             archive_path.unlink()
@@ -160,43 +160,8 @@ def source_post_check(exec: FunctionPython) -> FunctionPython:
 
         # If source is a zip file, upload it and update the source
         elif eval_zip_type(code_src):
-            dst = _get_dst(exec, path_src.name)
+            dst = build_zip_path(exec, path_src.name)
             get_store(dst).upload(code_src, dst)
             exec.spec.source["source"] = dst
 
     return exec
-
-
-def _get_dst(exec: FunctionPython, filename: str) -> str:
-    """
-    Get destination path.
-
-    Parameters
-    ----------
-    exec : FunctionPython
-        Executable.
-    filename : str
-        Filename.
-
-    Returns
-    -------
-    str
-        Destination path.
-    """
-    return f"zip+{get_default_store(exec.project)}/{exec.project}/{exec.ENTITY_TYPE}/{exec.name}/{exec.id}/{filename}"
-
-
-def create_archive(path: Path, filename: Path) -> None:
-    """
-    Create a zip archive from a specified directory.
-
-    Parameters
-    ----------
-    path : Path
-        Directory to archive.
-    filename : Path
-        Path where to save the zip archive.
-    """
-    with ZipFile(filename, "w") as zip_file:
-        for file in path.rglob("*"):
-            zip_file.write(file, file.relative_to(path))
