@@ -26,7 +26,7 @@ class RunSpecGuardrailRunBuild(RunSpec):
         python_version: str | None = None,
         requirements: list | None = None,
         processing_mode: str | None = None,
-        instructions: dict | None = None,
+        instructions: list | None = None,
         init_parameters: dict | None = None,
         **kwargs,
     ):
@@ -63,7 +63,7 @@ class RunValidatorGuardrailRunBuild(RunValidator):
     processing_mode: str | None = None
 
     # Task parameters
-    instructions: dict | None = None
+    instructions: list | None = None
 
     # Run parameters
     init_parameters: dict | None = None
