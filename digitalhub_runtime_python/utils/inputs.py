@@ -202,10 +202,14 @@ def compose_init(init_function: Callable, context: Any, parameters: dict) -> dic
     signature_parameters = dict(inspect.signature(init_function).parameters)
     if "context" not in signature_parameters:
         raise RuntimeError("Init function must have 'context' parameter.")
-    if len(parameters) != (len(signature_parameters) - 1):
-        signature_parameters.pop("context")
-        expected_parameters = list(signature_parameters.keys())
+    signature_parameters.pop("context")
+    required_parameters = [
+        name for name, param in signature_parameters.items() if param.default is inspect.Parameter.empty
+    ]
+    unknown = [k for k in parameters if k not in signature_parameters]
+    missing = [k for k in required_parameters if k not in parameters]
+    if unknown or missing:
         raise RuntimeError(
-            f"Init function parameters mismatch. Expected: {expected_parameters}, Got: {list(parameters)}"
+            f"Init function parameters mismatch. Expected: {list(signature_parameters.keys())}, Got: {list(parameters)}"
         )
     return {**parameters, "context": context}
