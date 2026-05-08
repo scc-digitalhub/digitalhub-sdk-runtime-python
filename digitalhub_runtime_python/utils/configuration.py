@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-from importlib import import_module
 from pathlib import Path
 from typing import Callable
 
@@ -28,6 +27,7 @@ from digitalhub.utils.uri_utils import (
 
 logger = get_logger(__file__)
 DEFAULT_PY_FILE = "main.py"
+DEFAULT_SERVERLESS_PATH = Path("/shared")
 
 
 def _parse_handler(handler: str) -> tuple[Path, str]:
@@ -278,7 +278,7 @@ def save_function_source(path: Path, source_spec: dict) -> Path:
     raise RuntimeError(f"Unable to collect source from: {source}")
 
 
-def _get_function_to_import(handler: str, source_code: str | None) -> tuple[str, str]:
+def _get_function_to_import(handler: str, source_code: str | None, root_path: Path) -> tuple[Path, str]:
     """
     Get function name from handler string.
 
@@ -291,8 +291,8 @@ def _get_function_to_import(handler: str, source_code: str | None) -> tuple[str,
 
     Returns
     -------
-    tuple
-        Function module and function name.
+    tuple[Path, str]
+        Function path and function name.
     """
     # If handler is not specified, assume function module is in main
     try:
@@ -304,11 +304,16 @@ def _get_function_to_import(handler: str, source_code: str | None) -> tuple[str,
         else:
             function_module = DEFAULT_PY_FILE.removesuffix(".py")
 
-    return function_module, function_name
+    function_path = (root_path / Path(function_module.replace(".", "/") + ".py")).resolve()
+    if not function_path.exists():
+        raise RuntimeError(f"Function module {function_module} not found at path {function_path}.")
+
+    return function_path, function_name
 
 
 def import_function_and_init_from_source(
     source_spec: dict,
+    root_path: Path | None = None,
 ) -> tuple[Callable, Callable | None]:
     """
     Import main function and optional init function from source.
@@ -317,25 +322,29 @@ def import_function_and_init_from_source(
     ----------
     source_spec : dict
         Function source spec.
+    root_path : Path | None
+        Root path to use if function path is not specified.
 
     Returns
     -------
     tuple
         Main function and optional init function.
     """
+    if root_path is None:
+        root_path = DEFAULT_SERVERLESS_PATH
+
     handler = source_spec.get("handler")
     source_code = source_spec.get("source")
 
-    function_module, function_name = _get_function_to_import(handler, source_code)
+    function_path, function_name = _get_function_to_import(handler, source_code, root_path)
 
     # Import module and get main function
-    module = import_module(function_module)
-    main_function = getattr(module, function_name)
+    main_function = _import_function_from_path(function_path, function_name)
 
     # Import init function if specified
     init_function: Callable | None = None
     init_handler: str | None = source_spec.get("init_function")
     if init_handler is not None:
-        init_function = getattr(module, init_handler)
+        init_function = _import_function_from_path(function_path, init_handler)
 
     return main_function, init_function
