@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import Callable
+from typing import Any, Callable
 
 from digitalhub.context.api import get_context
 from digitalhub.runtimes._base import Runtime
@@ -12,7 +12,7 @@ from digitalhub.utils.logger.logger import get_logger
 
 from digitalhub_runtime_python.utils.configuration import import_function_from_source
 from digitalhub_runtime_python.utils.inputs import compose_inputs
-from digitalhub_runtime_python.utils.outputs import build_new_status, parse_outputs
+from digitalhub_runtime_python.utils.outputs import build_new_status, collect_outputs
 
 logger = get_logger(__file__)
 
@@ -63,7 +63,8 @@ class RuntimePythonJob(Runtime):
         else:
             exec_result = self._execute(fnc, **fnc_args)
             logger.info("Collecting outputs.")
-            results = parse_outputs(exec_result, project, run_key)
+            named_outputs = self._get_named_outputs(exec_result)
+            results = collect_outputs(exec_result, named_outputs, project, run_key)
 
         status = build_new_status(project, results)
 
@@ -117,6 +118,24 @@ class RuntimePythonJob(Runtime):
         parameters = spec.get("parameters", {})
         local_execution = spec.get("local_execution")
         return compose_inputs(inputs, parameters, local_execution, func, project)
+
+    def _get_named_outputs(self, exec_result: Any) -> list[str]:
+        """
+        Get named outputs.
+
+        Parameters
+        ----------
+        exec_result : Any
+            Function execution result.
+
+        Returns
+        -------
+        list[str]
+            List of named outputs.
+        """
+        if isinstance(exec_result, list):
+            return [f"output_{idx}" for idx in range(len(exec_result))]
+        return []
 
 
 class RuntimeOpeninference(RuntimePython):

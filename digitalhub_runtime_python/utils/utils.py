@@ -10,7 +10,7 @@ from typing import Callable
 from digitalhub_runtime_python.utils.outputs import collect_outputs
 
 
-def handler(outputs: list[str] | None = None) -> Callable:
+def handler(outputs: list[str] | list[dict[str, str]] | None = None) -> Callable:
     """
     Decorator that handles the outputs of the function.
 

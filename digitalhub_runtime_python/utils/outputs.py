@@ -6,8 +6,18 @@ from __future__ import annotations
 
 import pickle
 import typing
+from dataclasses import dataclass
 from typing import Any
 
+from digitalhub import (
+    log_croissant,
+    log_generic_artifact,
+    log_generic_dataitem,
+    log_generic_model,
+    log_mlflow,
+    log_sklearn,
+    log_table,
+)
 from digitalhub.context.api import get_context
 from digitalhub.entities._commons.enums import EntityKinds, Relationship, State
 from digitalhub.entities.artifact._base.entity import Artifact
@@ -25,7 +35,122 @@ if typing.TYPE_CHECKING:
 logger = get_logger(__file__)
 
 
-def collect_outputs(results: Any, outputs: list[str], project_name: str, run_key: str) -> dict:
+mapped_logger = {
+    EntityKinds.DATAITEM_DATAITEM.value: log_generic_dataitem,
+    EntityKinds.DATAITEM_TABLE.value: log_table,
+    EntityKinds.DATAITEM_CROISSANT.value: log_croissant,
+    EntityKinds.MODEL_MLFLOW.value: log_mlflow,
+    EntityKinds.MODEL_SKLEARN.value: log_sklearn,
+    EntityKinds.MODEL_MODEL.value: log_generic_model,
+    EntityKinds.ARTIFACT_ARTIFACT.value: log_generic_artifact,
+}
+
+
+@dataclass
+class OutputStruct:
+    """
+    OutputStruct is a class that represents the output of a function.
+    """
+
+    name: str | None
+    kind: str | None
+    kwargs: dict | None = None
+    log: bool = False
+
+
+def _build_default_output_names(outputs_len: int, results_len: int) -> list[str]:
+    return [f"output_{idx}" for idx in range(outputs_len, results_len)]
+
+
+def _parse_UDF_outputs(outputs: list[str] | list[dict[str, Any]], results_len: int) -> list[OutputStruct]:
+    """
+    Parse UDF outputs.
+
+    Parameters
+    ----------
+    outputs : list[str] | list[dict[str, str]]
+        List of named outputs to collect.
+    results_len : int
+        Number of results produced by the function.
+
+    Returns
+    -------
+    list[OutputStruct]
+        List of OutputStruct objects.
+    """
+    normalized_outputs = list(outputs[:results_len])
+
+    if len(normalized_outputs) != results_len:
+        # Set default names for outputs if the number of outputs is different from the number of results.
+        # If the number of outputs is less than the number of results, the missing outputs will be named as output_{idx}.
+        # If the number of outputs is greater than the number of results, the extra outputs will be ignored.
+        logger.warning(
+            f"Number of outputs ({len(outputs)}) is different from number of results ({results_len}). "
+            f"Default names will be used for outputs.",
+        )
+        normalized_outputs.extend(_build_default_output_names(len(normalized_outputs), results_len))
+
+    parsed_outputs = []
+    for idx, item in enumerate(normalized_outputs):
+        if isinstance(item, str):
+            parsed_outputs.append(OutputStruct(name=item, kind=None))
+            continue
+
+        if not isinstance(item, dict):
+            raise ValueError(f"Invalid output format: {item}")
+
+        name = item.get("name") or f"output_{idx}"
+        kind = item.get("kind")
+        if kind is None:
+            raise ValueError(f"Missing kind for logged output: {name}")
+
+        if kind not in mapped_logger:
+            raise ValueError(f"Unsupported output kind: {kind}")
+
+        kwargs = dict(item.get("spec_kwargs") or {})
+        parsed_outputs.append(OutputStruct(name=name, kind=kind, kwargs=kwargs, log=True))
+    return parsed_outputs
+
+
+def _log_mapped_output(project_name: str, item: Any, output: OutputStruct) -> None:
+    logger.info(f"Logging output {output.name}.")
+    spec_kwargs = dict(output.kwargs or {})
+    spec_kwargs["source"] = item
+    mapped_logger[output.kind](project_name, output.name, **spec_kwargs)
+
+
+def _save_existing_object(obj: Dataitem | Artifact | Model, run_key: str) -> Dataitem | Artifact | Model:
+    dest = run_key + ":" + run_key.split("/")[-1]
+    obj.add_relationship(relation=Relationship.PRODUCEDBY.value, dest=dest)
+
+    try:
+        obj.save(update=True)
+    except EntityNotExistsError:
+        obj.save()
+
+    return obj
+
+
+def _materialize_output(name: str, item: Any, project_name: str, run_key: str) -> Any:
+    if isinstance(item, (str, int, float, bool, bytes)):
+        return item
+
+    if isinstance(item, (Dataitem, Artifact, Model)):
+        return _save_existing_object(item, run_key)
+
+    for df_class in get_supported_dataframes():
+        if isinstance(item, df_class):
+            return _log_dataitem(name, project_name, item)
+
+    return _log_artifact(name, project_name, item)
+
+
+def collect_outputs(
+    results: Any,
+    outputs: list[str] | list[dict[str, Any]],
+    project_name: str,
+    run_key: str,
+) -> dict:
     """
     Collect outputs. Use the produced results directly.
 
@@ -33,7 +158,7 @@ def collect_outputs(results: Any, outputs: list[str], project_name: str, run_key
     ----------
     results : Any
         Function outputs.
-    outputs : list[str]
+    outputs : list[OutputStruct]
         List of named outputs to collect.
     project_name : str
         Project name.
@@ -48,42 +173,16 @@ def collect_outputs(results: Any, outputs: list[str], project_name: str, run_key
     objects = {}
     results = listify_results(results)
 
+    parsed_outputs = _parse_UDF_outputs(outputs, len(results))
+
     for idx, item in enumerate(results):
-        # Get mapping of outputs, if not found, create a new one
-        try:
-            name = outputs[idx]
-        except IndexError:
-            name = f"output_{idx}"
+        output = parsed_outputs[idx]
 
-        if isinstance(item, (str, int, float, bool, bytes)):
-            objects[name] = item
+        if output.log:
+            _log_mapped_output(project_name, item, output)
+            continue
 
-        else:
-            # Recieve a digitalhub object
-            if isinstance(item, (Dataitem, Artifact, Model)):
-                obj = item
-
-                # Add relationship to object, update it
-                dest = run_key + ":" + run_key.split("/")[-1]
-                obj.add_relationship(relation=Relationship.PRODUCEDBY.value, dest=dest)
-
-                # Save or update object
-                try:
-                    obj.save(update=True)
-                except EntityNotExistsError:
-                    obj.save()
-
-            else:
-                # Recieve a dataframe object
-                for df_class in get_supported_dataframes():
-                    if isinstance(item, df_class):
-                        obj = _log_dataitem(name, project_name, item)
-                        break
-                # Recieve a generic python object
-                else:
-                    obj = _log_artifact(name, project_name, item)
-
-            objects[name] = obj
+        objects[output.name] = _materialize_output(output.name, item, project_name, run_key)
 
     return objects
 
