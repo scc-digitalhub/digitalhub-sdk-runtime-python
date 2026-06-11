@@ -13,6 +13,11 @@ from digitalhub_runtime_python.runtimes.runtime import (
     RuntimePythonJob,
 )
 
+from digitalhub_runtime_python.runtimes.hydra_runtime import (
+    RuntimeHydra,
+    RuntimeHydraJob,
+    RuntimeHydraSubtask,
+)
 
 class RuntimePythonBuilder(RuntimeBuilder):
     """RuntimePythonBuilder class."""
@@ -36,3 +41,19 @@ class RuntimeGuardrailBuilder(RuntimeBuilder):
     """RuntimeGuardrailBuilder class."""
 
     RUNTIME_CLASS = RuntimeGuardrail
+
+class RuntimeHydraBuilder(RuntimeBuilder):
+    """RuntimeHydraBuilder class."""
+
+    RUNTIME_CLASS = RuntimeHydra
+
+class RuntimeHydraJobBuilder(RuntimeBuilder):
+    """RuntimeHydraJobBuilder class."""
+
+    RUNTIME_CLASS = RuntimeHydraJob
+
+class RuntimeHydraSubtaskBuilder(RuntimeBuilder):
+    """RuntimeHydraSubtaskBuilder class."""
+
+    RUNTIME_CLASS = RuntimeHydraSubtask
+    
