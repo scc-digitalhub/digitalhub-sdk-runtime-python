@@ -6,14 +6,14 @@ from __future__ import annotations
 
 import typing
 
-from digitalhub_runtime_python.entities.run._base.entity import RunPythonRun
+from digitalhub_runtime_python.entities.run._base.entity import RunBaseBuildRun
 
 if typing.TYPE_CHECKING:
     from digitalhub_runtime_python.entities.run.python_build.spec import RunSpecPythonRunBuild
     from digitalhub_runtime_python.entities.run.python_build.status import RunStatusPythonRunBuild
 
 
-class RunPythonRunBuild(RunPythonRun):
+class RunPythonRunBuild(RunBaseBuildRun):
     """
     RunPythonRunBuild class.
     """

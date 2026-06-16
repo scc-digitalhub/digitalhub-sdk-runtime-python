@@ -20,13 +20,13 @@ from digitalhub_runtime_python.entities.run._base.utils import get_getter_for_ma
 if typing.TYPE_CHECKING:
     from digitalhub.entities._base.material.entity import MaterialEntity
 
-    from digitalhub_runtime_python.entities.run._base.spec import RunSpecPythonRun
-    from digitalhub_runtime_python.entities.run._base.status import RunStatusPythonRun
+    from digitalhub_runtime_python.entities.run._base.spec import RunSpecBaseRun
+    from digitalhub_runtime_python.entities.run._base.status import RunStatusBaseRun
 
 logger = get_logger(__file__)
 
 
-class RunPythonRun(Run):
+class RunBaseRun(Run):
     """
     RunPythonRun class.
     """
@@ -34,8 +34,8 @@ class RunPythonRun(Run):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        self.spec: RunSpecPythonRun
-        self.status: RunStatusPythonRun
+        self.spec: RunSpecBaseRun
+        self.status: RunStatusBaseRun
 
     def _setup_execution(self) -> None:
         """
@@ -215,3 +215,21 @@ class RunPythonRun(Run):
         if self.status.results is None:
             return {}
         return self.status.results
+
+
+class RunBaseBuildRun(RunBaseRun):
+    """
+    RunBaseBuildRun class.
+    """
+
+    @property
+    def image(self) -> str | None:
+        """
+        Get run's image.
+
+        Returns
+        -------
+        str | None
+            The image.
+        """
+        return self.status.outputs.get("image")

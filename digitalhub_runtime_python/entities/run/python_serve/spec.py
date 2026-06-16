@@ -4,12 +4,12 @@
 
 from __future__ import annotations
 
-from digitalhub_runtime_python.entities.run._base.spec import RunSpecPythonRun, RunValidatorPythonRun
+from digitalhub_runtime_python.entities.run._base.spec import RunSpecBaseRun, RunValidatorBaseRun
 
 
-class RunSpecPythonRunServe(RunSpecPythonRun):
+class RunSpecPythonRunServe(RunSpecBaseRun):
     """RunSpecPythonRunServe specifications."""
 
 
-class RunValidatorPythonRunServe(RunValidatorPythonRun):
+class RunValidatorPythonRunServe(RunValidatorBaseRun):
     """RunValidatorPythonRunServe validator."""
