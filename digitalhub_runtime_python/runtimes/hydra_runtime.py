@@ -1,5 +1,6 @@
 import sys
 from typing import Callable
+import yaml
 
 from digitalhub_runtime_python.runtimes.runtime import RuntimePython, RuntimePythonJob
 
@@ -11,7 +12,12 @@ from digitalhub_runtime_python.utils.configuration import (
 from digitalhub.utils.generic_utils import (
     decode_base64_string
 )
+from digitalhub.utils.logger.logger import get_logger
 
+from digitalhub_runtime_python.utils.outputs import build_new_status, collect_outputs
+
+
+logger = get_logger(__file__)
 
 class RuntimeHydra(RuntimePython):
     """
@@ -23,8 +29,52 @@ class RuntimeHydraJob(RuntimePythonJob):
     Runtime Hydra Job class.
     """
 
-    def _configure_execution(self, spec: dict) -> tuple[Callable, bool]:
-        args = ["main", "-m", "hydra/launcher=dh"]
+    def run(self, run: dict) -> dict:
+        """
+        Run function.
+
+        Returns
+        -------
+        dict
+            Status of the executed run.
+        """
+        logger.info("Validating task.")
+        self._validate_task(run)
+
+        logger.info("Starting task.")
+        spec = run.get("spec")
+        project = run.get("project")
+        run_key = run.get("key")
+
+        logger.info("Configuring execution.")
+        fnc, fnc_args = self._configure_execution(spec, run)
+
+        logger.info("Executing run.")
+        exec_result = self._execute(fnc, **fnc_args)
+        logger.info("Collecting outputs.")
+        named_outputs = self._get_named_outputs(exec_result)
+        results = collect_outputs(exec_result, named_outputs, project, run_key)
+        status = build_new_status(project, results)
+
+        # Return run status
+        logger.info("Task completed, returning run status.")
+        return status
+
+    def _configure_execution(self, spec: dict, run: dict) -> tuple[Callable, bool]:
+        args = ["main", "-m"]
+
+        # write runtime config for dh launcher
+        dh_launcher_config = {
+            "defaults": ["dh"],
+            "n_jobs": spec.get("workers", 1),
+            "function": spec.get("function", "hydra"),
+            "project_name": self.project,
+            "local_execution": True,
+        }
+        extra_conf_dir = self.runtime_dir / "dh_extra_conf" / "hydra" / "launcher"
+        extra_conf_dir.mkdir(parents=True, exist_ok=True)
+        with open(extra_conf_dir / "dh_launcher.yaml", "w") as outfile:
+            yaml.dump(dh_launcher_config, outfile, default_flow_style=False)
 
         if "config" in spec:
             config = spec["config"]
@@ -59,16 +109,11 @@ class RuntimeHydraJob(RuntimePythonJob):
                 path = self.runtime_dir / config["path"]
                 sys.argv = args + [f"--config-path={path.absolute()}"]
 
+        sys.argv += [f"--config-dir={(self.runtime_dir / "dh_extra_conf" ).absolute()}", "hydra/launcher=dh_launcher", f"hydra.launcher.job_ref={run['id']}"]
 
         fnc, _ = super()._configure_execution(spec)
         # treat as not wrapped, as the wrapping is done by hydra.main and we do not need to pass the extra attributes
-        return fnc, False
-
-    def _compose_args(self, func, spec, project):
-        # we call without any parameters
-        args = {"cfg_passthrough": None}
-        return args 
-
+        return fnc, {"cfg_passthrough": None}
 
 class RuntimeHydraSubtask(RuntimePythonJob):
     """
@@ -76,12 +121,7 @@ class RuntimeHydraSubtask(RuntimePythonJob):
     """
     def _configure_execution(self, spec: dict) -> tuple[Callable, bool]:
         source_spec = spec.get("source", {})
-        base64 = source_spec.get("base64")
         path = self.runtime_dir
-
-        # no source re-creation, assume already exists in runtime dir
-        if base64 is not None:
-            path = path / DEFAULT_PY_FILE
 
         function_path, function_name = _get_function_path(path, source_spec["handler"])
         fnc = _import_function_from_path(function_path, function_name)
@@ -90,8 +130,13 @@ class RuntimeHydraSubtask(RuntimePythonJob):
 
     def _compose_args(self, func, spec, project):
         # expect to be wrapped with hydra.main, 'cfg' is in the parameters, and Omecaconf is present
-        import OmegaConf
+        from omegaconf import OmegaConf
         args = super()._compose_args(func, spec, project)
-        args["cfg_passthrough"] = OmegaConf.to_container(spec.get("parameters", {}).get("cfg", {}))
+        try:
+            import omegaconf
+            args["cfg_passthrough"] = OmegaConf.create(spec.get("parameters", {}).get("cfg_passthrough", {}))
+        except Exception as e:
+            print(f"Failed to convert cfg to container. Exception: {e.__class__}. Error: {e.args}")
+            args["cfg_passthrough"] = {}
         return args 
     

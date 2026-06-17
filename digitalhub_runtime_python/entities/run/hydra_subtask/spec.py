@@ -33,8 +33,8 @@ class RunSpecHydraRunSubtask(RunSpecHydraRunJob):
         parameters: dict | None = None,
         init_parameters: dict | None = None,
         local_execution: bool = False,
-        overwrites: dict | None = None,
         config: dict | None = None,
+        job_ref: str | None = None,
         **kwargs,
     ) -> None:
         super().__init__(
@@ -59,11 +59,12 @@ class RunSpecHydraRunSubtask(RunSpecHydraRunJob):
             parameters,
             init_parameters,
             local_execution,
-            overwrites,
             config,
             **kwargs,
         )
+        self.job_ref = job_ref
 
 class RunValidatorHydraRunSubtask(RunValidatorHydraRunJob):
     """RunValidatorHydraRunSubtask validator."""
-    pass
+    job_ref: str | None = None
+    """Reference to the parent job, used for launching the subtask in the same job."""

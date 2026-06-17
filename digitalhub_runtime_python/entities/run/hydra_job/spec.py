@@ -33,8 +33,8 @@ class RunSpecHydraRunJob(RunSpecPythonRun):
         parameters: dict | None = None,
         init_parameters: dict | None = None,
         local_execution: bool = False,
-        overwrites: dict | None = None,
         config: dict | None = None,
+        workers: int | None = None,
         **kwargs,
     ) -> None:
         super().__init__(
@@ -61,8 +61,9 @@ class RunSpecHydraRunJob(RunSpecPythonRun):
             **kwargs,
         )
         self.local_execution = local_execution
-        self.overwrites = overwrites
+        self.parameters = parameters
         self.config = config
+        self.workers = workers
 
 class RunValidatorHydraRunJob(RunValidatorPythonRun):
     """RunValidatorHydraRunJob validator."""
@@ -70,8 +71,8 @@ class RunValidatorHydraRunJob(RunValidatorPythonRun):
     local_execution: bool = False
     """Whether to execute the run locally instead of in the cluster."""
 
-    overwrites: dict | None = None
-    """Overwrites for the run specifications."""
-
     config: dict | None = None
     """Configuration for the run."""
+
+    workers: int | None = None
+    """Number of workers to use for the run."""

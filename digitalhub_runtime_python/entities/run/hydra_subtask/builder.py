@@ -23,3 +23,20 @@ class RunHydraRunSubtaskBuilder(RunBuilder, RuntimeEntityBuilderHydra):
     ENTITY_SPEC_VALIDATOR = RunValidatorHydraRunSubtask
     ENTITY_STATUS_CLASS = RunStatusHydraRunSubtask
     ENTITY_KIND = EntityKinds.RUN_HYDRA_SUBTASK.value
+
+    def build_spec(self, **kwargs) -> RunSpecHydraRunSubtask:
+        """
+        Build entity spec object.
+
+        Parameters
+        ----------
+        **kwargs : dict
+            Keyword arguments for the constructor.
+
+        Returns
+        -------
+        RunSpecHydraRunSubtask
+            Spec object.
+        """
+        res = super().build_spec(**kwargs)
+        return res
