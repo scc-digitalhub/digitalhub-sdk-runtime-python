@@ -18,7 +18,7 @@ if typing.TYPE_CHECKING:
     from digitalhub.entities.project._base.entity import Project
     from nuclio_sdk import Context, Event
 
-    from digitalhub_runtime_python.entities.run._base.entity import RunPythonRun
+    from digitalhub_runtime_python.entities.run._base.entity import RunBaseRun
 
 logger = get_logger(__file__)
 
@@ -45,7 +45,7 @@ def get_project_(project_name: str) -> Project:
         raise RuntimeError(msg)
 
 
-def get_run_(project_name: str) -> RunPythonRun:
+def get_run_(project_name: str) -> RunBaseRun:
     """
     Get run.
 

@@ -7,8 +7,8 @@ from __future__ import annotations
 from digitalhub.entities.run._base.spec import RunSpec, RunValidator
 
 
-class RunSpecPythonRun(RunSpec):
-    """RunSpecPythonRun specifications."""
+class RunSpecBaseRun(RunSpec):
+    """RunSpecBaseRun specifications."""
 
     def __init__(
         self,
@@ -59,8 +59,8 @@ class RunSpecPythonRun(RunSpec):
         self.init_parameters = init_parameters
 
 
-class RunValidatorPythonRun(RunValidator):
-    """RunValidatorPythonRun validator."""
+class RunValidatorBaseRun(RunValidator):
+    """RunValidatorBaseRun validator."""
 
     # Function parameters
     source: dict | None = None

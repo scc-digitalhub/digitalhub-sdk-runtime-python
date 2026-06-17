@@ -6,14 +6,14 @@ from __future__ import annotations
 
 import typing
 
-from digitalhub_runtime_python.entities.run._base.entity import RunPythonRun
+from digitalhub_runtime_python.entities.run._base.entity import RunBaseBuildRun
 
 if typing.TYPE_CHECKING:
     from digitalhub_runtime_python.entities.run.guardrail_build.spec import RunSpecGuardrailRunBuild
     from digitalhub_runtime_python.entities.run.guardrail_build.status import RunStatusGuardrailRunBuild
 
 
-class RunGuardrailRunBuild(RunPythonRun):
+class RunGuardrailRunBuild(RunBaseBuildRun):
     """
     RunGuardrailRunBuild class.
     """

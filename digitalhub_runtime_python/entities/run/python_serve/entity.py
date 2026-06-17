@@ -9,14 +9,14 @@ import typing
 import requests
 from digitalhub.utils.exceptions import EntityError
 
-from digitalhub_runtime_python.entities.run._base.entity import RunPythonRun
+from digitalhub_runtime_python.entities.run._base.entity import RunBaseRun
 
 if typing.TYPE_CHECKING:
     from digitalhub_runtime_python.entities.run.python_serve.spec import RunSpecPythonRunServe
     from digitalhub_runtime_python.entities.run.python_serve.status import RunStatusPythonRunServe
 
 
-class RunPythonRunServe(RunPythonRun):
+class RunPythonRunServe(RunBaseRun):
     """
     RunPythonRunServe class.
     """

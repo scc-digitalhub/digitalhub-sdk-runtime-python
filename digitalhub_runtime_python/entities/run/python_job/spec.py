@@ -4,10 +4,10 @@
 
 from __future__ import annotations
 
-from digitalhub_runtime_python.entities.run._base.spec import RunSpecPythonRun, RunValidatorPythonRun
+from digitalhub_runtime_python.entities.run._base.spec import RunSpecBaseRun, RunValidatorBaseRun
 
 
-class RunSpecPythonRunJob(RunSpecPythonRun):
+class RunSpecPythonRunJob(RunSpecBaseRun):
     """RunSpecPythonRunJob specifications."""
 
     def __init__(
@@ -61,7 +61,7 @@ class RunSpecPythonRunJob(RunSpecPythonRun):
         self.local_execution = local_execution
 
 
-class RunValidatorPythonRunJob(RunValidatorPythonRun):
+class RunValidatorPythonRunJob(RunValidatorBaseRun):
     """RunValidatorPythonRunJob validator."""
 
     local_execution: bool = False

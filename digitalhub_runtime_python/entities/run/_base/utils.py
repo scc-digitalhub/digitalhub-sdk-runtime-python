@@ -8,11 +8,12 @@ from typing import Callable
 
 from digitalhub.entities._commons.enums import EntityTypes
 from digitalhub.entities.artifact.crud import get_artifact
+from digitalhub.entities.containerimage.crud import get_containerimage
 from digitalhub.entities.dataitem.crud import get_dataitem
 from digitalhub.entities.model.crud import get_model
 
 
-def get_getter_for_material(entity_type: str) -> Callable:
+def get_getters(entity_type: str) -> Callable:
     """
     Return appropriate getter function.
 
@@ -34,5 +35,8 @@ def get_getter_for_material(entity_type: str) -> Callable:
 
     if entity_type == EntityTypes.MODEL.value:
         return get_model
+
+    if entity_type == EntityTypes.CONTAINERIMAGE.value:
+        return get_containerimage
 
     raise ValueError(f"Unhandled entity type: {entity_type}")
