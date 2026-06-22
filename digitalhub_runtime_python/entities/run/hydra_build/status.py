@@ -4,10 +4,10 @@
 
 from __future__ import annotations
 
-from digitalhub_runtime_python.entities.run._base.status import RunStatusPythonRun
+from digitalhub_runtime_python.entities.run._base.status import RunStatusBaseRun
 
 
-class RunStatusHydraRunBuild(RunStatusPythonRun):
+class RunStatusHydraRunBuild(RunStatusBaseRun):
     """
     RunStatusHydraRunBuild status.
     """

@@ -6,14 +6,14 @@ from __future__ import annotations
 
 import typing
 
-from digitalhub_runtime_python.entities.run._base.entity import RunPythonRun
+from digitalhub_runtime_python.entities.run._base.entity import RunBaseRun
 
 if typing.TYPE_CHECKING:
     from digitalhub_runtime_python.entities.run.hydra_job.spec import RunSpecHydraRunJob
     from digitalhub_runtime_python.entities.run.hydra_job.status import RunStatusHydraRunJob
 
 
-class RunHydraRunJob(RunPythonRun):
+class RunHydraRunJob(RunBaseRun):
     """
     RunHydraRunJob class.
     """
