@@ -15,7 +15,7 @@ from digitalhub.factory.entity import entity_factory
 from digitalhub.utils.logger.logger import get_logger
 
 from digitalhub_runtime_python.entities._commons.enums import Actions
-from digitalhub_runtime_python.entities.run._base.utils import get_getter_for_material
+from digitalhub_runtime_python.entities.run._base.utils import get_getters
 
 if typing.TYPE_CHECKING:
     from digitalhub.entities._base.material.entity import MaterialEntity
@@ -120,7 +120,7 @@ class RunBaseRun(Run):
 
         for parameter, key in self.spec.inputs.items():
             entity_type = get_entity_type_from_key(key)
-            entity = get_getter_for_material(entity_type)(key)
+            entity = get_getters(entity_type)(key)
             if as_dict:
                 entity = entity.to_dict()
             inputs[parameter] = entity
@@ -178,7 +178,7 @@ class RunBaseRun(Run):
 
         for parameter, key in self.status.outputs.items():
             entity_type = get_entity_type_from_key(key)
-            entity = get_getter_for_material(entity_type)(key)
+            entity = get_getters(entity_type)(key)
             if as_key:
                 entity = entity.key
             if as_dict:
