@@ -100,3 +100,38 @@ class RuntimeEntityBuilderGuardrail(RuntimeEntityBuilder):
             ),
         ]
     )
+
+class RuntimeEntityBuilderHydra(RuntimeEntityBuilder):
+    EXECUTABLE_KIND = EntityKinds.FUNCTION_HYDRA.value
+    TASKS_KINDS = map_actions(
+        [
+            (
+                EntityKinds.TASK_HYDRA_BUILD.value,
+                Actions.BUILD.value,
+            ),
+            (
+                EntityKinds.TASK_HYDRA_JOB.value,
+                Actions.JOB.value,
+            ),
+            (
+                EntityKinds.TASK_HYDRA_SUBTASK.value,
+                Actions.SUBTASK.value,
+            ),
+        ]
+    )
+    RUN_KINDS = map_actions(
+        [
+            (
+                EntityKinds.RUN_HYDRA_BUILD.value,
+                Actions.BUILD.value,
+            ),
+            (
+                EntityKinds.RUN_HYDRA_JOB.value,
+                Actions.JOB.value,
+            ),
+            (
+                EntityKinds.RUN_HYDRA_SUBTASK.value,
+                Actions.SUBTASK.value,
+            ),
+        ]
+    )
