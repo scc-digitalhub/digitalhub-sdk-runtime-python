@@ -7,18 +7,9 @@ from __future__ import annotations
 import typing
 from pathlib import Path
 
-from digitalhub.entities._commons.utils import build_zip_path
-from digitalhub.stores.data.api import get_store
 from digitalhub.utils.exceptions import EntityError
-from digitalhub.utils.file_utils import eval_py_type, eval_zip_type
-from digitalhub.utils.generic_utils import create_archive, encode_string, read_source
+from digitalhub.utils.generic_utils import encode_string, read_source
 from digitalhub.utils.uri_utils import has_local_scheme
-
-from digitalhub_runtime_python.entities.function.python.models import Lang
-
-if typing.TYPE_CHECKING:
-    from digitalhub_runtime_python.entities.function.python.entity import FunctionPython
-
 
 def config_check(**kwargs) -> dict:
     """

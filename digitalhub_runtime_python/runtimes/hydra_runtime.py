@@ -133,7 +133,6 @@ class RuntimeHydraSubtask(RuntimePythonJob):
         from omegaconf import OmegaConf
         args = super()._compose_args(func, spec, project)
         try:
-            import omegaconf
             args["cfg_passthrough"] = OmegaConf.create(spec.get("parameters", {}).get("cfg_passthrough", {}))
         except Exception as e:
             print(f"Failed to convert cfg to container. Exception: {e.__class__}. Error: {e.args}")
