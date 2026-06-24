@@ -5,7 +5,7 @@ import yaml
 from digitalhub_runtime_python.runtimes.runtime import RuntimePython, RuntimePythonJob
 
 from digitalhub_runtime_python.utils.configuration import (
-    DEFAULT_PY_FILE, _get_function_path, _import_function_from_path, has_git_scheme, has_remote_scheme, has_s3_scheme, 
+    _get_function_path, _import_function_from_path, has_git_scheme, has_remote_scheme, has_s3_scheme, 
     _clone_git_source, _download_remote_source, _download_s3_source
 )
 
@@ -87,7 +87,7 @@ class RuntimeHydraJob(RuntimePythonJob):
                 file_path.write_text(decode_base64_string(base64_content))
                 # Call overwriting the launcher and other overwrites
                 # but with dh launcher, multirun, run execution attributes, and custom overwrites
-                sys.argv = args + [f"--config-path={path.absolute()}", f"--config-name=config"]
+                sys.argv = args + [f"--config-path={path.absolute()}", "--config-name=config"]
             
             # download config to runtime dir
             elif "source" in config:
