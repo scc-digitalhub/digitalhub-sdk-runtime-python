@@ -40,6 +40,7 @@ class EntityKinds(Enum):
     RUN_HYDRA_JOB = "hydra+job:run"
     RUN_HYDRA_SUBTASK = "hydra+subtask:run"
 
+
 class Actions(Enum):
     """
     Task actions.

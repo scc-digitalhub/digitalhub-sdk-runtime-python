@@ -64,7 +64,9 @@ class RunSpecHydraRunSubtask(RunSpecHydraRunJob):
         )
         self.job_ref = job_ref
 
+
 class RunValidatorHydraRunSubtask(RunValidatorHydraRunJob):
     """RunValidatorHydraRunSubtask validator."""
+
     job_ref: str | None = None
     """Reference to the parent job, used for launching the subtask in the same job."""

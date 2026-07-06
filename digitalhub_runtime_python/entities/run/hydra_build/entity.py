@@ -12,7 +12,7 @@ if typing.TYPE_CHECKING:
     from digitalhub_runtime_python.entities.run.hydra_build.spec import RunSpecHydraRunBuild
     from digitalhub_runtime_python.entities.run.hydra_build.status import RunStatusHydraRunBuild
 
-    
+
 class RunHydraRunBuild(RunBaseRun):
     """
     RunHydraRunBuild class.

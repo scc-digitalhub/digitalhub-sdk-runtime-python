@@ -58,12 +58,12 @@ entity_builders = (
 try:
     from digitalhub_runtime_python.runtimes.builder import (
         RuntimeGuardrailBuilder,
+        RuntimeHydraBuilder,
+        RuntimeHydraJobBuilder,
+        RuntimeHydraSubtaskBuilder,
         RuntimeOpeninferenceBuilder,
         RuntimePythonBuilder,
         RuntimePythonJobBuilder,
-        RuntimeHydraBuilder,
-        RuntimeHydraSubtaskBuilder,
-        RuntimeHydraJobBuilder,
     )
 
     runtime_builders = (

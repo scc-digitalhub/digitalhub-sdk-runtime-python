@@ -65,6 +65,7 @@ class RunSpecHydraRunJob(RunSpecBaseRun):
         self.config = config
         self.workers = workers
 
+
 class RunValidatorHydraRunJob(RunValidatorBaseRun):
     """RunValidatorHydraRunJob validator."""
 

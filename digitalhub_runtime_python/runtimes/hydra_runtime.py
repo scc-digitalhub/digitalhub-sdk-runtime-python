@@ -1,28 +1,31 @@
 import sys
 from typing import Callable
+
 import yaml
-
-from digitalhub_runtime_python.runtimes.runtime import RuntimePython, RuntimePythonJob
-
-from digitalhub_runtime_python.utils.configuration import (
-    _get_function_path, _import_function_from_path, has_git_scheme, has_remote_scheme, has_s3_scheme, 
-    _clone_git_source, _download_remote_source, _download_s3_source
-)
-
-from digitalhub.utils.generic_utils import (
-    decode_base64_string
-)
+from digitalhub.utils.generic_utils import decode_base64_string
 from digitalhub.utils.logger.logger import get_logger
 
+from digitalhub_runtime_python.runtimes.runtime import RuntimePython, RuntimePythonJob
+from digitalhub_runtime_python.utils.configuration import (
+    _clone_git_source,
+    _download_remote_source,
+    _download_s3_source,
+    _get_function_path,
+    _import_function_from_path,
+    has_git_scheme,
+    has_remote_scheme,
+    has_s3_scheme,
+)
 from digitalhub_runtime_python.utils.outputs import build_new_status, collect_outputs
 
-
 logger = get_logger(__file__)
+
 
 class RuntimeHydra(RuntimePython):
     """
     Runtime Hydra class.
     """
+
 
 class RuntimeHydraJob(RuntimePythonJob):
     """
@@ -88,7 +91,7 @@ class RuntimeHydraJob(RuntimePythonJob):
                 # Call overwriting the launcher and other overwrites
                 # but with dh launcher, multirun, run execution attributes, and custom overwrites
                 sys.argv = args + [f"--config-path={path.absolute()}", "--config-name=config"]
-            
+
             # download config to runtime dir
             elif "source" in config:
                 path = self.runtime_dir / "config"
@@ -109,16 +112,22 @@ class RuntimeHydraJob(RuntimePythonJob):
                 path = self.runtime_dir / config["path"]
                 sys.argv = args + [f"--config-path={path.absolute()}"]
 
-        sys.argv += [f"--config-dir={(self.runtime_dir / "dh_extra_conf" ).absolute()}", "hydra/launcher=dh_launcher", f"hydra.launcher.job_ref={run['id']}"]
+        sys.argv += [
+            f"--config-dir={(self.runtime_dir / 'dh_extra_conf').absolute()}",
+            "hydra/launcher=dh_launcher",
+            f"hydra.launcher.job_ref={run['id']}",
+        ]
 
         fnc, _ = super()._configure_execution(spec)
         # treat as not wrapped, as the wrapping is done by hydra.main and we do not need to pass the extra attributes
         return fnc, {"cfg_passthrough": None}
 
+
 class RuntimeHydraSubtask(RuntimePythonJob):
     """
     Runtime Hydra Subtask class.
     """
+
     def _configure_execution(self, spec: dict) -> tuple[Callable, bool]:
         source_spec = spec.get("source", {})
         path = self.runtime_dir
@@ -131,11 +140,11 @@ class RuntimeHydraSubtask(RuntimePythonJob):
     def _compose_args(self, func, spec, project):
         # expect to be wrapped with hydra.main, 'cfg' is in the parameters, and Omecaconf is present
         from omegaconf import OmegaConf
+
         args = super()._compose_args(func, spec, project)
         try:
             args["cfg_passthrough"] = OmegaConf.create(spec.get("parameters", {}).get("cfg_passthrough", {}))
         except Exception as e:
             print(f"Failed to convert cfg to container. Exception: {e.__class__}. Error: {e.args}")
             args["cfg_passthrough"] = {}
-        return args 
-    
+        return args

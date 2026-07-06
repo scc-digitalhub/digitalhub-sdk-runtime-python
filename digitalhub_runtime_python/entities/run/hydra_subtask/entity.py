@@ -7,9 +7,11 @@ from __future__ import annotations
 import typing
 
 from digitalhub_runtime_python.entities.run.hydra_job.entity import RunHydraRunJob
+
 if typing.TYPE_CHECKING:
     from digitalhub_runtime_python.entities.run.hydra_subtask.spec import RunSpecHydraRunSubtask
     from digitalhub_runtime_python.entities.run.hydra_subtask.status import RunStatusHydraRunSubtask
+
 
 class RunHydraRunSubtask(RunHydraRunJob):
     """

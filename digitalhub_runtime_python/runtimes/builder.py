@@ -6,6 +6,11 @@ from __future__ import annotations
 
 from digitalhub.runtimes.builder import RuntimeBuilder
 
+from digitalhub_runtime_python.runtimes.hydra_runtime import (
+    RuntimeHydra,
+    RuntimeHydraJob,
+    RuntimeHydraSubtask,
+)
 from digitalhub_runtime_python.runtimes.runtime import (
     RuntimeGuardrail,
     RuntimeOpeninference,
@@ -13,11 +18,6 @@ from digitalhub_runtime_python.runtimes.runtime import (
     RuntimePythonJob,
 )
 
-from digitalhub_runtime_python.runtimes.hydra_runtime import (
-    RuntimeHydra,
-    RuntimeHydraJob,
-    RuntimeHydraSubtask,
-)
 
 class RuntimePythonBuilder(RuntimeBuilder):
     """RuntimePythonBuilder class."""
@@ -42,18 +42,20 @@ class RuntimeGuardrailBuilder(RuntimeBuilder):
 
     RUNTIME_CLASS = RuntimeGuardrail
 
+
 class RuntimeHydraBuilder(RuntimeBuilder):
     """RuntimeHydraBuilder class."""
 
     RUNTIME_CLASS = RuntimeHydra
+
 
 class RuntimeHydraJobBuilder(RuntimeBuilder):
     """RuntimeHydraJobBuilder class."""
 
     RUNTIME_CLASS = RuntimeHydraJob
 
+
 class RuntimeHydraSubtaskBuilder(RuntimeBuilder):
     """RuntimeHydraSubtaskBuilder class."""
 
     RUNTIME_CLASS = RuntimeHydraSubtask
-    

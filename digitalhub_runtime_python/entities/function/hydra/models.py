@@ -8,6 +8,7 @@ from enum import Enum
 
 from pydantic import BaseModel, ConfigDict, Field
 
+
 class Lang(Enum):
     """
     Source code language.
@@ -44,10 +45,12 @@ class SourceValidator(BaseModel):
     lang: Lang = Field(default=Lang.PYTHON.value)
     "Source code language (hint)."
 
+
 class ConfigValidator(BaseModel):
     """
     Config params.
     """
+
     model_config = ConfigDict(use_enum_values=True)
 
     source: str = None

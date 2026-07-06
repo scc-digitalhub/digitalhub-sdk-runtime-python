@@ -11,9 +11,9 @@ from digitalhub_runtime_python.entities._commons.enums import EntityKinds
 from digitalhub_runtime_python.entities.function.hydra.entity import FunctionHydra
 from digitalhub_runtime_python.entities.function.hydra.spec import FunctionSpecHydra, FunctionValidatorHydra
 from digitalhub_runtime_python.entities.function.hydra.status import FunctionStatusHydra
-
+from digitalhub_runtime_python.entities.function.hydra.utils import config_check, source_check
 from digitalhub_runtime_python.entities.function.python.utils import source_post_check
-from digitalhub_runtime_python.entities.function.hydra.utils import source_check, config_check
+
 
 class FunctionHydraBuilder(FunctionBuilder, RuntimeEntityBuilderHydra):
     """

@@ -7,6 +7,7 @@ from __future__ import annotations
 import typing
 
 from digitalhub.entities.task._base.entity import Task
+
 if typing.TYPE_CHECKING:
     from digitalhub_runtime_python.entities.task.hydra_job.spec import TaskSpecHydraJob
     from digitalhub_runtime_python.entities.task.hydra_job.status import TaskStatusHydraJob

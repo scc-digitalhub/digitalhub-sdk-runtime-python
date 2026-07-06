@@ -9,7 +9,10 @@ from digitalhub.entities.run._base.builder import RunBuilder
 from digitalhub_runtime_python.entities._base.runtime_entity.builder import RuntimeEntityBuilderHydra
 from digitalhub_runtime_python.entities._commons.enums import EntityKinds
 from digitalhub_runtime_python.entities.run.hydra_subtask.entity import RunHydraRunSubtask
-from digitalhub_runtime_python.entities.run.hydra_subtask.spec import RunSpecHydraRunSubtask, RunValidatorHydraRunSubtask
+from digitalhub_runtime_python.entities.run.hydra_subtask.spec import (
+    RunSpecHydraRunSubtask,
+    RunValidatorHydraRunSubtask,
+)
 from digitalhub_runtime_python.entities.run.hydra_subtask.status import RunStatusHydraRunSubtask
 
 

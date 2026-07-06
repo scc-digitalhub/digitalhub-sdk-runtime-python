@@ -101,6 +101,7 @@ class RuntimeEntityBuilderGuardrail(RuntimeEntityBuilder):
         ]
     )
 
+
 class RuntimeEntityBuilderHydra(RuntimeEntityBuilder):
     EXECUTABLE_KIND = EntityKinds.FUNCTION_HYDRA.value
     TASKS_KINDS = map_actions(
