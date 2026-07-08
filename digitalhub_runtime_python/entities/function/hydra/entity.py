@@ -54,7 +54,7 @@ class FunctionHydra(Function):
                 write_text(src_pth, decode_base64_string(base64))
 
                 # Export and restore base64, then return
-                pth = super().export()
+                super().export()
                 self.spec.source["base64"] = base64
 
         config = self.spec.config
