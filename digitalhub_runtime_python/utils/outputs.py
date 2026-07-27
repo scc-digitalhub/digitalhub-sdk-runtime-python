@@ -99,7 +99,7 @@ def _parse_UDF_outputs(outputs: list[str] | list[dict[str, Any]], results_len: i
             continue
 
         if not isinstance(item, dict):
-            raise ValueError(f"Invalid output format: {item}")
+            raise TypeError(f"Invalid output format: {item}")
 
         name = item.get("name") or f"output_{idx}"
         kind = item.get("kind")
