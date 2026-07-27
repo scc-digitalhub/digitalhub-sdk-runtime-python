@@ -4,8 +4,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable
 
 from digitalhub.stores.data.api import get_store
 from digitalhub.utils.generic_utils import (

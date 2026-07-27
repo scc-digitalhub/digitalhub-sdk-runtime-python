@@ -1,5 +1,5 @@
 import sys
-from typing import Callable
+from collections.abc import Callable
 
 import yaml
 from digitalhub.utils.generic_utils import decode_base64_string

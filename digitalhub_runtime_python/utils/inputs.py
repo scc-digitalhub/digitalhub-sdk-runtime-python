@@ -6,7 +6,8 @@ from __future__ import annotations
 
 import inspect
 import typing
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from digitalhub.context.api import get_context
 from digitalhub.entities.project.crud import get_project
