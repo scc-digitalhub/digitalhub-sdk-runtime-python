@@ -9,22 +9,21 @@ import typing
 from dataclasses import dataclass
 from typing import Any
 
-from digitalhub import (
-    log_croissant,
-    log_generic_artifact,
-    log_generic_dataitem,
-    log_generic_model,
-    log_mlflow,
-    log_sklearn,
-    log_table,
-)
 from digitalhub.context.api import get_context
 from digitalhub.entities._commons.enums import EntityKinds, Relationship, State
 from digitalhub.entities.artifact._base.entity import Artifact
-from digitalhub.entities.artifact.crud import log_artifact
+from digitalhub.entities.artifact.artifact.crud import log_artifact
 from digitalhub.entities.dataitem._base.entity import Dataitem
-from digitalhub.entities.dataitem.crud import log_dataitem
+from digitalhub.entities.dataitem.croissant.crud import log_croissant
+from digitalhub.entities.dataitem.dataitem.crud import log_dataitem
+from digitalhub.entities.dataitem.table.crud import log_table
 from digitalhub.entities.model._base.entity import Model
+from digitalhub.entities.model.huggingface.crud import log_huggingface
+from digitalhub.entities.model.mlflow.crud import log_mlflow
+from digitalhub.entities.model.model.crud import log_model
+from digitalhub.entities.model.sklearn.crud import log_sklearn
+from digitalhub.entities.model.tvm_ir.crud import log_tvm_ir
+from digitalhub.entities.model.tvm_so.crud import log_tvm_so
 from digitalhub.stores.readers.data.api import get_supported_dataframes
 from digitalhub.utils.exceptions import EntityNotExistsError
 from digitalhub.utils.logger.logger import get_logger
@@ -36,13 +35,16 @@ logger = get_logger(__file__)
 
 
 mapped_logger = {
-    EntityKinds.DATAITEM_DATAITEM.value: log_generic_dataitem,
+    EntityKinds.DATAITEM_DATAITEM.value: log_dataitem,
     EntityKinds.DATAITEM_TABLE.value: log_table,
     EntityKinds.DATAITEM_CROISSANT.value: log_croissant,
     EntityKinds.MODEL_MLFLOW.value: log_mlflow,
     EntityKinds.MODEL_SKLEARN.value: log_sklearn,
-    EntityKinds.MODEL_MODEL.value: log_generic_model,
-    EntityKinds.ARTIFACT_ARTIFACT.value: log_generic_artifact,
+    EntityKinds.MODEL_MODEL.value: log_model,
+    EntityKinds.MODEL_HUGGINGFACE.value: log_huggingface,
+    EntityKinds.MODEL_TVM_IR.value: log_tvm_ir,
+    EntityKinds.MODEL_TVM_SO.value: log_tvm_so,
+    EntityKinds.ARTIFACT_ARTIFACT.value: log_artifact,
 }
 
 
@@ -140,7 +142,7 @@ def _materialize_output(name: str, item: Any, project_name: str, run_key: str) -
 
     for df_class in get_supported_dataframes():
         if isinstance(item, df_class):
-            return _log_dataitem(name, project_name, item)
+            return _log_table(name, project_name, item)
 
     return _log_artifact(name, project_name, item)
 
@@ -232,7 +234,7 @@ def listify_results(results: Any) -> list:
     return results
 
 
-def _log_dataitem(name: str, project_name: str, data: Any) -> DataitemTable:
+def _log_table(name: str, project_name: str, data: Any) -> DataitemTable:
     """
     Log dataitem.
 
@@ -247,14 +249,13 @@ def _log_dataitem(name: str, project_name: str, data: Any) -> DataitemTable:
 
     Returns
     -------
-    str
-        Dataitem key.
+    DataitemTable
+        Dataitem table object.
     """
     try:
-        return log_dataitem(
+        return log_table(
             project=project_name,
             name=name,
-            kind=EntityKinds.DATAITEM_TABLE.value,
             data=data,
         )
     except Exception as e:
@@ -289,7 +290,6 @@ def _log_artifact(name: str, project_name: str, data: Any) -> Artifact:
         return log_artifact(
             project=project_name,
             name=name,
-            kind=EntityKinds.ARTIFACT_ARTIFACT.value,
             source=pickle_file,
         )
 
