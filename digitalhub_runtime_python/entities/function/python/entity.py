@@ -6,19 +6,14 @@ from __future__ import annotations
 
 import typing
 
-from digitalhub.entities.function._base.entity import Function
-from digitalhub.utils.generic_utils import decode_base64_string
-from digitalhub.utils.io_utils import write_text
-from digitalhub.utils.uri_utils import has_local_scheme
-
-from digitalhub_runtime_python.entities._commons.requirement_parser.parser import RequirementParser
+from digitalhub_runtime_python.entities.function._base.entity import FunctionBaseFunction
 
 if typing.TYPE_CHECKING:
     from digitalhub_runtime_python.entities.function.python.spec import FunctionSpecPython
     from digitalhub_runtime_python.entities.function.python.status import FunctionStatusPython
 
 
-class FunctionPython(Function):
+class FunctionPython(FunctionBaseFunction):
     """
     FunctionPython class.
     """
@@ -29,41 +24,3 @@ class FunctionPython(Function):
         self.spec: FunctionSpecPython
         self.status: FunctionStatusPython
 
-    def export(self) -> str:
-        """
-        Export object as a YAML file in the context folder.
-
-        Returns
-        -------
-        str
-            Exported filepath.
-        """
-        # Strip base64 from source at following conditions:
-        # - source is local path
-        # - base64 is not None
-
-        # Check source
-        source = self.spec.source.get("source")
-        if source is not None and has_local_scheme(source):
-            # Check base64. If it is set, decode it in a local file
-            # save in variable to restore on object after export
-            base64 = self.spec.source.pop("base64", None)
-            if base64 is not None:
-                # Write local file
-                src_pth = self._context().root / source
-                write_text(src_pth, decode_base64_string(base64))
-
-                # Export and restore base64, then return
-                pth = super().export()
-                self.spec.source["base64"] = base64
-                return pth
-
-        return super().export()
-
-    def _post_create_hook_before_save(self) -> None:
-        """
-        Hook method called after the creation of the entity but before saving
-        in Core.
-        Can be overridden in subclasses to implement custom behavior.
-        """
-        self.spec.requirements = RequirementParser().parse(self.spec.requirements)

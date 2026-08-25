@@ -11,13 +11,46 @@ from digitalhub.entities._commons.utils import build_zip_path
 from digitalhub.stores.data.api import get_store
 from digitalhub.utils.exceptions import EntityError
 from digitalhub.utils.file_utils import eval_py_type, eval_zip_type
-from digitalhub.utils.generic_utils import create_archive, encode_string, read_source
+from digitalhub.utils.generic_utils import create_archive, decode_base64_string, encode_string, read_source
+from digitalhub.utils.io_utils import write_text
 from digitalhub.utils.uri_utils import has_local_scheme
 
 from digitalhub_runtime_python.entities.function.python.models import Lang
 
 if typing.TYPE_CHECKING:
     from digitalhub_runtime_python.entities.function.python.entity import FunctionPython
+
+
+class _LocalSourceExport:
+    def __init__(self, source: dict, root: Path) -> None:
+        self.source = source
+        self.root = root
+        self.base64 = None
+
+    def __enter__(self) -> None:
+        # Strip base64 from source at following conditions:
+        # - source is local path
+        # - base64 is not None
+        source_path = self.source.get("source")
+        if source_path is None or not has_local_scheme(source_path):
+            return
+
+        # Check base64. If it is set, decode it in a local file
+        # save in variable to restore on object after export
+        self.base64 = self.source.pop("base64", None)
+        if self.base64 is not None:
+            # Write local file
+            write_text(self.root / source_path, decode_base64_string(self.base64))
+        return
+
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
+        # Restore base64 after export, including when export raises an exception.
+        if self.base64 is not None:
+            self.source["base64"] = self.base64
+
+
+def export_local_source(source: dict, root: Path) -> _LocalSourceExport:
+    return _LocalSourceExport(source, root)
 
 
 def source_check(**kwargs) -> dict:
