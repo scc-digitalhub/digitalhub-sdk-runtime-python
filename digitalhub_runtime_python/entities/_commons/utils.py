@@ -134,8 +134,7 @@ def _check_params(
     if init_function is not None:
         source["init_function"] = init_function
 
-    if lang is None:
-        source["lang"] = Lang.PYTHON.value
+    source["lang"] = lang if lang is not None else Lang.PYTHON.value
 
     if code_src is None and code is None and base64 is None:
         raise EntityError("Source must be provided.")
