@@ -23,4 +23,3 @@ class FunctionGuardrail(FunctionBaseFunction):
 
         self.spec: FunctionSpecGuardrail
         self.status: FunctionStatusGuardrail
-

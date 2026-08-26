@@ -23,4 +23,3 @@ class FunctionOpeninference(FunctionBaseFunction):
 
         self.spec: FunctionSpecOpeninference
         self.status: FunctionStatusOpeninference
-

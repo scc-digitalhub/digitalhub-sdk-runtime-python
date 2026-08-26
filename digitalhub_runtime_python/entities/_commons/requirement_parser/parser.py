@@ -5,9 +5,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from digitalhub.utils.logger.logger import get_logger
 from pip._internal.operations import freeze
 
 from digitalhub_runtime_python.entities._commons.requirement_parser.factory import RequirementParserFactory
+
+logger = get_logger(__file__)
 
 
 class RequirementParser:
@@ -88,7 +91,12 @@ class RequirementParser:
                 normalized_name = req.lower().replace("_", "-")
                 if normalized_name in installed_map:
                     # Use the installed version
-                    result.append(installed_map[normalized_name])
+                    installed_requirement = installed_map[normalized_name]
+                    logger.warning(
+                        f"Warning: {req} version unspecified, using version {installed_requirement} inferred "
+                        "from local environment. To override set an explicit version."
+                    )
+                    result.append(installed_requirement)
                 else:
                     # Package not found in environment, keep without version
                     result.append(req)

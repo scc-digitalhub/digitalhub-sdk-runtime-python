@@ -23,4 +23,3 @@ class FunctionPython(FunctionBaseFunction):
 
         self.spec: FunctionSpecPython
         self.status: FunctionStatusPython
-

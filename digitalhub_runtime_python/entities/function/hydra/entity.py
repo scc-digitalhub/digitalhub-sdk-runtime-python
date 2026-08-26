@@ -23,4 +23,3 @@ class FunctionHydra(FunctionBaseFunction):
 
         self.spec: FunctionSpecHydra
         self.status: FunctionStatusHydra
-

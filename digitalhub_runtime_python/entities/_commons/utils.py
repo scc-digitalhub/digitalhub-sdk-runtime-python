@@ -76,6 +76,7 @@ def source_check(**kwargs) -> dict:
     lang = kwargs.pop("lang", None)
 
     if source is not None:
+        source = source.copy()
         code_src = source.pop("source", None)
         code = source.pop("code", None)
         base64 = source.pop("base64", None)
@@ -180,10 +181,12 @@ def source_post_check(exec: FunctionPython) -> FunctionPython:
         # If source is a folder, zip it and upload it
         if not path_src.is_file():
             archive_path = create_archive(path_src)
-            dst = build_zip_path(exec, archive_path.name)
-            get_store(dst).upload(str(archive_path), dst)
-            exec.spec.source["source"] = dst
-            archive_path.unlink()
+            try:
+                dst = build_zip_path(exec, archive_path.name)
+                get_store(dst).upload(str(archive_path), dst)
+                exec.spec.source["source"] = dst
+            finally:
+                archive_path.unlink(missing_ok=True)
 
         # If source is a file, read it and encode it in base64
         elif eval_py_type(code_src):

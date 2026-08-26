@@ -37,6 +37,7 @@ def source_check(**kwargs) -> dict:
     lang = kwargs.pop("lang", None)
 
     if source is not None:
+        source = source.copy()
         code_src = source.pop("source", None)
         code = source.pop("code", None)
         base64 = source.pop("base64", None)
@@ -103,8 +104,7 @@ def _check_params(
     if complete_function is not None:
         source["complete_function"] = complete_function
 
-    if lang is None:
-        source["lang"] = Lang.PYTHON.value
+    source["lang"] = lang if lang is not None else Lang.PYTHON.value
 
     if code_src is None and code is None and base64 is None:
         raise EntityError("Source must be provided.")
@@ -143,6 +143,7 @@ def config_check(**kwargs) -> dict:
     config_path = kwargs.pop("config_path", None)
 
     if config is not None:
+        config = config.copy()
         config_src = config.pop("source", None)
         config_base64 = config.pop("base64", None)
         config_content = None
