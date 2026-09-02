@@ -96,7 +96,7 @@ class FunctionBaseFunction(Function):
         wait: bool = False,
         log_info: bool = True,
         extensions: list[dict] | None = None,
-        auto_build: bool = True,
+        auto_build: bool = False,
         **kwargs,
     ):
         """
