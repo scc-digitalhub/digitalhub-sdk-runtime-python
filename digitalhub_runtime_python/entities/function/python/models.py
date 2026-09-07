@@ -18,6 +18,7 @@ class PythonVersion(Enum):
     PYTHON3_11 = "PYTHON3_11"
     PYTHON3_12 = "PYTHON3_12"
     PYTHON3_13 = "PYTHON3_13"
+    PYTHON3_14 = "PYTHON3_14"
 
 
 class Lang(Enum):
