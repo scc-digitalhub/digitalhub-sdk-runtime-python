@@ -210,7 +210,7 @@ def _import_function_from_path(function_path: Path, function_name: str) -> Calla
     return import_function(function_path, function_name)
 
 
-def import_function_from_source(path: Path, source_spec: dict) -> Callable:
+def import_function_from_source(path: Path, source_spec: dict, skip_save: bool = False) -> Callable:
     """
     Get function from source.
 
@@ -227,7 +227,7 @@ def import_function_from_source(path: Path, source_spec: dict) -> Callable:
         Function.
     """
     try:
-        source_path = save_function_source(path, source_spec)
+        source_path = save_function_source(path, source_spec) if not skip_save else path
         function_path, function_name = _get_function_path(source_path, source_spec["handler"])
         return _import_function_from_path(function_path, function_name)
     except Exception as e:

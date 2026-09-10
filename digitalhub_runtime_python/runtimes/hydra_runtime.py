@@ -19,6 +19,8 @@ from digitalhub_runtime_python.utils.configuration import (
     has_git_scheme,
     has_remote_scheme,
     has_s3_scheme,
+    import_function_from_source,
+    save_function_source,
 )
 from digitalhub_runtime_python.utils.outputs import build_new_status, collect_outputs
 
@@ -70,6 +72,9 @@ class RuntimeHydraJob(RuntimePythonJob):
     def _configure_execution(self, spec: dict, run: dict) -> tuple[Callable, bool]:
         args = ["main", "-m"]
 
+        # prepare source code
+        source_path = save_function_source(self.runtime_dir, spec.get("source", {}))
+
         # write runtime config for dh launcher
         dh_launcher_config = {
             "defaults": ["dh"],
@@ -111,6 +116,8 @@ class RuntimeHydraJob(RuntimePythonJob):
                 # Unsupported scheme
                 else:
                     raise RuntimeError(f"Unable to collect source from: {source}")
+                if "path" in config:
+                    path = path / config["path"]
                 sys.argv = args + [f"--config-path={path.absolute()}"]
             elif "path" in config:
                 path = self.runtime_dir / config["path"]
@@ -122,7 +129,16 @@ class RuntimeHydraJob(RuntimePythonJob):
             f"hydra.launcher.job_ref={run['id']}",
         ]
 
-        fnc, _ = super()._configure_execution(spec)
+        if "parameters" in spec:
+            sys.argv += [f"{key}={value}" for key, value in spec["parameters"].items()]
+
+
+        # import from source
+        fnc = import_function_from_source(
+            source_path,
+            spec.get("source", {}),
+            skip_save=True,
+        )
         # treat as not wrapped, as the wrapping is done by hydra.main and we do not need to pass the extra attributes
         return fnc, {"cfg_passthrough": None}
 

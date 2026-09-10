@@ -193,7 +193,7 @@ def _check_config_params(
     if path is not None:
         config["path"] = path
 
-    if config_src is None and config_content is None and config_base64 is None:
+    if config_src is None and config_content is None and config_base64 is None and path is None:
         raise EntityError("Config must be provided.")
 
     if config_src is not None:
