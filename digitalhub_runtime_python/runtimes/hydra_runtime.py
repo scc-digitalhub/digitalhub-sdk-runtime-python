@@ -149,6 +149,9 @@ class RuntimeHydraSubtask(RuntimePythonJob):
     """
 
     def _configure_execution(self, spec: dict) -> tuple[Callable, bool]:
+        from hydra.core.utils import  setup_globals
+        setup_globals()
+
         source_spec = spec.get("source", {})
         path = self.runtime_dir
 
