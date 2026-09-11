@@ -132,7 +132,6 @@ class RuntimeHydraJob(RuntimePythonJob):
         if "parameters" in spec:
             sys.argv += [f"{key}={value}" for key, value in spec["parameters"].items()]
 
-
         # import from source
         fnc = import_function_from_source(
             source_path,
@@ -149,7 +148,8 @@ class RuntimeHydraSubtask(RuntimePythonJob):
     """
 
     def _configure_execution(self, spec: dict) -> tuple[Callable, bool]:
-        from hydra.core.utils import  setup_globals
+        from hydra.core.utils import setup_globals
+
         setup_globals()
 
         source_spec = spec.get("source", {})
