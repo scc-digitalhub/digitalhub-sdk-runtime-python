@@ -161,13 +161,13 @@ class RuntimeHydraSubtask(RuntimePythonJob):
         return fnc, False
 
     def _compose_args(self, func, spec, project):
-        # expect to be wrapped with hydra.main, 'cfg' is in the parameters, and Omecaconf is present
+        # expect to be wrapped with hydra.main, 'cfg_passthrough' is in the parameters, and Omecaconf is present
         from omegaconf import OmegaConf
 
-        args = super()._compose_args(func, spec, project)
+        cfg = spec.get("parameters", {}).get("cfg_passthrough", {})
         try:
-            args["cfg_passthrough"] = OmegaConf.create(spec.get("parameters", {}).get("cfg_passthrough", {}))
+            args = {"cfg_passthrough": OmegaConf.create(cfg)}
         except Exception as e:  # noqa: BLE001
             print(f"Failed to convert cfg to container. Exception: {e.__class__}. Error: {e.args}")
-            args["cfg_passthrough"] = {}
+            args = {"cfg_passthrough": {}}
         return args
