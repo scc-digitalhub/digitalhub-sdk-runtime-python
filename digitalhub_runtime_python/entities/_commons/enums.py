@@ -32,19 +32,6 @@ class EntityKinds(Enum):
     RUN_GUARDRAIL_BUILD = "guardrail+build:run"
     RUN_GUARDRAIL_SERVE = "guardrail+serve:run"
 
-    FUNCTION_HYDRA = "hydra"
-    TASK_HYDRA_BUILD = "hydra+build"
-    TASK_HYDRA_JOB = "hydra+job"
-    TASK_HYDRA_SUBTASK = "hydra+subtask"
-    RUN_HYDRA_BUILD = "hydra+build:run"
-    RUN_HYDRA_JOB = "hydra+job:run"
-    RUN_HYDRA_SUBTASK = "hydra+subtask:run"
-
-    FUNCTION_RAY = "ray"
-    TASK_RAY_BUILD = "ray+build"
-    TASK_RAY_JOB = "ray+job"
-    RUN_RAY_BUILD = "ray+build:run"
-    RUN_RAY_JOB = "ray+job:run"
 
 
 class Actions(Enum):
@@ -55,4 +42,3 @@ class Actions(Enum):
     BUILD = "build"
     JOB = "job"
     SERVE = "serve"
-    SUBTASK = "subtask"

@@ -151,9 +151,3 @@ class RuntimeGuardrail(RuntimePython):
     """
     Runtime Guardrail class.
     """
-
-
-class RuntimeRay(RuntimePython):
-    """
-    Runtime Ray class.
-    """
