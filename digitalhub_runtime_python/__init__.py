@@ -6,6 +6,7 @@ from digitalhub_runtime_python.entities.function.guardrail.builder import Functi
 from digitalhub_runtime_python.entities.function.hydra.builder import FunctionHydraBuilder
 from digitalhub_runtime_python.entities.function.openinference.builder import FunctionOpeninferenceBuilder
 from digitalhub_runtime_python.entities.function.python.builder import FunctionPythonBuilder
+from digitalhub_runtime_python.entities.function.ray.builder import FunctionRayBuilder
 from digitalhub_runtime_python.entities.run.guardrail_build.builder import RunGuardrailRunBuildBuilder
 from digitalhub_runtime_python.entities.run.guardrail_serve.builder import RunGuardrailRunServeBuilder
 from digitalhub_runtime_python.entities.run.hydra_build.builder import RunHydraRunBuildBuilder
@@ -16,6 +17,8 @@ from digitalhub_runtime_python.entities.run.openinference_serve.builder import R
 from digitalhub_runtime_python.entities.run.python_build.builder import RunPythonRunBuildBuilder
 from digitalhub_runtime_python.entities.run.python_job.builder import RunPythonRunJobBuilder
 from digitalhub_runtime_python.entities.run.python_serve.builder import RunPythonRunServeBuilder
+from digitalhub_runtime_python.entities.run.ray_build.builder import RunRayRunBuildBuilder
+from digitalhub_runtime_python.entities.run.ray_job.builder import RunRayRunJobBuilder
 from digitalhub_runtime_python.entities.task.guardrail_build.builder import TaskGuardrailBuildBuilder
 from digitalhub_runtime_python.entities.task.guardrail_serve.builder import TaskGuardrailServeBuilder
 from digitalhub_runtime_python.entities.task.hydra_build.builder import TaskHydraBuildBuilder
@@ -26,13 +29,15 @@ from digitalhub_runtime_python.entities.task.openinference_serve.builder import 
 from digitalhub_runtime_python.entities.task.python_build.builder import TaskPythonBuildBuilder
 from digitalhub_runtime_python.entities.task.python_job.builder import TaskPythonJobBuilder
 from digitalhub_runtime_python.entities.task.python_serve.builder import TaskPythonServeBuilder
-from digitalhub_runtime_python.utils.utils import handler
+from digitalhub_runtime_python.entities.task.ray_build.builder import TaskRayBuildBuilder
+from digitalhub_runtime_python.entities.task.ray_job.builder import TaskRayJobBuilder
 
 entity_builders = (
     (EntityKinds.FUNCTION_GUARDRAIL.value, FunctionGuardrailBuilder),
     (EntityKinds.FUNCTION_OPENINFERENCE.value, FunctionOpeninferenceBuilder),
     (EntityKinds.FUNCTION_PYTHON.value, FunctionPythonBuilder),
     (EntityKinds.FUNCTION_HYDRA.value, FunctionHydraBuilder),
+    (EntityKinds.FUNCTION_RAY.value, FunctionRayBuilder),
     (EntityKinds.RUN_GUARDRAIL_BUILD.value, RunGuardrailRunBuildBuilder),
     (EntityKinds.RUN_GUARDRAIL_SERVE.value, RunGuardrailRunServeBuilder),
     (EntityKinds.RUN_OPENINFERENCE_BUILD.value, RunOpeninferenceRunBuildBuilder),
@@ -43,6 +48,8 @@ entity_builders = (
     (EntityKinds.RUN_HYDRA_BUILD.value, RunHydraRunBuildBuilder),
     (EntityKinds.RUN_HYDRA_JOB.value, RunHydraRunJobBuilder),
     (EntityKinds.RUN_HYDRA_SUBTASK.value, RunHydraRunSubtaskBuilder),
+    (EntityKinds.RUN_RAY_JOB.value, RunRayRunJobBuilder),
+    (EntityKinds.RUN_RAY_BUILD.value, RunRayRunBuildBuilder),
     (EntityKinds.TASK_GUARDRAIL_BUILD.value, TaskGuardrailBuildBuilder),
     (EntityKinds.TASK_GUARDRAIL_SERVE.value, TaskGuardrailServeBuilder),
     (EntityKinds.TASK_OPENINFERENCE_BUILD.value, TaskOpeninferenceBuildBuilder),
@@ -53,6 +60,8 @@ entity_builders = (
     (EntityKinds.TASK_HYDRA_BUILD.value, TaskHydraBuildBuilder),
     (EntityKinds.TASK_HYDRA_JOB.value, TaskHydraJobBuilder),
     (EntityKinds.TASK_HYDRA_SUBTASK.value, TaskHydraSubtaskBuilder),
+    (EntityKinds.TASK_RAY_BUILD.value, TaskRayBuildBuilder),
+    (EntityKinds.TASK_RAY_JOB.value, TaskRayJobBuilder),
 )
 
 try:
@@ -64,6 +73,7 @@ try:
         RuntimeOpeninferenceBuilder,
         RuntimePythonBuilder,
         RuntimePythonJobBuilder,
+        RuntimeRayBuilder,
     )
 
     runtime_builders = (
@@ -71,6 +81,7 @@ try:
         (EntityKinds.FUNCTION_OPENINFERENCE.value, RuntimeOpeninferenceBuilder),
         (EntityKinds.FUNCTION_PYTHON.value, RuntimePythonBuilder),
         (EntityKinds.FUNCTION_HYDRA.value, RuntimeHydraBuilder),
+        (EntityKinds.FUNCTION_RAY.value, RuntimeRayBuilder),
         (EntityKinds.RUN_GUARDRAIL_BUILD.value, RuntimeGuardrailBuilder),
         (EntityKinds.RUN_GUARDRAIL_SERVE.value, RuntimeGuardrailBuilder),
         (EntityKinds.RUN_OPENINFERENCE_BUILD.value, RuntimeOpeninferenceBuilder),
@@ -81,6 +92,8 @@ try:
         (EntityKinds.RUN_HYDRA_BUILD.value, RuntimeHydraBuilder),
         (EntityKinds.RUN_HYDRA_JOB.value, RuntimeHydraJobBuilder),
         (EntityKinds.RUN_HYDRA_SUBTASK.value, RuntimeHydraSubtaskBuilder),
+        (EntityKinds.RUN_RAY_BUILD.value, RuntimeRayBuilder),
+        (EntityKinds.RUN_RAY_JOB.value, RuntimeRayBuilder),
         (EntityKinds.TASK_GUARDRAIL_BUILD.value, RuntimeGuardrailBuilder),
         (EntityKinds.TASK_GUARDRAIL_SERVE.value, RuntimeGuardrailBuilder),
         (EntityKinds.TASK_OPENINFERENCE_BUILD.value, RuntimeOpeninferenceBuilder),
@@ -91,6 +104,8 @@ try:
         (EntityKinds.TASK_HYDRA_BUILD.value, RuntimeHydraBuilder),
         (EntityKinds.TASK_HYDRA_JOB.value, RuntimeHydraJobBuilder),
         (EntityKinds.TASK_HYDRA_SUBTASK.value, RuntimeHydraSubtaskBuilder),
+        (EntityKinds.TASK_RAY_BUILD.value, RuntimeRayBuilder),
+        (EntityKinds.TASK_RAY_JOB.value, RuntimeRayBuilder),
     )
 except ImportError as e:
     from digitalhub.utils.logger.logger import get_logger
