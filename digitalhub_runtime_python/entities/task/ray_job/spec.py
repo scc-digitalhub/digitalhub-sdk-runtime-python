@@ -11,6 +11,7 @@ class TaskSpecRayJob(TaskSpecFunction):
     """
     TaskSpecRayJob specifications.
     """
+
     def __init__(
         self,
         function: str,
@@ -36,6 +37,7 @@ class TaskSpecRayJob(TaskSpecFunction):
         self.replicas = replicas
         self.min_replicas = min_replicas
         self.max_replicas = max_replicas
+
 
 class TaskValidatorRayJob(TaskValidatorFunction):
     """

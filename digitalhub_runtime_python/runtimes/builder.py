@@ -61,6 +61,7 @@ class RuntimeHydraSubtaskBuilder(RuntimeBuilder):
 
     RUNTIME_CLASS = RuntimeHydraSubtask
 
+
 class RuntimeRayBuilder(RuntimeBuilder):
     """RuntimeRayBuilder class."""
 

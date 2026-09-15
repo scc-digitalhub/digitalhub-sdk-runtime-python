@@ -46,6 +46,7 @@ class EntityKinds(Enum):
     RUN_RAY_BUILD = "ray+build:run"
     RUN_RAY_JOB = "ray+job:run"
 
+
 class Actions(Enum):
     """
     Task actions.
