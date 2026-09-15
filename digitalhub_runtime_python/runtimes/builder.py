@@ -16,6 +16,7 @@ from digitalhub_runtime_python.runtimes.runtime import (
     RuntimeOpeninference,
     RuntimePython,
     RuntimePythonJob,
+    RuntimeRay,
 )
 
 
@@ -59,3 +60,8 @@ class RuntimeHydraSubtaskBuilder(RuntimeBuilder):
     """RuntimeHydraSubtaskBuilder class."""
 
     RUNTIME_CLASS = RuntimeHydraSubtask
+
+class RuntimeRayBuilder(RuntimeBuilder):
+    """RuntimeRayBuilder class."""
+
+    RUNTIME_CLASS = RuntimeRay

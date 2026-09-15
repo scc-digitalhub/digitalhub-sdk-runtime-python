@@ -136,3 +136,30 @@ class RuntimeEntityBuilderHydra(RuntimeEntityBuilder):
             ),
         ]
     )
+
+class RuntimeEntityBuilderRay(RuntimeEntityBuilder):
+    EXECUTABLE_KIND = EntityKinds.FUNCTION_RAY.value
+    TASKS_KINDS = map_actions(
+        [
+            (
+                EntityKinds.TASK_RAY_JOB.value,
+                Actions.JOB.value,
+            ),
+            (
+                EntityKinds.TASK_RAY_BUILD.value,
+                Actions.BUILD.value,
+            ),
+        ]
+    )
+    RUN_KINDS = map_actions(
+        [
+            (
+                EntityKinds.RUN_RAY_JOB.value,
+                Actions.JOB.value,
+            ),
+            (
+                EntityKinds.RUN_RAY_BUILD.value,
+                Actions.BUILD.value,
+            ),
+        ]
+    )
