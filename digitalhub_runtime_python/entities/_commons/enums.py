@@ -33,7 +33,6 @@ class EntityKinds(Enum):
     RUN_GUARDRAIL_SERVE = "guardrail+serve:run"
 
 
-
 class Actions(Enum):
     """
     Task actions.
