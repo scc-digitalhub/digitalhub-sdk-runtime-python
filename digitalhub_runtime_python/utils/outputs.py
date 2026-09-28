@@ -10,20 +10,13 @@ from dataclasses import dataclass
 from typing import Any
 
 from digitalhub.context.api import get_context
-from digitalhub.entities._commons.enums import EntityKinds, Relationship, State
+from digitalhub.entities._commons.enums import Relationship, State
 from digitalhub.entities.artifact._base.entity import Artifact
 from digitalhub.entities.artifact.artifact.crud import log_artifact
 from digitalhub.entities.dataitem._base.entity import Dataitem
-from digitalhub.entities.dataitem.croissant.crud import log_croissant
-from digitalhub.entities.dataitem.dataitem.crud import log_dataitem
 from digitalhub.entities.dataitem.table.crud import log_table
 from digitalhub.entities.model._base.entity import Model
-from digitalhub.entities.model.huggingface.crud import log_huggingface
-from digitalhub.entities.model.mlflow.crud import log_mlflow
-from digitalhub.entities.model.model.crud import log_model
-from digitalhub.entities.model.sklearn.crud import log_sklearn
-from digitalhub.entities.model.tvm_ir.crud import log_tvm_ir
-from digitalhub.entities.model.tvm_so.crud import log_tvm_so
+from digitalhub.factory.registry import registry
 from digitalhub.stores.readers.data.api import get_supported_dataframes
 from digitalhub.utils.exceptions import EntityNotExistsError
 from digitalhub.utils.logger.logger import get_logger
@@ -32,20 +25,6 @@ if typing.TYPE_CHECKING:
     from digitalhub.entities.dataitem.table.entity import DataitemTable
 
 logger = get_logger(__file__)
-
-
-mapped_logger = {
-    EntityKinds.DATAITEM_DATAITEM.value: log_dataitem,
-    EntityKinds.DATAITEM_TABLE.value: log_table,
-    EntityKinds.DATAITEM_CROISSANT.value: log_croissant,
-    EntityKinds.MODEL_MLFLOW.value: log_mlflow,
-    EntityKinds.MODEL_SKLEARN.value: log_sklearn,
-    EntityKinds.MODEL_MODEL.value: log_model,
-    EntityKinds.MODEL_HUGGINGFACE.value: log_huggingface,
-    EntityKinds.MODEL_TVM_IR.value: log_tvm_ir,
-    EntityKinds.MODEL_TVM_SO.value: log_tvm_so,
-    EntityKinds.ARTIFACT_ARTIFACT.value: log_artifact,
-}
 
 
 @dataclass
@@ -106,19 +85,22 @@ def _parse_UDF_outputs(outputs: list[str] | list[dict[str, Any]], results_len: i
         if kind is None:
             raise ValueError(f"Missing kind for logged output: {name}")
 
-        if kind not in mapped_logger:
-            raise ValueError(f"Unsupported output kind: {kind}")
+        try:
+            registry.get_shortcut(f"log_{kind}")
+        except AttributeError as e:
+            raise ValueError(f"Unsupported output kind: {kind}") from e
 
         kwargs = dict(item.get("spec_kwargs") or {})
         parsed_outputs.append(OutputStruct(name=name, kind=kind, kwargs=kwargs, log=True))
     return parsed_outputs
 
 
-def _log_mapped_output(project_name: str, item: Any, output: OutputStruct) -> None:
+def _log_output(project_name: str, item: Any, output: OutputStruct) -> None:
     logger.info(f"Logging output {output.name}.")
     spec_kwargs = dict(output.kwargs or {})
     spec_kwargs["source"] = item
-    mapped_logger[output.kind](project_name, output.name, **spec_kwargs)
+    logger_function = registry.get_shortcut(f"log_{output.kind}")
+    logger_function(project=project_name, name=output.name, **spec_kwargs)
 
 
 def _save_existing_object(obj: Dataitem | Artifact | Model, run_key: str) -> Dataitem | Artifact | Model:
@@ -181,7 +163,7 @@ def collect_outputs(
         output = parsed_outputs[idx]
 
         if output.log:
-            _log_mapped_output(project_name, item, output)
+            _log_output(project_name, item, output)
             continue
 
         objects[output.name] = _materialize_output(output.name, item, project_name, run_key)
