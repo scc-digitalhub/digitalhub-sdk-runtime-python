@@ -23,12 +23,12 @@ classifiers = [
 keywords = ["data", "dataops", "kubernetes"]
 requires-python = ">=3.10, <3.15"
 dependencies = [
-"digitalhub[full]>=0.16.0b, <0.17",
-"nuclio-sdk",
-"msgpack",
-"pip",
-"tomli; python_version < '3.11'",
-"pyyaml",
+    "digitalhub[full]>=0.16.0b, <0.17",
+    "nuclio-sdk",
+    "msgpack",
+    "pip",
+    "tomli; python_version < '3.11'",
+    "pyyaml",
 ]
 
 [project.optional-dependencies]
