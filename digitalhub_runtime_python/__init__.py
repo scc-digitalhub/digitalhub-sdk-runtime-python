@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 from digitalhub_runtime_python.entities import entity_plugins
 from digitalhub_runtime_python.entities._commons.enums import EntityKinds
+from digitalhub_runtime_python.utils.utils import handler
 
 entity_builders = tuple((plugin.kind, plugin.builder) for plugin in entity_plugins)
 
