@@ -12,7 +12,7 @@ Explore the full documentation at the [link](https://scc-digitalhub.github.io/sd
 To install the Digitalhub SDK Runtime Python, you can use pip:
 
 ```bash
-pip install digitalhub-sdk-runtime-python
+pip install digitalhub-runtime-python
 ```
 
 ## Development
