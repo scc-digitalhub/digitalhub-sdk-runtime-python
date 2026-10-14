@@ -49,7 +49,7 @@ class RunBaseRun(Run):
                     relation=Relationship.CONSUMES.value,
                     dest=v.get("key"),
                 )
-            self.save(update=True)
+            self.update()
         self.spec.inputs = inputs
 
     def wait(self, log_info: bool = True) -> Run:

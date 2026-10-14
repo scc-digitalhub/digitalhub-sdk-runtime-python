@@ -108,7 +108,7 @@ def _save_existing_object(obj: Dataitem | Artifact | Model, run_key: str) -> Dat
     obj.add_relationship(relation=Relationship.PRODUCEDBY.value, dest=dest)
 
     try:
-        obj.save(update=True)
+        obj.update()
     except EntityNotExistsError:
         obj.save()
 
