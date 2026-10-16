@@ -34,7 +34,24 @@ def new_function_guardrail(
     labels: list[str] | None = None,
     embedded: bool = False,
 ) -> FunctionGuardrail:
-    """Create a guardrail function entity."""
+    """
+    Create a guardrail function entity.
+
+    Examples
+    --------
+    Create a guardrail function from a local source file:
+
+    ```python
+    import digitalhub as dh
+
+    function = dh.new_function_guardrail(
+        project="my-project",
+        name="input-guardrail",
+        code_src="./guardrail.py",
+        handler="guardrail",
+    )
+    ```
+    """
     if code is not None and code_src is not None:
         raise ValueError("Only one of 'code' or 'code_src' can be provided.")
 

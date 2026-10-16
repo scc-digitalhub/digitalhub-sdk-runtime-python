@@ -36,7 +36,25 @@ def new_function_openinference(
     labels: list[str] | None = None,
     embedded: bool = False,
 ) -> FunctionOpeninference:
-    """Create an OpenInference function entity."""
+    """
+    Create an OpenInference function entity.
+
+    Examples
+    --------
+    Create an OpenInference function from a local source file:
+
+    ```python
+    import digitalhub as dh
+
+    function = dh.new_function_openinference(
+        project="my-project",
+        name="instrumented-model",
+        code_src="./model.py",
+        handler="predict",
+        model_name="my-model",
+    )
+    ```
+    """
     if code is not None and code_src is not None:
         raise ValueError("Only one of 'code' or 'code_src' can be provided.")
 

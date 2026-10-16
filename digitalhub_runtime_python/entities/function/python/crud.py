@@ -77,6 +77,22 @@ def new_function_python(
     -------
     FunctionPython
         Created Python function entity.
+
+    Examples
+    --------
+    Create a Python function from a local source file:
+
+    ```python
+    import digitalhub as dh
+
+    function = dh.new_function_python(
+        project="my-project",
+        name="python-function",
+        code_src="main.py",
+        handler="function",
+        python_version="PYTHON3_10",
+    )
+    ```
     """
     if code is not None and code_src is not None:
         raise ValueError("Only one of 'code' or 'code_src' can be provided.")
