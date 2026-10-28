@@ -8,7 +8,6 @@ from pathlib import Path
 from digitalhub_runtime_python.entities._commons.requirement_parser.enums import RequirementFile, RequirementFormat
 from digitalhub_runtime_python.entities._commons.requirement_parser.modules._base import BaseParser
 from digitalhub_runtime_python.entities._commons.requirement_parser.modules._conda import CondaParser
-from digitalhub_runtime_python.entities._commons.requirement_parser.modules._pip import PipParser
 from digitalhub_runtime_python.entities._commons.requirement_parser.modules._pyproject import PyProjectParser
 
 
@@ -34,6 +33,8 @@ class RequirementParserFactory:
         req_type = self._requirements_format(requirements_file)
         match req_type:
             case RequirementFormat.PIP:
+                from digitalhub_runtime_python.entities._commons.requirement_parser.modules._pip import PipParser
+
                 return PipParser()
             case RequirementFormat.PYPROJECT:
                 return PyProjectParser()

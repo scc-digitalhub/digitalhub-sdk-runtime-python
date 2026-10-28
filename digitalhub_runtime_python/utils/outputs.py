@@ -17,7 +17,6 @@ from digitalhub.entities.dataitem._base.entity import Dataitem
 from digitalhub.entities.dataitem.table.crud import log_table
 from digitalhub.entities.model._base.entity import Model
 from digitalhub.factory.registry import registry
-from digitalhub.stores.readers.data.api import get_supported_dataframes
 from digitalhub.utils.exceptions import EntityNotExistsError
 from digitalhub.utils.logger.logger import get_logger
 
@@ -121,6 +120,8 @@ def _materialize_output(name: str, item: Any, project_name: str, run_key: str) -
 
     if isinstance(item, (Dataitem, Artifact, Model)):
         return _save_existing_object(item, run_key)
+
+    from digitalhub.stores.readers.data.api import get_supported_dataframes
 
     for df_class in get_supported_dataframes():
         if isinstance(item, df_class):

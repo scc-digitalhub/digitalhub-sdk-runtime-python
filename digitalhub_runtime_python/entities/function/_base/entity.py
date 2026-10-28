@@ -9,7 +9,6 @@ from digitalhub.utils.generic_utils import decode_base64_string
 from digitalhub.utils.io_utils import write_text
 
 from digitalhub_runtime_python.entities._commons.enums import Actions
-from digitalhub_runtime_python.entities._commons.requirement_parser.parser import RequirementParser
 from digitalhub_runtime_python.entities._commons.utils import export_local_source
 
 
@@ -27,6 +26,8 @@ class FunctionBaseFunction(Function):
         None
             This method updates the function requirements in place.
         """
+        from digitalhub_runtime_python.entities._commons.requirement_parser.parser import RequirementParser
+
         self.spec.requirements = RequirementParser().parse(self.spec.requirements)
 
     def export(self) -> str:
