@@ -1,0 +1,30 @@
+{
+    "id": "guardrail-function1",
+    "key": "store://demo-etl/function/guardrail/guardrail-function1",
+    "kind": "guardrail",
+    "metadata": {
+        "name": "guardrail-function1",
+        "project": "demo-etl"
+    },
+    "name": "guardrail-function1",
+    "project": "demo-etl",
+    "spec": {
+        "image": "debian:1.22.04",
+        "base_image": "debian:1.22.04",
+        "python_version": "PYTHON3_10",
+        "requirements": [
+            "requests"
+        ],
+        "source": {
+            "source": "main.py",
+            "handler": "handler",
+            "base64": "ZGVmIGhhbmRsZXIoKToKICAgIHByaW50KCJIZWxsbyB3b3JsZCEiKQ==",
+            "lang": "python"
+        },
+        "processing_mode": "preprocessor"
+    },
+    "status": {
+        "state": "CREATED"
+    },
+    "user": "digitalhubdev"
+}

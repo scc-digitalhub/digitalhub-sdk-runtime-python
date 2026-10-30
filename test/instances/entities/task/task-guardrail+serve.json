@@ -1,0 +1,49 @@
+{
+    "id": "guardrail-serve-task1",
+    "key": "store://demo-etl/task/guardrail+serve/guardrail-serve-task1",
+    "kind": "guardrail+serve",
+    "metadata": {
+        "name": "guardrail-serve-task1",
+        "project": "demo-etl"
+    },
+    "name": "guardrail-serve-task1",
+    "project": "demo-etl",
+    "spec": {
+        "function": "guardrail://demo-etl/guardrail-function:guardrail-function1",
+        "volumes": [
+            {
+                "volume_type": "empty_dir",
+                "name": "volume1",
+                "mount_path": "/volume1"
+            },
+            {
+                "volume_type": "persistent_volume_claim",
+                "name": "volume2",
+                "mount_path": "/volume2"
+            }
+        ],
+        "resources": {
+            "cpu": "1",
+            "mem": "1Gi",
+            "gpu": "1",
+            "disk": "1Gi"
+        },
+        "envs": [
+            {
+                "name": "USER",
+                "value": "test"
+            }
+        ],
+        "secrets": [
+            "secret-key"
+        ],
+        "profile": "1xa100",
+        "service_name": "guardrail-service",
+        "service_type": "NodePort",
+        "replicas": 2
+    },
+    "status": {
+        "state": "CREATED"
+    },
+    "user": "digitalhubdev"
+}

@@ -1,0 +1,49 @@
+{
+    "id": "openinference-build-task1",
+    "key": "store://demo-etl/task/openinference+build/openinference-build-task1",
+    "kind": "openinference+build",
+    "metadata": {
+        "name": "openinference-build-task1",
+        "project": "demo-etl"
+    },
+    "name": "openinference-build-task1",
+    "project": "demo-etl",
+    "spec": {
+        "function": "openinference://demo-etl/openinference-function:openinference-function1",
+        "volumes": [
+            {
+                "volume_type": "empty_dir",
+                "name": "volume1",
+                "mount_path": "/volume1"
+            },
+            {
+                "volume_type": "persistent_volume_claim",
+                "name": "volume2",
+                "mount_path": "/volume2"
+            }
+        ],
+        "resources": {
+            "cpu": "1",
+            "mem": "1Gi",
+            "gpu": "1",
+            "disk": "1Gi"
+        },
+        "envs": [
+            {
+                "name": "USER",
+                "value": "test"
+            }
+        ],
+        "secrets": [
+            "secret-key"
+        ],
+        "profile": "1xa100",
+        "instructions": [
+            "apt-get update"
+        ]
+    },
+    "status": {
+        "state": "CREATED"
+    },
+    "user": "digitalhubdev"
+}

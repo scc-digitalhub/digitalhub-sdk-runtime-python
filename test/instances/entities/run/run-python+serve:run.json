@@ -55,6 +55,7 @@
     "requirements": [
       "requests"
     ],
+    "service_name": "python-serve",
     "service_type": "NodePort",
     "replicas": 3,
     "inputs": {
