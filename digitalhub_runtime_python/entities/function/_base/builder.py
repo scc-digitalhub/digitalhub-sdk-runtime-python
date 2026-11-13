@@ -7,7 +7,7 @@ from __future__ import annotations
 from digitalhub.entities.function._base.builder import FunctionBuilder
 
 from digitalhub_runtime_python.entities._base.runtime_entity.builder import RuntimeEntityBuilder
-from digitalhub_runtime_python.entities._commons.utils import source_check, source_post_check
+from digitalhub_runtime_python.entities.function._base.utils import source_check, source_post_check
 
 
 class FunctionBaseBuilder(FunctionBuilder, RuntimeEntityBuilder):

@@ -4,18 +4,27 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, cast
+
 from digitalhub.entities.function._base.entity import Function
 from digitalhub.utils.generic_utils import decode_base64_string
 from digitalhub.utils.io_utils import write_text
 
 from digitalhub_runtime_python.entities._commons.enums import Actions
-from digitalhub_runtime_python.entities._commons.utils import export_local_source
+from digitalhub_runtime_python.entities.function._base.utils import export_local_source, get_current_python_version
+
+if TYPE_CHECKING:
+    from digitalhub_runtime_python.entities.function._base.spec import FunctionBaseSpec
 
 
 class FunctionBaseFunction(Function):
     """
     Base class for runtime Python functions.
     """
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.spec: FunctionBaseSpec  # ty: ignore[incompatible-mutable-override]
 
     def _post_create_hook_before_save(self) -> None:
         """
@@ -28,6 +37,10 @@ class FunctionBaseFunction(Function):
         """
         from digitalhub_runtime_python.entities._commons.requirement_parser.parser import RequirementParser
 
+        try:
+            self.spec.python_version = self.spec.python_version or get_current_python_version()
+        except AttributeError:
+            pass
         self.spec.requirements = RequirementParser().parse(self.spec.requirements)
 
     def export(self) -> str:
@@ -39,7 +52,8 @@ class FunctionBaseFunction(Function):
         str
             Exported filepath.
         """
-        with export_local_source(self.spec.source, self._context().root):
+        source = cast(dict, self.spec.source)
+        with export_local_source(source, self._context().root):
             config = getattr(self.spec, "config", None)
             # Check base64. If it is set, decode it in a local file
             # save in variable to restore on object after export
@@ -123,6 +137,9 @@ class FunctionBaseFunction(Function):
         Run
             Run instance.
         """
+        if kwargs.get("local_execution", False):
+            self._check_python_version()
+
         if auto_build and self.spec.image is None:
             self.build(wait=True, log_info=log_info)
 
@@ -133,3 +150,13 @@ class FunctionBaseFunction(Function):
             extensions=extensions,
             **kwargs,
         )
+
+    def _check_python_version(self) -> None:
+        """Raise when a local run requests a different Python version."""
+        python_version = self.spec.python_version
+        current_python_version = get_current_python_version()
+        if python_version is not None and python_version != current_python_version:
+            raise ValueError(
+                f"Local execution cannot use python_version='{python_version}'; "
+                f"current Python version is {current_python_version}."
+            )

@@ -4,10 +4,14 @@
 
 from __future__ import annotations
 
+import sys
 import typing
 from pathlib import Path
+from typing import Protocol, TypeVar, cast
 
 from digitalhub.entities._commons.utils import build_zip_path
+from digitalhub.entities._mixin.versioned.protocol import VersionedEntityProtocol
+from digitalhub.entities.function._base.entity import Function
 from digitalhub.stores.data.api import get_store
 from digitalhub.utils.exceptions import EntityError
 from digitalhub.utils.file_utils import eval_py_type, eval_zip_type
@@ -15,10 +19,24 @@ from digitalhub.utils.generic_utils import create_archive, decode_base64_string,
 from digitalhub.utils.io_utils import write_text
 from digitalhub.utils.uri_utils import has_local_scheme
 
-from digitalhub_runtime_python.entities.function.python.models import Lang
+from digitalhub_runtime_python.entities.function._base.models import Lang
 
 if typing.TYPE_CHECKING:
-    from digitalhub_runtime_python.entities.function.python.entity import FunctionPython
+    from digitalhub_runtime_python.entities.function._base.spec import FunctionBaseSpec
+
+
+class _FunctionWithSource(Protocol):
+    spec: FunctionBaseSpec
+
+
+_TVersionedEntity = TypeVar("_TVersionedEntity", bound=Function | VersionedEntityProtocol)
+
+
+def get_current_python_version() -> str:
+    """
+    Return the current Python version in the runtime's version format.
+    """
+    return f"PYTHON{sys.version_info.major}_{sys.version_info.minor}"
 
 
 class _LocalSourceExport:
@@ -104,7 +122,7 @@ def _check_params(
     lang: str | None = None,
 ) -> dict:
     """
-    Check source.
+    Check source parameters.
 
     Parameters
     ----------
@@ -152,22 +170,24 @@ def _check_params(
     return source
 
 
-def source_post_check(exec: FunctionPython) -> FunctionPython:
+def source_post_check(exec: _TVersionedEntity) -> _TVersionedEntity:
     """
     Post check source.
 
     Parameters
     ----------
-    exec : FunctionPython
+    exec : VersionedEntityProtocol
         Executable.
 
     Returns
     -------
-    FunctionPython
+    VersionedEntityProtocol
         Updated executable.
     """
-    code_src = exec.spec.source.get("source", None)
-    base64 = exec.spec.source.get("base64", None)
+    function = cast(_FunctionWithSource, exec)
+    source = cast(dict, function.spec.source)
+    code_src = source.get("source", None)
+    base64 = source.get("base64", None)
     if code_src is None or base64 is not None:
         return exec
 
@@ -182,20 +202,20 @@ def source_post_check(exec: FunctionPython) -> FunctionPython:
         if not path_src.is_file():
             archive_path = create_archive(path_src)
             try:
-                dst = build_zip_path(exec, archive_path.name)
+                dst = build_zip_path(cast(VersionedEntityProtocol, exec), archive_path.name)
                 get_store(dst).upload(str(archive_path), dst)
-                exec.spec.source["source"] = dst
+                source["source"] = dst
             finally:
                 archive_path.unlink(missing_ok=True)
 
         # If source is a file, read it and encode it in base64
         elif eval_py_type(code_src):
-            exec.spec.source["base64"] = read_source(code_src)
+            source["base64"] = read_source(code_src)
 
         # If source is a zip file, upload it and update the source
         elif eval_zip_type(code_src):
-            dst = build_zip_path(exec, path_src.name)
+            dst = build_zip_path(cast(VersionedEntityProtocol, exec), path_src.name)
             get_store(dst).upload(code_src, dst)
-            exec.spec.source["source"] = dst
+            source["source"] = dst
 
     return exec

@@ -4,13 +4,12 @@
 
 from __future__ import annotations
 
-from digitalhub.entities.function._base.spec import FunctionSpec, FunctionValidator
-
+from digitalhub_runtime_python.entities.function._base.models import SourceValidator
+from digitalhub_runtime_python.entities.function._base.spec import FunctionBaseSpec, FunctionBaseValidator
 from digitalhub_runtime_python.entities.function.guardrail.models import ProcessingMode
-from digitalhub_runtime_python.entities.function.python.models import PythonVersion, SourceValidator
 
 
-class FunctionSpecGuardrail(FunctionSpec):
+class FunctionSpecGuardrail(FunctionBaseSpec):
     """
     FunctionSpecGuardrail specifications.
     """
@@ -24,35 +23,20 @@ class FunctionSpecGuardrail(FunctionSpec):
         requirements: list | None = None,
         processing_mode: str | None = None,
     ) -> None:
-        super().__init__()
-
-        self.image = image
-        self.base_image = base_image
-        self.python_version = python_version
-        self.requirements = requirements
-        self.source = source
+        super().__init__(
+            source=source,
+            image=image,
+            base_image=base_image,
+            python_version=python_version,
+            requirements=requirements,
+        )
         self.processing_mode = processing_mode
 
 
-class FunctionValidatorGuardrail(FunctionValidator):
+class FunctionValidatorGuardrail(FunctionBaseValidator[SourceValidator]):
     """
     FunctionValidatorGuardrail validator.
     """
-
-    source: SourceValidator
-    """Source code validator"""
-
-    python_version: PythonVersion
-    "Python version"
-
-    image: str | None = None
-    "Image where the function will be executed"
-
-    base_image: str | None = None
-    "Base image used to build the image where the function will be executed"
-
-    requirements: list[str] | None = None
-    "Requirements list to be installed in the image where the function will be executed"
 
     processing_mode: ProcessingMode
     """Processing mode"""

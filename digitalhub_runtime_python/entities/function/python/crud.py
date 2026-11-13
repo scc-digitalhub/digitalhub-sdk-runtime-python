@@ -59,7 +59,7 @@ def new_function_python(
     base_image : str, optional
         Base container image used to build the function image.
     python_version : str, optional
-        Python version used by the function runtime.
+        Python version used by the function runtime. Defaults to the current Python version.
     requirements : list[str] or str, optional
         Python dependencies required by the function.
     uuid : str, optional
