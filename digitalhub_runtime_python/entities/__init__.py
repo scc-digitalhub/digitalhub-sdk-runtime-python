@@ -25,35 +25,54 @@ from digitalhub_runtime_python.entities.task.python_build.builder import TaskPyt
 from digitalhub_runtime_python.entities.task.python_job.builder import TaskPythonJobBuilder
 from digitalhub_runtime_python.entities.task.python_serve.builder import TaskPythonServeBuilder
 
+try:
+    from digitalhub_runtime_python.runtimes.builder import (
+        RuntimeGuardrailBuilder,
+        RuntimeOpeninferenceBuilder,
+        RuntimePythonBuilder,
+        RuntimePythonJobBuilder,
+    )
+except ImportError as e:
+    from digitalhub.utils.logger.logger import get_logger
+
+    get_logger(__name__).debug(f"Error importing runtime builders: {e}")
+    RuntimeGuardrailBuilder = None
+    RuntimeOpeninferenceBuilder = None
+    RuntimePythonBuilder = None
+    RuntimePythonJobBuilder = None
+
 function_guardrail_plugin = EntityPlugin(
     builder=FunctionGuardrailBuilder,
     shortcuts=(CrudPlugin(new_function_guardrail),),
+    runtime_builder=RuntimeGuardrailBuilder,
 )
 function_openinference_plugin = EntityPlugin(
     builder=FunctionOpeninferenceBuilder,
     shortcuts=(CrudPlugin(new_function_openinference),),
+    runtime_builder=RuntimeOpeninferenceBuilder,
 )
 function_python_plugin = EntityPlugin(
     builder=FunctionPythonBuilder,
     shortcuts=(CrudPlugin(new_function_python),),
+    runtime_builder=RuntimePythonBuilder,
 )
 
 entity_plugins = (
     function_guardrail_plugin,
     function_openinference_plugin,
     function_python_plugin,
-    EntityPlugin(builder=TaskGuardrailBuildBuilder),
-    EntityPlugin(builder=TaskGuardrailServeBuilder),
-    EntityPlugin(builder=TaskOpeninferenceBuildBuilder),
-    EntityPlugin(builder=TaskOpeninferenceServeBuilder),
-    EntityPlugin(builder=TaskPythonBuildBuilder),
-    EntityPlugin(builder=TaskPythonJobBuilder),
-    EntityPlugin(builder=TaskPythonServeBuilder),
-    EntityPlugin(builder=RunGuardrailRunBuildBuilder),
-    EntityPlugin(builder=RunGuardrailRunServeBuilder),
-    EntityPlugin(builder=RunOpeninferenceRunBuildBuilder),
-    EntityPlugin(builder=RunOpeninferenceRunServeBuilder),
-    EntityPlugin(builder=RunPythonRunBuildBuilder),
-    EntityPlugin(builder=RunPythonRunJobBuilder),
-    EntityPlugin(builder=RunPythonRunServeBuilder),
+    EntityPlugin(builder=TaskGuardrailBuildBuilder, runtime_builder=RuntimeGuardrailBuilder),
+    EntityPlugin(builder=TaskGuardrailServeBuilder, runtime_builder=RuntimeGuardrailBuilder),
+    EntityPlugin(builder=TaskOpeninferenceBuildBuilder, runtime_builder=RuntimeOpeninferenceBuilder),
+    EntityPlugin(builder=TaskOpeninferenceServeBuilder, runtime_builder=RuntimeOpeninferenceBuilder),
+    EntityPlugin(builder=TaskPythonBuildBuilder, runtime_builder=RuntimePythonBuilder),
+    EntityPlugin(builder=TaskPythonJobBuilder, runtime_builder=RuntimePythonJobBuilder),
+    EntityPlugin(builder=TaskPythonServeBuilder, runtime_builder=RuntimePythonBuilder),
+    EntityPlugin(builder=RunGuardrailRunBuildBuilder, runtime_builder=RuntimeGuardrailBuilder),
+    EntityPlugin(builder=RunGuardrailRunServeBuilder, runtime_builder=RuntimeGuardrailBuilder),
+    EntityPlugin(builder=RunOpeninferenceRunBuildBuilder, runtime_builder=RuntimeOpeninferenceBuilder),
+    EntityPlugin(builder=RunOpeninferenceRunServeBuilder, runtime_builder=RuntimeOpeninferenceBuilder),
+    EntityPlugin(builder=RunPythonRunBuildBuilder, runtime_builder=RuntimePythonBuilder),
+    EntityPlugin(builder=RunPythonRunJobBuilder, runtime_builder=RuntimePythonJobBuilder),
+    EntityPlugin(builder=RunPythonRunServeBuilder, runtime_builder=RuntimePythonBuilder),
 )

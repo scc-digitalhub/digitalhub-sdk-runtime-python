@@ -17,7 +17,7 @@ CURRENT_PYTHON_VERSION = f"PYTHON{sys.version_info.major}_{sys.version_info.mino
 
 
 def test_function_specs_leave_python_version_unset():
-    source = SourceValidator()
+    source = SourceValidator(source="source.py", handler="predict")
 
     assert FunctionSpecPython(source=source).python_version is None
     assert FunctionSpecGuardrail(source=source, processing_mode=ProcessingMode.PREPROCESSOR).python_version is None
@@ -53,7 +53,7 @@ def test_function_specs_keep_shared_source_field(spec_class):
 
 def test_python_version_validator_returns_value_string():
     spec = FunctionSpecPython(
-        source=SourceValidator(),
+        source=SourceValidator(source="source.py", handler="predict"),
         python_version=PythonVersion.PYTHON3_11,
     )
 
@@ -68,7 +68,10 @@ def test_function_base_spec_is_a_pydantic_spec():
 
 def test_pre_save_hook_defaults_python_version_to_current():
     function = object.__new__(FunctionBaseFunction)
-    function.spec = FunctionSpecPython(source=SourceValidator(), requirements=[])
+    function.spec = FunctionSpecPython(
+        source=SourceValidator(source="source.py", handler="predict"),
+        requirements=[],
+    )
 
     function._post_create_hook_before_save()
 
@@ -78,7 +81,10 @@ def test_pre_save_hook_defaults_python_version_to_current():
 def test_local_execution_rejects_mismatched_python_version_from_spec():
     mismatch = next(version.value for version in PythonVersion if version.value != CURRENT_PYTHON_VERSION)
     function = object.__new__(FunctionBaseFunction)
-    function.spec = FunctionSpecPython(source=SourceValidator(), python_version=mismatch)
+    function.spec = FunctionSpecPython(
+        source=SourceValidator(source="source.py", handler="predict"),
+        python_version=mismatch,
+    )
 
     with pytest.raises(ValueError, match="Local execution"):
         function.run("run", local_execution=True)

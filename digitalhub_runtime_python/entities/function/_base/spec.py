@@ -6,13 +6,13 @@ from __future__ import annotations
 
 from digitalhub.entities.function._base.spec import FunctionSpec
 
-from digitalhub_runtime_python.entities.function._base.models import PythonVersion, SourceValidator
+from digitalhub_runtime_python.entities.function._base.models import PythonSourceCode, PythonVersion
 
 
 class FunctionBaseSpec(FunctionSpec):
     """Base specification for runtime Python functions."""
 
-    source: SourceValidator
+    source: PythonSourceCode
     """Source code."""
 
     python_version: PythonVersion | None = None

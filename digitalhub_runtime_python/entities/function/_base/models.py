@@ -5,8 +5,10 @@
 from __future__ import annotations
 
 from enum import Enum
+from typing import ClassVar
 
-from pydantic import BaseModel, ConfigDict, Field
+from digitalhub.entities._mixin.source.models import HandlerSourceCode
+from pydantic import Field
 
 
 class PythonVersion(Enum):
@@ -29,27 +31,13 @@ class Lang(Enum):
     PYTHON = "python"
 
 
-class SourceValidator(BaseModel):
-    """
-    Source code params.
-    """
+class PythonSourceCode(HandlerSourceCode):
+    """Source code model for Python functions."""
 
-    model_config = ConfigDict(use_enum_values=True)
-
-    source: str = None
-    "Pointer to source code."
-
-    handler: str = None
-    "Function entrypoint."
-
-    init_function: str = None
-    """Handler for init function."""
-
-    code: str = None
-    "Source code (plain text)."
-
-    base64: str = None
-    "Source code (base64 encoded)."
-
+    DEFAULT_LANG: ClassVar[str | None] = "python"
+    REQUIRE_HANDLER: ClassVar[bool] = True
     lang: Lang = Field(default=Lang.PYTHON.value)
-    "Source code language (hint)."
+    init_function: str | None = None
+
+
+SourceValidator = PythonSourceCode

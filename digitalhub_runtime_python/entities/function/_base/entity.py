@@ -6,18 +6,21 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from digitalhub.entities._mixin.source.entity import SourceEntityMixin
 from digitalhub.entities.function._base.entity import Function
+from digitalhub.utils.file_utils import eval_py_type
 from digitalhub.utils.generic_utils import decode_base64_string
 from digitalhub.utils.io_utils import write_text
+from pydantic import BaseModel
 
 from digitalhub_runtime_python.entities._commons.enums import Actions
-from digitalhub_runtime_python.entities.function._base.utils import export_local_source, get_current_python_version
+from digitalhub_runtime_python.entities.function._base.utils import get_current_python_version
 
 if TYPE_CHECKING:
     from digitalhub_runtime_python.entities.function._base.spec import FunctionBaseSpec
 
 
-class FunctionBaseFunction(Function):
+class FunctionBaseFunction(SourceEntityMixin, Function):
     """
     Base class for runtime Python functions.
     """
@@ -52,21 +55,29 @@ class FunctionBaseFunction(Function):
         str
             Exported filepath.
         """
-        with export_local_source(self.spec.source, self._context().root):
-            config = getattr(self.spec, "config", None)
-            # Check base64. If it is set, decode it in a local file
-            if config is None or (base64 := config.get("base64")) is None:
-                return super().export()
+        config = getattr(self.spec, "config", None)
+        if config is None:
+            return super().export()
 
+        if isinstance(config, BaseModel):
+            if "base64" not in type(config).model_fields or (base64 := config.model_dump().get("base64")) is None:
+                return super().export()
+            self.spec.config = config.model_copy(update={"base64": None})
+        else:
+            if (base64 := config.get("base64")) is None:
+                return super().export()
             export_config = dict(config)
             export_config.pop("base64")
             self.spec.config = export_config
-            try:
-                config_pth = self._context().root / "config.yaml"
-                write_text(config_pth, decode_base64_string(base64))
-                return super().export()
-            finally:
-                self.spec.config = config
+        try:
+            config_pth = self._context().root / "config.yaml"
+            write_text(config_pth, decode_base64_string(base64))
+            return super().export()
+        finally:
+            self.spec.config = config
+
+    def _is_inlineable_source(self, path: str) -> bool:
+        return eval_py_type(path)
 
     def build(
         self,

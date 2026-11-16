@@ -6,6 +6,4 @@ from __future__ import annotations
 
 from digitalhub_runtime_python.entities.task._base.spec import TaskSpecServe
 
-
-class TaskSpecOpeninferenceServe(TaskSpecServe):
-    """TaskSpecOpeninferenceServe specifications."""
+TaskSpecOpeninferenceServe = TaskSpecServe

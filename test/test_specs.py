@@ -1,20 +1,20 @@
-from contextlib import nullcontext
 from types import SimpleNamespace
 from unittest.mock import Mock
 
+import digitalhub.entities._mixin.source.entity as source_entity_module
 import pytest
 from digitalhub.entities._constructors.spec import build_spec
 from digitalhub.entities.function._base.entity import Function
 from pydantic import ValidationError
 
 import digitalhub_runtime_python.entities.function._base.entity as function_entity_module
-from digitalhub_runtime_python.entities.function._base import utils as function_utils
 from digitalhub_runtime_python.entities.function._base.entity import FunctionBaseFunction
 from digitalhub_runtime_python.entities.function._base.models import SourceValidator
 from digitalhub_runtime_python.entities.function.guardrail.models import ProcessingMode
 from digitalhub_runtime_python.entities.function.guardrail.spec import FunctionSpecGuardrail
 from digitalhub_runtime_python.entities.function.openinference.models import TensorValidator
 from digitalhub_runtime_python.entities.function.openinference.spec import FunctionSpecOpeninference
+from digitalhub_runtime_python.entities.function.python.builder import FunctionPythonBuilder
 from digitalhub_runtime_python.entities.function.python.spec import FunctionSpecPython
 from digitalhub_runtime_python.entities.run.guardrail_serve.spec import RunSpecGuardrailRunServe
 from digitalhub_runtime_python.entities.run.openinference_build.spec import RunSpecOpeninferenceRunBuild
@@ -29,21 +29,20 @@ def test_function_spec_rejects_unknown_build_parameters():
     with pytest.raises(TypeError, match="unknown_parameter"):
         build_spec(
             FunctionSpecPython,
-            source=SourceValidator(),
+            source=SourceValidator(source="source.py", handler="predict"),
             unknown_parameter=True,
         )
 
-
 def test_function_specs_validate_action_fields_and_roundtrip():
     with pytest.raises(ValidationError):
-        FunctionSpecGuardrail(source=SourceValidator())
+        FunctionSpecGuardrail(source=SourceValidator(source="source.py", handler="predict"))
 
     guardrail = FunctionSpecGuardrail(
-        source=SourceValidator(),
+        source=SourceValidator(source="source.py", handler="predict"),
         processing_mode=ProcessingMode.PREPROCESSOR,
     )
     openinference = FunctionSpecOpeninference(
-        source={"handler": "predict"},
+        source={"source": "source.py", "handler": "predict"},
         inputs=[{"name": "features"}],
     )
     restored = FunctionSpecOpeninference.from_dict(openinference.to_dict())
@@ -56,23 +55,44 @@ def test_function_specs_validate_action_fields_and_roundtrip():
 
 
 def test_source_export_restores_base64_when_export_raises(monkeypatch, tmp_path):
-    source = SourceValidator(source="source.py", base64="c2NyaXB0")
-    monkeypatch.setattr(function_utils, "has_local_scheme", lambda _: True)
-    monkeypatch.setattr(function_utils, "write_text", lambda *args: None)
+    source = SourceValidator(source="source.py", handler="predict", base64="c2NyaXB0")
+    function = object.__new__(FunctionBaseFunction)
+    function.spec = SimpleNamespace(source=source)
+    function._context = Mock(return_value=SimpleNamespace(root=tmp_path))
+    monkeypatch.setattr(source_entity_module, "has_local_scheme", lambda _: True)
+    monkeypatch.setattr(source_entity_module, "write_text", lambda *args: None)
+    monkeypatch.setattr(Function, "export", Mock(side_effect=RuntimeError("export failed")))
 
-    with pytest.raises(RuntimeError, match="export failed"), function_utils.export_local_source(source, tmp_path):
-        assert source.base64 is None
-        raise RuntimeError("export failed")
-
+    with pytest.raises(RuntimeError, match="export failed"):
+        function.export()
     assert source.base64 == "c2NyaXB0"
+
+
+def test_python_builder_routes_top_level_source_arguments():
+    builder = FunctionPythonBuilder()
+
+    function = builder.build(
+        kind=builder.ENTITY_KIND,
+        project="project",
+        name="function",
+        code="print('hello')",
+        handler="main",
+        init_function="initialize",
+    )
+
+    assert function.spec.source.base64 == "cHJpbnQoJ2hlbGxvJyk="
+    assert function.spec.source.handler == "main"
+    assert function.spec.source.init_function == "initialize"
 
 
 def test_function_export_omits_config_base64_without_mutating_original(monkeypatch, tmp_path):
     original_config = {"base64": "c2VjcmV0", "path": "config.yaml"}
     function = object.__new__(FunctionBaseFunction)
-    function.spec = SimpleNamespace(config=original_config, source=SourceValidator(source="remote-source"))
+    function.spec = SimpleNamespace(
+        config=original_config,
+        source=SourceValidator(source="remote-source", handler="predict"),
+    )
     function._context = Mock(return_value=SimpleNamespace(root=tmp_path))
-    monkeypatch.setattr(function_entity_module, "export_local_source", lambda *_: nullcontext())
     monkeypatch.setattr(function_entity_module, "write_text", Mock())
 
     def export(self):
@@ -89,9 +109,11 @@ def test_function_export_omits_config_base64_without_mutating_original(monkeypat
 def test_function_export_restores_original_config_when_write_fails(monkeypatch, tmp_path):
     original_config = {"base64": "c2VjcmV0", "path": "config.yaml"}
     function = object.__new__(FunctionBaseFunction)
-    function.spec = SimpleNamespace(config=original_config, source=SourceValidator(source="remote-source"))
+    function.spec = SimpleNamespace(
+        config=original_config,
+        source=SourceValidator(source="remote-source", handler="predict"),
+    )
     function._context = Mock(return_value=SimpleNamespace(root=tmp_path))
-    monkeypatch.setattr(function_entity_module, "export_local_source", lambda *_: nullcontext())
     monkeypatch.setattr(function_entity_module, "write_text", Mock(side_effect=OSError("write failed")))
 
     with pytest.raises(OSError, match="write failed"):

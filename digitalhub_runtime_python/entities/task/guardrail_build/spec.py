@@ -6,6 +6,4 @@ from __future__ import annotations
 
 from digitalhub_runtime_python.entities.task._base.spec import TaskSpecBuild
 
-
-class TaskSpecGuardrailBuild(TaskSpecBuild):
-    """TaskSpecGuardrailBuild specifications."""
+TaskSpecGuardrailBuild = TaskSpecBuild
