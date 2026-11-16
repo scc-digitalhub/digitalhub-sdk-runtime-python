@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 from digitalhub.entities.function._base.entity import Function
 from digitalhub.utils.generic_utils import decode_base64_string
@@ -52,8 +52,7 @@ class FunctionBaseFunction(Function):
         str
             Exported filepath.
         """
-        source = cast(dict, self.spec.source)
-        with export_local_source(source, self._context().root):
+        with export_local_source(self.spec.source, self._context().root):
             config = getattr(self.spec, "config", None)
             # Check base64. If it is set, decode it in a local file
             # save in variable to restore on object after export

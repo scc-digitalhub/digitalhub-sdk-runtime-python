@@ -10,7 +10,6 @@ from digitalhub_runtime_python.entities.function._base.builder import FunctionBa
 from digitalhub_runtime_python.entities.function.openinference.entity import FunctionOpeninference
 from digitalhub_runtime_python.entities.function.openinference.spec import (
     FunctionSpecOpeninference,
-    FunctionValidatorOpeninference,
 )
 from digitalhub_runtime_python.entities.function.openinference.status import FunctionStatusOpeninference
 
@@ -22,6 +21,5 @@ class FunctionOpeninferenceBuilder(FunctionBaseBuilder, RuntimeEntityBuilderOpen
 
     ENTITY_CLASS = FunctionOpeninference
     ENTITY_SPEC_CLASS = FunctionSpecOpeninference
-    ENTITY_SPEC_VALIDATOR = FunctionValidatorOpeninference
     ENTITY_STATUS_CLASS = FunctionStatusOpeninference
     ENTITY_KIND = EntityKinds.FUNCTION_OPENINFERENCE.value

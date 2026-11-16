@@ -4,39 +4,8 @@
 
 from __future__ import annotations
 
-from digitalhub.entities.task._base.spec import TaskSpecFunction, TaskValidatorFunction
+from digitalhub_runtime_python.entities.task._base.spec import TaskSpecBuild
 
 
-class TaskSpecGuardrailBuild(TaskSpecFunction):
+class TaskSpecGuardrailBuild(TaskSpecBuild):
     """TaskSpecGuardrailBuild specifications."""
-
-    def __init__(
-        self,
-        function: str,
-        volumes: list[dict] | None = None,
-        resources: dict | None = None,
-        envs: list[dict] | None = None,
-        secrets: list[str] | None = None,
-        profile: str | None = None,
-        instructions: list | None = None,
-        **kwargs,
-    ) -> None:
-        super().__init__(
-            function=function,
-            volumes=volumes,
-            resources=resources,
-            envs=envs,
-            secrets=secrets,
-            profile=profile,
-            **kwargs,
-        )
-        self.instructions = instructions
-
-
-class TaskValidatorGuardrailBuild(TaskValidatorFunction):
-    """
-    TaskValidatorGuardrailBuild validator.
-    """
-
-    instructions: list[str] | None = None
-    """Build instructions."""

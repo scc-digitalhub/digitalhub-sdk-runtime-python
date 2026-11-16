@@ -10,7 +10,6 @@ from digitalhub_runtime_python.entities.function._base.builder import FunctionBa
 from digitalhub_runtime_python.entities.function.guardrail.entity import FunctionGuardrail
 from digitalhub_runtime_python.entities.function.guardrail.spec import (
     FunctionSpecGuardrail,
-    FunctionValidatorGuardrail,
 )
 from digitalhub_runtime_python.entities.function.guardrail.status import FunctionStatusGuardrail
 
@@ -22,6 +21,5 @@ class FunctionGuardrailBuilder(FunctionBaseBuilder, RuntimeEntityBuilderGuardrai
 
     ENTITY_CLASS = FunctionGuardrail
     ENTITY_SPEC_CLASS = FunctionSpecGuardrail
-    ENTITY_SPEC_VALIDATOR = FunctionValidatorGuardrail
     ENTITY_STATUS_CLASS = FunctionStatusGuardrail
     ENTITY_KIND = EntityKinds.FUNCTION_GUARDRAIL.value

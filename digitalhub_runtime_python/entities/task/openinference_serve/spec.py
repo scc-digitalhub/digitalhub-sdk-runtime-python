@@ -4,51 +4,8 @@
 
 from __future__ import annotations
 
-from digitalhub.entities.task._base.models import CoreServiceType
-from digitalhub.entities.task._base.spec import TaskSpecFunction, TaskValidatorFunction
-from pydantic import Field
+from digitalhub_runtime_python.entities.task._base.spec import TaskSpecServe
 
 
-class TaskSpecOpeninferenceServe(TaskSpecFunction):
+class TaskSpecOpeninferenceServe(TaskSpecServe):
     """TaskSpecOpeninferenceServe specifications."""
-
-    def __init__(
-        self,
-        function: str,
-        volumes: list[dict] | None = None,
-        resources: dict | None = None,
-        envs: list[dict] | None = None,
-        secrets: list[str] | None = None,
-        profile: str | None = None,
-        replicas: int | None = None,
-        service_type: str | None = None,
-        service_name: str | None = None,
-        **kwargs,
-    ) -> None:
-        super().__init__(
-            function=function,
-            volumes=volumes,
-            resources=resources,
-            envs=envs,
-            secrets=secrets,
-            profile=profile,
-            **kwargs,
-        )
-        self.replicas = replicas
-        self.service_type = service_type
-        self.service_name = service_name
-
-
-class TaskValidatorOpeninferenceServe(TaskValidatorFunction):
-    """
-    TaskValidatorOpeninferenceServe validator.
-    """
-
-    replicas: int | None = Field(default=None, ge=1)
-    """Number of replicas."""
-
-    service_type: CoreServiceType | None = None
-    """Service type."""
-
-    service_name: str | None = None
-    """Service name."""

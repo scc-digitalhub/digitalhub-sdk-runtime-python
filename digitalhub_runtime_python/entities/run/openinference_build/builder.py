@@ -11,7 +11,6 @@ from digitalhub_runtime_python.entities._commons.enums import EntityKinds
 from digitalhub_runtime_python.entities.run.openinference_build.entity import RunOpeninferenceRunBuild
 from digitalhub_runtime_python.entities.run.openinference_build.spec import (
     RunSpecOpeninferenceRunBuild,
-    RunValidatorOpeninferenceRunBuild,
 )
 from digitalhub_runtime_python.entities.run.openinference_build.status import RunStatusOpeninferenceRunBuild
 
@@ -23,6 +22,5 @@ class RunOpeninferenceRunBuildBuilder(RunBuilder, RuntimeEntityBuilderOpeninfere
 
     ENTITY_CLASS = RunOpeninferenceRunBuild
     ENTITY_SPEC_CLASS = RunSpecOpeninferenceRunBuild
-    ENTITY_SPEC_VALIDATOR = RunValidatorOpeninferenceRunBuild
     ENTITY_STATUS_CLASS = RunStatusOpeninferenceRunBuild
     ENTITY_KIND = EntityKinds.RUN_OPENINFERENCE_BUILD.value

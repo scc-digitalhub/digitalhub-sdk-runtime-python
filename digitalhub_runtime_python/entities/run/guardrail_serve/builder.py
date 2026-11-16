@@ -11,7 +11,6 @@ from digitalhub_runtime_python.entities._commons.enums import EntityKinds
 from digitalhub_runtime_python.entities.run.guardrail_serve.entity import RunGuardrailRunServe
 from digitalhub_runtime_python.entities.run.guardrail_serve.spec import (
     RunSpecGuardrailRunServe,
-    RunValidatorGuardrailRunServe,
 )
 from digitalhub_runtime_python.entities.run.guardrail_serve.status import RunStatusGuardrailRunServe
 
@@ -23,6 +22,5 @@ class RunGuardrailRunServeBuilder(RunBuilder, RuntimeEntityBuilderGuardrail):
 
     ENTITY_CLASS = RunGuardrailRunServe
     ENTITY_SPEC_CLASS = RunSpecGuardrailRunServe
-    ENTITY_SPEC_VALIDATOR = RunValidatorGuardrailRunServe
     ENTITY_STATUS_CLASS = RunStatusGuardrailRunServe
     ENTITY_KIND = EntityKinds.RUN_GUARDRAIL_SERVE.value

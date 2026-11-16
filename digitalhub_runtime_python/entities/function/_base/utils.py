@@ -19,7 +19,7 @@ from digitalhub.utils.generic_utils import create_archive, decode_base64_string,
 from digitalhub.utils.io_utils import write_text
 from digitalhub.utils.uri_utils import has_local_scheme
 
-from digitalhub_runtime_python.entities.function._base.models import Lang
+from digitalhub_runtime_python.entities.function._base.models import Lang, SourceValidator
 
 if typing.TYPE_CHECKING:
     from digitalhub_runtime_python.entities.function._base.spec import FunctionBaseSpec
@@ -40,7 +40,7 @@ def get_current_python_version() -> str:
 
 
 class _LocalSourceExport:
-    def __init__(self, source: dict, root: Path) -> None:
+    def __init__(self, source: SourceValidator, root: Path) -> None:
         self.source = source
         self.root = root
         self.base64 = None
@@ -49,14 +49,15 @@ class _LocalSourceExport:
         # Strip base64 from source at following conditions:
         # - source is local path
         # - base64 is not None
-        source_path = self.source.get("source")
+        source_path = self.source.source
         if source_path is None or not has_local_scheme(source_path):
             return
 
         # Check base64. If it is set, decode it in a local file
         # save in variable to restore on object after export
-        self.base64 = self.source.pop("base64", None)
+        self.base64 = self.source.base64
         if self.base64 is not None:
+            self.source.base64 = None
             # Write local file
             write_text(self.root / source_path, decode_base64_string(self.base64))
         return
@@ -64,10 +65,10 @@ class _LocalSourceExport:
     def __exit__(self, exc_type, exc_value, traceback) -> None:
         # Restore base64 after export, including when export raises an exception.
         if self.base64 is not None:
-            self.source["base64"] = self.base64
+            self.source.base64 = self.base64
 
 
-def export_local_source(source: dict, root: Path) -> _LocalSourceExport:
+def export_local_source(source: SourceValidator, root: Path) -> _LocalSourceExport:
     return _LocalSourceExport(source, root)
 
 
@@ -185,9 +186,9 @@ def source_post_check(exec: _TVersionedEntity) -> _TVersionedEntity:
         Updated executable.
     """
     function = cast(_FunctionWithSource, exec)
-    source = cast(dict, function.spec.source)
-    code_src = source.get("source", None)
-    base64 = source.get("base64", None)
+    source = function.spec.source
+    code_src = source.source
+    base64 = source.base64
     if code_src is None or base64 is not None:
         return exec
 
@@ -204,18 +205,18 @@ def source_post_check(exec: _TVersionedEntity) -> _TVersionedEntity:
             try:
                 dst = build_zip_path(cast(VersionedEntityProtocol, exec), archive_path.name)
                 get_store(dst).upload(str(archive_path), dst)
-                source["source"] = dst
+                source.source = dst
             finally:
                 archive_path.unlink(missing_ok=True)
 
         # If source is a file, read it and encode it in base64
         elif eval_py_type(code_src):
-            source["base64"] = read_source(code_src)
+            source.base64 = read_source(code_src)
 
         # If source is a zip file, upload it and update the source
         elif eval_zip_type(code_src):
             dst = build_zip_path(cast(VersionedEntityProtocol, exec), path_src.name)
             get_store(dst).upload(code_src, dst)
-            source["source"] = dst
+            source.source = dst
 
     return exec

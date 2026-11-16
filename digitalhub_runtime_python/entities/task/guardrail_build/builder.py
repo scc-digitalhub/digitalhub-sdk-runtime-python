@@ -11,7 +11,6 @@ from digitalhub_runtime_python.entities._commons.enums import EntityKinds
 from digitalhub_runtime_python.entities.task.guardrail_build.entity import TaskGuardrailBuild
 from digitalhub_runtime_python.entities.task.guardrail_build.spec import (
     TaskSpecGuardrailBuild,
-    TaskValidatorGuardrailBuild,
 )
 from digitalhub_runtime_python.entities.task.guardrail_build.status import TaskStatusGuardrailBuild
 
@@ -23,6 +22,5 @@ class TaskGuardrailBuildBuilder(TaskBuilder, RuntimeEntityBuilderGuardrail):
 
     ENTITY_CLASS = TaskGuardrailBuild
     ENTITY_SPEC_CLASS = TaskSpecGuardrailBuild
-    ENTITY_SPEC_VALIDATOR = TaskValidatorGuardrailBuild
     ENTITY_STATUS_CLASS = TaskStatusGuardrailBuild
     ENTITY_KIND = EntityKinds.TASK_GUARDRAIL_BUILD.value

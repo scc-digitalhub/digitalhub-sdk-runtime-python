@@ -11,7 +11,6 @@ from digitalhub_runtime_python.entities._commons.enums import EntityKinds
 from digitalhub_runtime_python.entities.task.openinference_serve.entity import TaskOpeninferenceServe
 from digitalhub_runtime_python.entities.task.openinference_serve.spec import (
     TaskSpecOpeninferenceServe,
-    TaskValidatorOpeninferenceServe,
 )
 from digitalhub_runtime_python.entities.task.openinference_serve.status import TaskStatusOpeninferenceServe
 
@@ -23,6 +22,5 @@ class TaskOpeninferenceServeBuilder(TaskBuilder, RuntimeEntityBuilderOpeninferen
 
     ENTITY_CLASS = TaskOpeninferenceServe
     ENTITY_SPEC_CLASS = TaskSpecOpeninferenceServe
-    ENTITY_SPEC_VALIDATOR = TaskValidatorOpeninferenceServe
     ENTITY_STATUS_CLASS = TaskStatusOpeninferenceServe
     ENTITY_KIND = EntityKinds.TASK_OPENINFERENCE_SERVE.value
