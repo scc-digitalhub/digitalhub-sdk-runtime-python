@@ -5,7 +5,8 @@
 from __future__ import annotations
 
 from digitalhub_runtime_python.entities.run._base.spec import RunSpecGuardrail
+from digitalhub_runtime_python.entities.task._base.spec import ServeSpecMixin
 
 
-class RunSpecGuardrailRunServe(RunSpecGuardrail):
+class RunSpecGuardrailRunServe(RunSpecGuardrail, ServeSpecMixin):
     """RunSpecGuardrailRunServe specifications."""

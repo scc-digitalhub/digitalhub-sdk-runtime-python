@@ -19,9 +19,7 @@ class RunSpecBaseRun(RunSpec):
     base_image: str | None = None
     python_version: PythonVersion | None = None
     requirements: list[str] | str | None = None
-
     init_parameters: dict | None = None
-    """Init function parameters."""
 
 
 class RunSpecPython(RunSpecBaseRun):

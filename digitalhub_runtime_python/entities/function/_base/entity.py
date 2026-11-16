@@ -55,20 +55,18 @@ class FunctionBaseFunction(Function):
         with export_local_source(self.spec.source, self._context().root):
             config = getattr(self.spec, "config", None)
             # Check base64. If it is set, decode it in a local file
-            # save in variable to restore on object after export
-            base64 = None
-            if config is not None:
-                base64 = config.pop("base64", None)
-                if base64 is not None:
-                    # Write local file
-                    config_pth = self._context().root / "config.yaml"
-                    write_text(config_pth, decode_base64_string(base64))
+            if config is None or (base64 := config.get("base64")) is None:
+                return super().export()
 
+            export_config = dict(config)
+            export_config.pop("base64")
+            self.spec.config = export_config
             try:
+                config_pth = self._context().root / "config.yaml"
+                write_text(config_pth, decode_base64_string(base64))
                 return super().export()
             finally:
-                if config is not None and base64 is not None:
-                    config["base64"] = base64
+                self.spec.config = config
 
     def build(
         self,

@@ -5,7 +5,8 @@
 from __future__ import annotations
 
 from digitalhub_runtime_python.entities.run._base.spec import RunSpecPython
+from digitalhub_runtime_python.entities.task._base.spec import ServeSpecMixin
 
 
-class RunSpecPythonRunServe(RunSpecPython):
+class RunSpecPythonRunServe(RunSpecPython, ServeSpecMixin):
     """RunSpecPythonRunServe specifications."""

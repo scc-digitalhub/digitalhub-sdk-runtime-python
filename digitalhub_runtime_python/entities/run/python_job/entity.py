@@ -6,6 +6,8 @@ from __future__ import annotations
 
 import typing
 
+from digitalhub.entities.run._base.entity import LocalExecutionRunMixin
+
 from digitalhub_runtime_python.entities.run._base.entity import RunBaseRun
 
 if typing.TYPE_CHECKING:
@@ -13,7 +15,7 @@ if typing.TYPE_CHECKING:
     from digitalhub_runtime_python.entities.run.python_job.status import RunStatusPythonRunJob
 
 
-class RunPythonRunJob(RunBaseRun):
+class RunPythonRunJob(LocalExecutionRunMixin, RunBaseRun):
     """
     RunPythonRunJob class.
     """
@@ -23,17 +25,6 @@ class RunPythonRunJob(RunBaseRun):
 
         self.spec: RunSpecPythonRunJob
         self.status: RunStatusPythonRunJob
-
-    def local_execution(self) -> bool:
-        """
-        Check if run has local execution.
-
-        Returns
-        -------
-        bool
-            True if run has local execution, False otherwise.
-        """
-        return self.spec.local_execution
 
     def add_output(self, name: str, value: str) -> None:
         """
