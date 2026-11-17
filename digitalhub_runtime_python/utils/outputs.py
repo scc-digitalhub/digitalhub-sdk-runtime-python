@@ -287,7 +287,7 @@ def build_new_status(
     parsed_execution: dict,
 ) -> dict:
     """
-    Build run status after execution.
+    Build run status after execution, including entities registered in the current context.
 
     Parameters
     ----------
@@ -302,7 +302,7 @@ def build_new_status(
         Status dict.
     """
     results = {}
-    outputs = {**get_context(project_name).logged}
+    outputs = dict(get_context(project_name).logged)
     try:
         for key, value in parsed_execution.items():
             if isinstance(value, (Dataitem, Artifact, Model)):
