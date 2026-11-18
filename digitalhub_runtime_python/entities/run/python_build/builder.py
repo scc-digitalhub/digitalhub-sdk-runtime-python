@@ -8,9 +8,9 @@ from digitalhub.entities.run._base.builder import RunBuilder
 
 from digitalhub_runtime_python.entities._base.runtime_entity.builder import RuntimeEntityBuilderPython
 from digitalhub_runtime_python.entities._commons.enums import EntityKinds
+from digitalhub_runtime_python.entities.run._base.status import RunStatusBaseRun
 from digitalhub_runtime_python.entities.run.python_build.entity import RunPythonRunBuild
 from digitalhub_runtime_python.entities.run.python_build.spec import RunSpecPythonRunBuild
-from digitalhub_runtime_python.entities.run.python_build.status import RunStatusPythonRunBuild
 
 
 class RunPythonRunBuildBuilder(RunBuilder, RuntimeEntityBuilderPython):
@@ -20,5 +20,5 @@ class RunPythonRunBuildBuilder(RunBuilder, RuntimeEntityBuilderPython):
 
     ENTITY_CLASS = RunPythonRunBuild
     ENTITY_SPEC_CLASS = RunSpecPythonRunBuild
-    ENTITY_STATUS_CLASS = RunStatusPythonRunBuild
+    ENTITY_STATUS_CLASS = RunStatusBaseRun
     ENTITY_KIND = EntityKinds.RUN_PYTHON_BUILD.value

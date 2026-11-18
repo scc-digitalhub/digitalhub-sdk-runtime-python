@@ -9,8 +9,9 @@ import typing
 from digitalhub_runtime_python.entities.function._base.entity import FunctionBaseFunction
 
 if typing.TYPE_CHECKING:
-    from digitalhub_runtime_python.entities.function.python.spec import FunctionSpecPython
-    from digitalhub_runtime_python.entities.function.python.status import FunctionStatusPython
+    from digitalhub.entities._base.entity.status import Status
+
+    from digitalhub_runtime_python.entities.function._base.spec import FunctionBaseSpec
 
 
 class FunctionPython(FunctionBaseFunction):
@@ -21,5 +22,5 @@ class FunctionPython(FunctionBaseFunction):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        self.spec: FunctionSpecPython
-        self.status: FunctionStatusPython
+        self.spec: FunctionBaseSpec
+        self.status: Status

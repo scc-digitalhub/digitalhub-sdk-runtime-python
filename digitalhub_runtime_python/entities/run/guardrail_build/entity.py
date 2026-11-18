@@ -9,8 +9,8 @@ import typing
 from digitalhub_runtime_python.entities.run._base.entity import RunBaseBuildRun
 
 if typing.TYPE_CHECKING:
+    from digitalhub_runtime_python.entities.run._base.status import RunStatusBaseRun
     from digitalhub_runtime_python.entities.run.guardrail_build.spec import RunSpecGuardrailRunBuild
-    from digitalhub_runtime_python.entities.run.guardrail_build.status import RunStatusGuardrailRunBuild
 
 
 class RunGuardrailRunBuild(RunBaseBuildRun):
@@ -22,4 +22,4 @@ class RunGuardrailRunBuild(RunBaseBuildRun):
         super().__init__(*args, **kwargs)
 
         self.spec: RunSpecGuardrailRunBuild
-        self.status: RunStatusGuardrailRunBuild
+        self.status: RunStatusBaseRun

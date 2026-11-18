@@ -9,8 +9,9 @@ import typing
 from digitalhub_runtime_python.entities.function._base.entity import FunctionBaseFunction
 
 if typing.TYPE_CHECKING:
+    from digitalhub.entities._base.entity.status import Status
+
     from digitalhub_runtime_python.entities.function.guardrail.spec import FunctionSpecGuardrail
-    from digitalhub_runtime_python.entities.function.guardrail.status import FunctionStatusGuardrail
 
 
 class FunctionGuardrail(FunctionBaseFunction):
@@ -22,4 +23,4 @@ class FunctionGuardrail(FunctionBaseFunction):
         super().__init__(*args, **kwargs)
 
         self.spec: FunctionSpecGuardrail
-        self.status: FunctionStatusGuardrail
+        self.status: Status

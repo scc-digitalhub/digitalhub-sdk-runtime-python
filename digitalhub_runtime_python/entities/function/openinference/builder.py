@@ -4,6 +4,8 @@
 
 from __future__ import annotations
 
+from digitalhub.entities._base.entity.status import Status
+
 from digitalhub_runtime_python.entities._base.runtime_entity.builder import RuntimeEntityBuilderOpeninference
 from digitalhub_runtime_python.entities._commons.enums import EntityKinds
 from digitalhub_runtime_python.entities.function._base.builder import FunctionBaseBuilder
@@ -11,7 +13,6 @@ from digitalhub_runtime_python.entities.function.openinference.entity import Fun
 from digitalhub_runtime_python.entities.function.openinference.spec import (
     FunctionSpecOpeninference,
 )
-from digitalhub_runtime_python.entities.function.openinference.status import FunctionStatusOpeninference
 
 
 class FunctionOpeninferenceBuilder(FunctionBaseBuilder, RuntimeEntityBuilderOpeninference):
@@ -21,5 +22,5 @@ class FunctionOpeninferenceBuilder(FunctionBaseBuilder, RuntimeEntityBuilderOpen
 
     ENTITY_CLASS = FunctionOpeninference
     ENTITY_SPEC_CLASS = FunctionSpecOpeninference
-    ENTITY_STATUS_CLASS = FunctionStatusOpeninference
+    ENTITY_STATUS_CLASS = Status
     ENTITY_KIND = EntityKinds.FUNCTION_OPENINFERENCE.value

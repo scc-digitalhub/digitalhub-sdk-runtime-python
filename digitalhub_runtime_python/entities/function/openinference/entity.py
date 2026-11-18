@@ -9,8 +9,9 @@ import typing
 from digitalhub_runtime_python.entities.function._base.entity import FunctionBaseFunction
 
 if typing.TYPE_CHECKING:
+    from digitalhub.entities._base.entity.status import Status
+
     from digitalhub_runtime_python.entities.function.openinference.spec import FunctionSpecOpeninference
-    from digitalhub_runtime_python.entities.function.openinference.status import FunctionStatusOpeninference
 
 
 class FunctionOpeninference(FunctionBaseFunction):
@@ -22,4 +23,4 @@ class FunctionOpeninference(FunctionBaseFunction):
         super().__init__(*args, **kwargs)
 
         self.spec: FunctionSpecOpeninference
-        self.status: FunctionStatusOpeninference
+        self.status: Status

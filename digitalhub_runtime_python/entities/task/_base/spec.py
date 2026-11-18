@@ -4,9 +4,7 @@
 
 from __future__ import annotations
 
-from digitalhub.entities._base.entity.spec import Spec
-from digitalhub.entities.task._base.models import CoreServiceType
-from digitalhub.entities.task._base.spec import BuildSpecMixin, TaskSpecFunction
+from digitalhub.entities.task._base.spec import BuildSpecMixin, ServeSpecMixin, TaskSpecFunction
 from pydantic import Field
 
 
@@ -14,13 +12,7 @@ class TaskSpecBuild(TaskSpecFunction, BuildSpecMixin):
     """Shared build-task specification."""
 
 
-class ServeSpecMixin(Spec):
-    """Spec mixin for Python serve action fields."""
-
-    replicas: int | None = Field(default=None, ge=1)
-    service_type: CoreServiceType | None = None
-    service_name: str | None = None
-
-
 class TaskSpecServe(TaskSpecFunction, ServeSpecMixin):
     """Shared serve-task specification."""
+
+    replicas: int | None = Field(default=None, ge=1)

@@ -11,8 +11,8 @@ from digitalhub.entities.run._base.entity import LocalExecutionRunMixin
 from digitalhub_runtime_python.entities.run._base.entity import RunBaseRun
 
 if typing.TYPE_CHECKING:
+    from digitalhub_runtime_python.entities.run._base.status import RunStatusBaseRun
     from digitalhub_runtime_python.entities.run.python_job.spec import RunSpecPythonRunJob
-    from digitalhub_runtime_python.entities.run.python_job.status import RunStatusPythonRunJob
 
 
 class RunPythonRunJob(LocalExecutionRunMixin, RunBaseRun):
@@ -24,7 +24,7 @@ class RunPythonRunJob(LocalExecutionRunMixin, RunBaseRun):
         super().__init__(*args, **kwargs)
 
         self.spec: RunSpecPythonRunJob
-        self.status: RunStatusPythonRunJob
+        self.status: RunStatusBaseRun
 
     def add_output(self, name: str, value: str) -> None:
         """

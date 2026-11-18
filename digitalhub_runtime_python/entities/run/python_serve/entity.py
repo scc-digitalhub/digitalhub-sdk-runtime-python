@@ -12,8 +12,8 @@ from digitalhub.utils.exceptions import EntityError
 from digitalhub_runtime_python.entities.run._base.entity import RunBaseRun
 
 if typing.TYPE_CHECKING:
+    from digitalhub_runtime_python.entities.run._base.status import RunStatusBaseRun
     from digitalhub_runtime_python.entities.run.python_serve.spec import RunSpecPythonRunServe
-    from digitalhub_runtime_python.entities.run.python_serve.status import RunStatusPythonRunServe
 
 
 class RunPythonRunServe(RunBaseRun):
@@ -25,7 +25,7 @@ class RunPythonRunServe(RunBaseRun):
         super().__init__(*args, **kwargs)
 
         self.spec: RunSpecPythonRunServe
-        self.status: RunStatusPythonRunServe
+        self.status: RunStatusBaseRun
 
     def invoke(
         self,

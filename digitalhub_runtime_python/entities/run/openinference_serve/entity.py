@@ -9,8 +9,8 @@ import typing
 from digitalhub_runtime_python.entities.run._base.entity import RunBaseRun
 
 if typing.TYPE_CHECKING:
+    from digitalhub_runtime_python.entities.run._base.status import RunStatusBaseRun
     from digitalhub_runtime_python.entities.run.openinference_serve.spec import RunSpecOpeninferenceRunServe
-    from digitalhub_runtime_python.entities.run.openinference_serve.status import RunStatusOpeninferenceRunServe
 
 
 class RunOpeninferenceRunServe(RunBaseRun):
@@ -22,4 +22,4 @@ class RunOpeninferenceRunServe(RunBaseRun):
         super().__init__(*args, **kwargs)
 
         self.spec: RunSpecOpeninferenceRunServe
-        self.status: RunStatusOpeninferenceRunServe
+        self.status: RunStatusBaseRun

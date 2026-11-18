@@ -1,7 +1,7 @@
 import sys
 
 import pytest
-from digitalhub.entities.function._base.spec import FunctionSpec
+from digitalhub.entities._base.entity.spec import Spec
 
 from digitalhub_runtime_python.entities.function._base.entity import FunctionBaseFunction
 from digitalhub_runtime_python.entities.function._base.models import PythonVersion, SourceValidator
@@ -11,7 +11,6 @@ from digitalhub_runtime_python.entities.function.guardrail.spec import FunctionS
 from digitalhub_runtime_python.entities.function.openinference.spec import (
     FunctionSpecOpeninference,
 )
-from digitalhub_runtime_python.entities.function.python.spec import FunctionSpecPython
 
 CURRENT_PYTHON_VERSION = f"PYTHON{sys.version_info.major}_{sys.version_info.minor}"
 
@@ -19,22 +18,19 @@ CURRENT_PYTHON_VERSION = f"PYTHON{sys.version_info.major}_{sys.version_info.mino
 def test_function_specs_leave_python_version_unset():
     source = SourceValidator(source="source.py", handler="predict")
 
-    assert FunctionSpecPython(source=source).python_version is None
+    assert FunctionBaseSpec(source=source).python_version is None
     assert FunctionSpecGuardrail(source=source, processing_mode=ProcessingMode.PREPROCESSOR).python_version is None
     assert FunctionSpecOpeninference(source=source).python_version is None
 
 
 def test_function_specs_share_base_spec():
-    base_spec = FunctionSpecPython.__bases__[0]
-
-    assert base_spec.__name__ == "FunctionBaseSpec"
-    assert FunctionSpecGuardrail.__bases__[0] is base_spec
-    assert FunctionSpecOpeninference.__bases__[0] is base_spec
+    assert FunctionSpecGuardrail.__bases__[0] is FunctionBaseSpec
+    assert FunctionSpecOpeninference.__bases__[0] is FunctionBaseSpec
 
 
 @pytest.mark.parametrize(
     "spec_class",
-    [FunctionSpecPython, FunctionSpecGuardrail, FunctionSpecOpeninference],
+    [FunctionBaseSpec, FunctionSpecGuardrail, FunctionSpecOpeninference],
 )
 def test_function_specs_allow_python_version_to_be_unset(spec_class):
     field = spec_class.model_fields["python_version"]
@@ -45,14 +41,14 @@ def test_function_specs_allow_python_version_to_be_unset(spec_class):
 
 @pytest.mark.parametrize(
     "spec_class",
-    [FunctionSpecPython, FunctionSpecGuardrail, FunctionSpecOpeninference],
+    [FunctionBaseSpec, FunctionSpecGuardrail, FunctionSpecOpeninference],
 )
 def test_function_specs_keep_shared_source_field(spec_class):
     assert spec_class.model_fields["source"].annotation is SourceValidator
 
 
 def test_python_version_validator_returns_value_string():
-    spec = FunctionSpecPython(
+    spec = FunctionBaseSpec(
         source=SourceValidator(source="source.py", handler="predict"),
         python_version=PythonVersion.PYTHON3_11,
     )
@@ -62,13 +58,13 @@ def test_python_version_validator_returns_value_string():
 
 
 def test_function_base_spec_is_a_pydantic_spec():
-    assert issubclass(FunctionBaseSpec, FunctionSpec)
+    assert issubclass(FunctionBaseSpec, Spec)
     assert "source" in FunctionBaseSpec.model_fields
 
 
 def test_pre_save_hook_defaults_python_version_to_current():
     function = object.__new__(FunctionBaseFunction)
-    function.spec = FunctionSpecPython(
+    function.spec = FunctionBaseSpec(
         source=SourceValidator(source="source.py", handler="predict"),
         requirements=[],
     )
@@ -81,7 +77,7 @@ def test_pre_save_hook_defaults_python_version_to_current():
 def test_local_execution_rejects_mismatched_python_version_from_spec():
     mismatch = next(version.value for version in PythonVersion if version.value != CURRENT_PYTHON_VERSION)
     function = object.__new__(FunctionBaseFunction)
-    function.spec = FunctionSpecPython(
+    function.spec = FunctionBaseSpec(
         source=SourceValidator(source="source.py", handler="predict"),
         python_version=mismatch,
     )

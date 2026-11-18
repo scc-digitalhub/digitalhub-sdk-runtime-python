@@ -10,12 +10,12 @@ from pydantic import ValidationError
 import digitalhub_runtime_python.entities.function._base.entity as function_entity_module
 from digitalhub_runtime_python.entities.function._base.entity import FunctionBaseFunction
 from digitalhub_runtime_python.entities.function._base.models import SourceValidator
+from digitalhub_runtime_python.entities.function._base.spec import FunctionBaseSpec
 from digitalhub_runtime_python.entities.function.guardrail.models import ProcessingMode
 from digitalhub_runtime_python.entities.function.guardrail.spec import FunctionSpecGuardrail
 from digitalhub_runtime_python.entities.function.openinference.models import TensorValidator
 from digitalhub_runtime_python.entities.function.openinference.spec import FunctionSpecOpeninference
 from digitalhub_runtime_python.entities.function.python.builder import FunctionPythonBuilder
-from digitalhub_runtime_python.entities.function.python.spec import FunctionSpecPython
 from digitalhub_runtime_python.entities.run.guardrail_serve.spec import RunSpecGuardrailRunServe
 from digitalhub_runtime_python.entities.run.openinference_build.spec import RunSpecOpeninferenceRunBuild
 from digitalhub_runtime_python.entities.run.python_build.spec import RunSpecPythonRunBuild
@@ -28,10 +28,11 @@ from digitalhub_runtime_python.entities.task.python_serve.spec import TaskSpecPy
 def test_function_spec_rejects_unknown_build_parameters():
     with pytest.raises(TypeError, match="unknown_parameter"):
         build_spec(
-            FunctionSpecPython,
+            FunctionBaseSpec,
             source=SourceValidator(source="source.py", handler="predict"),
             unknown_parameter=True,
         )
+
 
 def test_function_specs_validate_action_fields_and_roundtrip():
     with pytest.raises(ValidationError):

@@ -52,7 +52,12 @@ class RunBaseRun(Run):
             self.update()
         self.spec.inputs = inputs
 
-    def wait(self, log_info: bool = True) -> Run:
+    def wait(
+        self,
+        log_info: bool = True,
+        timeout: float | None = None,
+        poll_interval: float = 5.0,
+    ) -> Run:
         """
         Wait for run to finish.
 
@@ -60,6 +65,10 @@ class RunBaseRun(Run):
         ----------
         log_info : bool
             If True, log information.
+        timeout : float | None
+            Maximum wait time in seconds.
+        poll_interval : float
+            Time between status checks in seconds.
 
         Returns
         -------
@@ -98,7 +107,11 @@ class RunBaseRun(Run):
 
             return self
 
-        return super().wait(log_info=log_info)
+        return super().wait(
+            log_info=log_info,
+            timeout=timeout,
+            poll_interval=poll_interval,
+        )
 
     def inputs(self, as_dict: bool = False) -> dict:
         """
