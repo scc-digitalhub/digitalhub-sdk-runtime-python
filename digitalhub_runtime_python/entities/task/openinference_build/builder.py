@@ -4,15 +4,13 @@
 
 from __future__ import annotations
 
+from digitalhub.entities._base.entity.status import Status
 from digitalhub.entities.task._base.builder import TaskBuilder
 
 from digitalhub_runtime_python.entities._base.runtime_entity.builder import RuntimeEntityBuilderOpeninference
 from digitalhub_runtime_python.entities._commons.enums import EntityKinds
+from digitalhub_runtime_python.entities.task._base.spec import TaskSpecBuild
 from digitalhub_runtime_python.entities.task.openinference_build.entity import TaskOpeninferenceBuild
-from digitalhub_runtime_python.entities.task.openinference_build.spec import (
-    TaskSpecOpeninferenceBuild,
-)
-from digitalhub_runtime_python.entities.task.openinference_build.status import TaskStatusOpeninferenceBuild
 
 
 class TaskOpeninferenceBuildBuilder(TaskBuilder, RuntimeEntityBuilderOpeninference):
@@ -21,6 +19,6 @@ class TaskOpeninferenceBuildBuilder(TaskBuilder, RuntimeEntityBuilderOpeninferen
     """
 
     ENTITY_CLASS = TaskOpeninferenceBuild
-    ENTITY_SPEC_CLASS = TaskSpecOpeninferenceBuild
-    ENTITY_STATUS_CLASS = TaskStatusOpeninferenceBuild
+    ENTITY_SPEC_CLASS = TaskSpecBuild
+    ENTITY_STATUS_CLASS = Status
     ENTITY_KIND = EntityKinds.TASK_OPENINFERENCE_BUILD.value

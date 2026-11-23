@@ -9,8 +9,9 @@ import typing
 from digitalhub.entities.task._base.entity import Task
 
 if typing.TYPE_CHECKING:
-    from digitalhub_runtime_python.entities.task.openinference_build.spec import TaskSpecOpeninferenceBuild
-    from digitalhub_runtime_python.entities.task.openinference_build.status import TaskStatusOpeninferenceBuild
+    from digitalhub.entities._base.entity.status import Status
+
+    from digitalhub_runtime_python.entities.task._base.spec import TaskSpecBuild
 
 
 class TaskOpeninferenceBuild(Task):
@@ -21,5 +22,5 @@ class TaskOpeninferenceBuild(Task):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        self.spec: TaskSpecOpeninferenceBuild
-        self.status: TaskStatusOpeninferenceBuild
+        self.spec: TaskSpecBuild
+        self.status: Status

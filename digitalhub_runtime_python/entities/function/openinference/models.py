@@ -29,14 +29,14 @@ class TensorDatatype(Enum):
     FP64 = "FP64"
 
 
-class TensorValidator(BaseModel):
+class TensorSpec(BaseModel):
     """
-    Tensor params.
+    Tensor input or output specification.
     """
 
     model_config = ConfigDict(use_enum_values=True)
 
-    name: str = None
+    name: str | None = None
     "Tensor name."
 
     shape: list[int] = Field(default_factory=list)

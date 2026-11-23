@@ -4,15 +4,13 @@
 
 from __future__ import annotations
 
+from digitalhub.entities._base.entity.status import Status
 from digitalhub.entities.task._base.builder import TaskBuilder
 
 from digitalhub_runtime_python.entities._base.runtime_entity.builder import RuntimeEntityBuilderGuardrail
 from digitalhub_runtime_python.entities._commons.enums import EntityKinds
+from digitalhub_runtime_python.entities.task._base.spec import TaskSpecServe
 from digitalhub_runtime_python.entities.task.guardrail_serve.entity import TaskGuardrailServe
-from digitalhub_runtime_python.entities.task.guardrail_serve.spec import (
-    TaskSpecGuardrailServe,
-)
-from digitalhub_runtime_python.entities.task.guardrail_serve.status import TaskStatusGuardrailServe
 
 
 class TaskGuardrailServeBuilder(TaskBuilder, RuntimeEntityBuilderGuardrail):
@@ -21,6 +19,6 @@ class TaskGuardrailServeBuilder(TaskBuilder, RuntimeEntityBuilderGuardrail):
     """
 
     ENTITY_CLASS = TaskGuardrailServe
-    ENTITY_SPEC_CLASS = TaskSpecGuardrailServe
-    ENTITY_STATUS_CLASS = TaskStatusGuardrailServe
+    ENTITY_SPEC_CLASS = TaskSpecServe
+    ENTITY_STATUS_CLASS = Status
     ENTITY_KIND = EntityKinds.TASK_GUARDRAIL_SERVE.value

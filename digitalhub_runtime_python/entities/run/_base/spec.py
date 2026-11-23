@@ -4,14 +4,14 @@
 
 from __future__ import annotations
 
-from digitalhub.entities.run._base.spec import RunSpec
+from digitalhub.entities.run._base.spec import RunSpecFunction
 
 from digitalhub_runtime_python.entities.function._base.models import PythonVersion
 from digitalhub_runtime_python.entities.function.guardrail.models import ProcessingMode
-from digitalhub_runtime_python.entities.function.openinference.models import TensorValidator
+from digitalhub_runtime_python.entities.function.openinference.models import TensorSpec
 
 
-class RunSpecBaseRun(RunSpec):
+class RunSpecBaseRun(RunSpecFunction):
     """RunSpecBaseRun specifications."""
 
     source: dict | None = None
@@ -39,5 +39,5 @@ class RunSpecOpeninference(RunSpecBaseRun):
     """Shared OpenInference run specification."""
 
     model_name: str | None = None
-    inputs: list[TensorValidator] | None = None
-    outputs: list[TensorValidator] | None = None
+    inputs: list[TensorSpec] | None = None
+    outputs: list[TensorSpec] | None = None

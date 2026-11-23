@@ -38,6 +38,3 @@ class PythonSourceCode(HandlerSourceCode):
     REQUIRE_HANDLER: ClassVar[bool] = True
     lang: Lang = Field(default=Lang.PYTHON.value)
     init_function: str | None = None
-
-
-SourceValidator = PythonSourceCode

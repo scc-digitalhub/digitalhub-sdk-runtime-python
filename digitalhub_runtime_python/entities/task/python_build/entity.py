@@ -9,8 +9,9 @@ import typing
 from digitalhub.entities.task._base.entity import Task
 
 if typing.TYPE_CHECKING:
-    from digitalhub_runtime_python.entities.task.python_build.spec import TaskSpecPythonBuild
-    from digitalhub_runtime_python.entities.task.python_build.status import TaskStatusPythonBuild
+    from digitalhub.entities._base.entity.status import Status
+
+    from digitalhub_runtime_python.entities.task._base.spec import TaskSpecBuild
 
 
 class TaskPythonBuild(Task):
@@ -21,5 +22,5 @@ class TaskPythonBuild(Task):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        self.spec: TaskSpecPythonBuild
-        self.status: TaskStatusPythonBuild
+        self.spec: TaskSpecBuild
+        self.status: Status

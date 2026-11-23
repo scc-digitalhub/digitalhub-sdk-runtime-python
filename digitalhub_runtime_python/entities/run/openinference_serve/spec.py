@@ -4,8 +4,9 @@
 
 from __future__ import annotations
 
+from digitalhub.entities._mixin.execution.spec import ServeSpecMixin
+
 from digitalhub_runtime_python.entities.run._base.spec import RunSpecOpeninference
-from digitalhub_runtime_python.entities.task._base.spec import ServeSpecMixin
 
 
 class RunSpecOpeninferenceRunServe(RunSpecOpeninference, ServeSpecMixin):

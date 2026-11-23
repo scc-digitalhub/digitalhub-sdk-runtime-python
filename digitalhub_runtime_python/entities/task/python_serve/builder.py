@@ -4,13 +4,13 @@
 
 from __future__ import annotations
 
+from digitalhub.entities._base.entity.status import Status
 from digitalhub.entities.task._base.builder import TaskBuilder
 
 from digitalhub_runtime_python.entities._base.runtime_entity.builder import RuntimeEntityBuilderPython
 from digitalhub_runtime_python.entities._commons.enums import EntityKinds
+from digitalhub_runtime_python.entities.task._base.spec import TaskSpecServe
 from digitalhub_runtime_python.entities.task.python_serve.entity import TaskPythonServe
-from digitalhub_runtime_python.entities.task.python_serve.spec import TaskSpecPythonServe
-from digitalhub_runtime_python.entities.task.python_serve.status import TaskStatusPythonServe
 
 
 class TaskPythonServeBuilder(TaskBuilder, RuntimeEntityBuilderPython):
@@ -19,6 +19,6 @@ class TaskPythonServeBuilder(TaskBuilder, RuntimeEntityBuilderPython):
     """
 
     ENTITY_CLASS = TaskPythonServe
-    ENTITY_SPEC_CLASS = TaskSpecPythonServe
-    ENTITY_STATUS_CLASS = TaskStatusPythonServe
+    ENTITY_SPEC_CLASS = TaskSpecServe
+    ENTITY_STATUS_CLASS = Status
     ENTITY_KIND = EntityKinds.TASK_PYTHON_SERVE.value

@@ -7,7 +7,7 @@ from __future__ import annotations
 from pydantic import Field
 
 from digitalhub_runtime_python.entities.function._base.spec import FunctionBaseSpec
-from digitalhub_runtime_python.entities.function.openinference.models import TensorValidator
+from digitalhub_runtime_python.entities.function.openinference.models import TensorSpec
 
 
 class FunctionSpecOpeninference(FunctionBaseSpec):
@@ -18,8 +18,8 @@ class FunctionSpecOpeninference(FunctionBaseSpec):
     model_name: str | None = None
     "Model name to be used for the function execution"
 
-    inputs: list[TensorValidator] = Field(default_factory=list)
+    inputs: list[TensorSpec] = Field(default_factory=list)
     "Function inputs."
 
-    outputs: list[TensorValidator] = Field(default_factory=list)
+    outputs: list[TensorSpec] = Field(default_factory=list)
     "Function outputs."
