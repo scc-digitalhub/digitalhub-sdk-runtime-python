@@ -2,28 +2,52 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from digitalhub.plugins import CrudPlugin, EntityPlugin
+from digitalhub.plugins import (
+    Action,
+    BuilderDef,
+    CrudPlugin,
+    ExecFamily,
+    FunctionBuilder,
+    RunBuilder,
+    SourceBuilderMixin,
+    Status,
+    TaskBuilder,
+    TaskSpecFunction,
+)
 
-from digitalhub_runtime_python.entities.function.guardrail.builder import FunctionGuardrailBuilder
+from digitalhub_runtime_python.entities._commons.enums import Actions, EntityKinds
+from digitalhub_runtime_python.entities.function._base.spec import FunctionBaseSpec
 from digitalhub_runtime_python.entities.function.guardrail.crud import new_function_guardrail
-from digitalhub_runtime_python.entities.function.openinference.builder import FunctionOpeninferenceBuilder
+from digitalhub_runtime_python.entities.function.guardrail.entity import FunctionGuardrail
+from digitalhub_runtime_python.entities.function.guardrail.spec import FunctionSpecGuardrail
 from digitalhub_runtime_python.entities.function.openinference.crud import new_function_openinference
-from digitalhub_runtime_python.entities.function.python.builder import FunctionPythonBuilder
+from digitalhub_runtime_python.entities.function.openinference.entity import FunctionOpeninference
+from digitalhub_runtime_python.entities.function.openinference.spec import FunctionSpecOpeninference
 from digitalhub_runtime_python.entities.function.python.crud import new_function_python
-from digitalhub_runtime_python.entities.run.guardrail_build.builder import RunGuardrailRunBuildBuilder
-from digitalhub_runtime_python.entities.run.guardrail_serve.builder import RunGuardrailRunServeBuilder
-from digitalhub_runtime_python.entities.run.openinference_build.builder import RunOpeninferenceRunBuildBuilder
-from digitalhub_runtime_python.entities.run.openinference_serve.builder import RunOpeninferenceRunServeBuilder
-from digitalhub_runtime_python.entities.run.python_build.builder import RunPythonRunBuildBuilder
-from digitalhub_runtime_python.entities.run.python_job.builder import RunPythonRunJobBuilder
-from digitalhub_runtime_python.entities.run.python_serve.builder import RunPythonRunServeBuilder
-from digitalhub_runtime_python.entities.task.guardrail_build.builder import TaskGuardrailBuildBuilder
-from digitalhub_runtime_python.entities.task.guardrail_serve.builder import TaskGuardrailServeBuilder
-from digitalhub_runtime_python.entities.task.openinference_build.builder import TaskOpeninferenceBuildBuilder
-from digitalhub_runtime_python.entities.task.openinference_serve.builder import TaskOpeninferenceServeBuilder
-from digitalhub_runtime_python.entities.task.python_build.builder import TaskPythonBuildBuilder
-from digitalhub_runtime_python.entities.task.python_job.builder import TaskPythonJobBuilder
-from digitalhub_runtime_python.entities.task.python_serve.builder import TaskPythonServeBuilder
+from digitalhub_runtime_python.entities.function.python.entity import FunctionPython
+from digitalhub_runtime_python.entities.run._base.status import RunStatusBaseRun
+from digitalhub_runtime_python.entities.run.guardrail_build.entity import RunGuardrailRunBuild
+from digitalhub_runtime_python.entities.run.guardrail_build.spec import RunSpecGuardrailRunBuild
+from digitalhub_runtime_python.entities.run.guardrail_serve.entity import RunGuardrailRunServe
+from digitalhub_runtime_python.entities.run.guardrail_serve.spec import RunSpecGuardrailRunServe
+from digitalhub_runtime_python.entities.run.openinference_build.entity import RunOpeninferenceRunBuild
+from digitalhub_runtime_python.entities.run.openinference_build.spec import RunSpecOpeninferenceRunBuild
+from digitalhub_runtime_python.entities.run.openinference_serve.entity import RunOpeninferenceRunServe
+from digitalhub_runtime_python.entities.run.openinference_serve.spec import RunSpecOpeninferenceRunServe
+from digitalhub_runtime_python.entities.run.python_build.entity import RunPythonRunBuild
+from digitalhub_runtime_python.entities.run.python_build.spec import RunSpecPythonRunBuild
+from digitalhub_runtime_python.entities.run.python_job.entity import RunPythonRunJob
+from digitalhub_runtime_python.entities.run.python_job.spec import RunSpecPythonRunJob
+from digitalhub_runtime_python.entities.run.python_serve.entity import RunPythonRunServe
+from digitalhub_runtime_python.entities.run.python_serve.spec import RunSpecPythonRunServe
+from digitalhub_runtime_python.entities.task._base.spec import TaskSpecBuild, TaskSpecServe
+from digitalhub_runtime_python.entities.task.guardrail_build.entity import TaskGuardrailBuild
+from digitalhub_runtime_python.entities.task.guardrail_serve.entity import TaskGuardrailServe
+from digitalhub_runtime_python.entities.task.openinference_build.entity import TaskOpeninferenceBuild
+from digitalhub_runtime_python.entities.task.openinference_serve.entity import TaskOpeninferenceServe
+from digitalhub_runtime_python.entities.task.python_build.entity import TaskPythonBuild
+from digitalhub_runtime_python.entities.task.python_job.entity import TaskPythonJob
+from digitalhub_runtime_python.entities.task.python_serve.entity import TaskPythonServe
 
 # Imported on first use: the entities register even when the runtime cannot be
 # imported, and the import error is reported when a run executes locally.
@@ -32,38 +56,128 @@ RUNTIME_OPENINFERENCE_BUILDER = "digitalhub_runtime_python.runtimes.builder:Runt
 RUNTIME_PYTHON_BUILDER = "digitalhub_runtime_python.runtimes.builder:RuntimePythonBuilder"
 RUNTIME_PYTHON_JOB_BUILDER = "digitalhub_runtime_python.runtimes.builder:RuntimePythonJobBuilder"
 
-function_guardrail_plugin = EntityPlugin(
-    builder=FunctionGuardrailBuilder,
-    shortcuts=(CrudPlugin(new_function_guardrail),),
+guardrail = ExecFamily(
+    executable=BuilderDef(
+        EntityKinds.FUNCTION_GUARDRAIL,
+        FunctionGuardrail,
+        FunctionSpecGuardrail,
+        Status,
+        base=FunctionBuilder,
+        mixins=(SourceBuilderMixin,),
+        shortcuts=(CrudPlugin(new_function_guardrail),),
+    ),
+    actions={
+        Actions.BUILD: Action(
+            task=BuilderDef(
+                EntityKinds.TASK_GUARDRAIL_BUILD, TaskGuardrailBuild, TaskSpecBuild, Status, base=TaskBuilder
+            ),
+            run=BuilderDef(
+                EntityKinds.RUN_GUARDRAIL_BUILD,
+                RunGuardrailRunBuild,
+                RunSpecGuardrailRunBuild,
+                RunStatusBaseRun,
+                base=RunBuilder,
+            ),
+        ),
+        Actions.SERVE: Action(
+            task=BuilderDef(
+                EntityKinds.TASK_GUARDRAIL_SERVE, TaskGuardrailServe, TaskSpecServe, Status, base=TaskBuilder
+            ),
+            run=BuilderDef(
+                EntityKinds.RUN_GUARDRAIL_SERVE,
+                RunGuardrailRunServe,
+                RunSpecGuardrailRunServe,
+                RunStatusBaseRun,
+                base=RunBuilder,
+            ),
+        ),
+    },
     runtime_builder=RUNTIME_GUARDRAIL_BUILDER,
 )
-function_openinference_plugin = EntityPlugin(
-    builder=FunctionOpeninferenceBuilder,
-    shortcuts=(CrudPlugin(new_function_openinference),),
+
+openinference = ExecFamily(
+    executable=BuilderDef(
+        EntityKinds.FUNCTION_OPENINFERENCE,
+        FunctionOpeninference,
+        FunctionSpecOpeninference,
+        Status,
+        base=FunctionBuilder,
+        mixins=(SourceBuilderMixin,),
+        shortcuts=(CrudPlugin(new_function_openinference),),
+    ),
+    actions={
+        Actions.BUILD: Action(
+            task=BuilderDef(
+                EntityKinds.TASK_OPENINFERENCE_BUILD, TaskOpeninferenceBuild, TaskSpecBuild, Status, base=TaskBuilder
+            ),
+            run=BuilderDef(
+                EntityKinds.RUN_OPENINFERENCE_BUILD,
+                RunOpeninferenceRunBuild,
+                RunSpecOpeninferenceRunBuild,
+                RunStatusBaseRun,
+                base=RunBuilder,
+            ),
+        ),
+        Actions.SERVE: Action(
+            task=BuilderDef(
+                EntityKinds.TASK_OPENINFERENCE_SERVE, TaskOpeninferenceServe, TaskSpecServe, Status, base=TaskBuilder
+            ),
+            run=BuilderDef(
+                EntityKinds.RUN_OPENINFERENCE_SERVE,
+                RunOpeninferenceRunServe,
+                RunSpecOpeninferenceRunServe,
+                RunStatusBaseRun,
+                base=RunBuilder,
+            ),
+        ),
+    },
     runtime_builder=RUNTIME_OPENINFERENCE_BUILDER,
 )
-function_python_plugin = EntityPlugin(
-    builder=FunctionPythonBuilder,
-    shortcuts=(CrudPlugin(new_function_python),),
+
+python = ExecFamily(
+    executable=BuilderDef(
+        EntityKinds.FUNCTION_PYTHON,
+        FunctionPython,
+        FunctionBaseSpec,
+        Status,
+        base=FunctionBuilder,
+        mixins=(SourceBuilderMixin,),
+        shortcuts=(CrudPlugin(new_function_python),),
+    ),
+    actions={
+        Actions.JOB: Action(
+            task=BuilderDef(EntityKinds.TASK_PYTHON_JOB, TaskPythonJob, TaskSpecFunction, Status, base=TaskBuilder),
+            run=BuilderDef(
+                EntityKinds.RUN_PYTHON_JOB, RunPythonRunJob, RunSpecPythonRunJob, RunStatusBaseRun, base=RunBuilder
+            ),
+            runtime_builder=RUNTIME_PYTHON_JOB_BUILDER,
+        ),
+        Actions.BUILD: Action(
+            task=BuilderDef(EntityKinds.TASK_PYTHON_BUILD, TaskPythonBuild, TaskSpecBuild, Status, base=TaskBuilder),
+            run=BuilderDef(
+                EntityKinds.RUN_PYTHON_BUILD,
+                RunPythonRunBuild,
+                RunSpecPythonRunBuild,
+                RunStatusBaseRun,
+                base=RunBuilder,
+            ),
+        ),
+        Actions.SERVE: Action(
+            task=BuilderDef(EntityKinds.TASK_PYTHON_SERVE, TaskPythonServe, TaskSpecServe, Status, base=TaskBuilder),
+            run=BuilderDef(
+                EntityKinds.RUN_PYTHON_SERVE,
+                RunPythonRunServe,
+                RunSpecPythonRunServe,
+                RunStatusBaseRun,
+                base=RunBuilder,
+            ),
+        ),
+    },
     runtime_builder=RUNTIME_PYTHON_BUILDER,
 )
 
 entity_plugins = (
-    function_guardrail_plugin,
-    function_openinference_plugin,
-    function_python_plugin,
-    EntityPlugin(builder=TaskGuardrailBuildBuilder, runtime_builder=RUNTIME_GUARDRAIL_BUILDER),
-    EntityPlugin(builder=TaskGuardrailServeBuilder, runtime_builder=RUNTIME_GUARDRAIL_BUILDER),
-    EntityPlugin(builder=TaskOpeninferenceBuildBuilder, runtime_builder=RUNTIME_OPENINFERENCE_BUILDER),
-    EntityPlugin(builder=TaskOpeninferenceServeBuilder, runtime_builder=RUNTIME_OPENINFERENCE_BUILDER),
-    EntityPlugin(builder=TaskPythonBuildBuilder, runtime_builder=RUNTIME_PYTHON_BUILDER),
-    EntityPlugin(builder=TaskPythonJobBuilder, runtime_builder=RUNTIME_PYTHON_JOB_BUILDER),
-    EntityPlugin(builder=TaskPythonServeBuilder, runtime_builder=RUNTIME_PYTHON_BUILDER),
-    EntityPlugin(builder=RunGuardrailRunBuildBuilder, runtime_builder=RUNTIME_GUARDRAIL_BUILDER),
-    EntityPlugin(builder=RunGuardrailRunServeBuilder, runtime_builder=RUNTIME_GUARDRAIL_BUILDER),
-    EntityPlugin(builder=RunOpeninferenceRunBuildBuilder, runtime_builder=RUNTIME_OPENINFERENCE_BUILDER),
-    EntityPlugin(builder=RunOpeninferenceRunServeBuilder, runtime_builder=RUNTIME_OPENINFERENCE_BUILDER),
-    EntityPlugin(builder=RunPythonRunBuildBuilder, runtime_builder=RUNTIME_PYTHON_BUILDER),
-    EntityPlugin(builder=RunPythonRunJobBuilder, runtime_builder=RUNTIME_PYTHON_JOB_BUILDER),
-    EntityPlugin(builder=RunPythonRunServeBuilder, runtime_builder=RUNTIME_PYTHON_BUILDER),
+    *guardrail.plugins(),
+    *openinference.plugins(),
+    *python.plugins(),
 )

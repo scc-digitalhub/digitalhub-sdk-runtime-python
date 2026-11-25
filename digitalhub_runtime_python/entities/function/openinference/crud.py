@@ -8,7 +8,7 @@ import typing
 
 from digitalhub.entities.function.crud import new_function
 
-from digitalhub_runtime_python.entities.function.openinference.builder import FunctionOpeninferenceBuilder
+from digitalhub_runtime_python.entities._commons.enums import EntityKinds
 
 if typing.TYPE_CHECKING:
     from digitalhub_runtime_python.entities.function.openinference.entity import FunctionOpeninference
@@ -61,7 +61,7 @@ def new_function_openinference(
     return new_function(
         project=project,
         name=name,
-        kind=FunctionOpeninferenceBuilder.ENTITY_KIND,
+        kind=EntityKinds.FUNCTION_OPENINFERENCE.value,
         uuid=uuid,
         version=version,
         description=description,

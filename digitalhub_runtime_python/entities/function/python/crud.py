@@ -8,7 +8,7 @@ import typing
 
 from digitalhub.entities.function.crud import new_function
 
-from digitalhub_runtime_python.entities.function.python.builder import FunctionPythonBuilder
+from digitalhub_runtime_python.entities._commons.enums import EntityKinds
 
 if typing.TYPE_CHECKING:
     from digitalhub_runtime_python.entities.function.python.entity import FunctionPython
@@ -100,7 +100,7 @@ def new_function_python(
     return new_function(
         project=project,
         name=name,
-        kind=FunctionPythonBuilder.ENTITY_KIND,
+        kind=EntityKinds.FUNCTION_PYTHON.value,
         uuid=uuid,
         version=version,
         description=description,

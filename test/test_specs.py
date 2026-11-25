@@ -3,10 +3,12 @@ from unittest.mock import Mock
 
 import digitalhub.entities._mixin.source.entity as source_entity_module
 import pytest
+from digitalhub.factory.registry import registry
 from digitalhub.plugins import Function, build_spec
 from pydantic import ValidationError
 
 import digitalhub_runtime_python.entities.function._base.entity as function_entity_module
+from digitalhub_runtime_python.entities._commons.enums import EntityKinds
 from digitalhub_runtime_python.entities.function._base.entity import FunctionBaseFunction
 from digitalhub_runtime_python.entities.function._base.models import PythonSourceCode
 from digitalhub_runtime_python.entities.function._base.spec import FunctionBaseSpec
@@ -14,7 +16,6 @@ from digitalhub_runtime_python.entities.function.guardrail.models import Process
 from digitalhub_runtime_python.entities.function.guardrail.spec import FunctionSpecGuardrail
 from digitalhub_runtime_python.entities.function.openinference.models import TensorSpec
 from digitalhub_runtime_python.entities.function.openinference.spec import FunctionSpecOpeninference
-from digitalhub_runtime_python.entities.function.python.builder import FunctionPythonBuilder
 from digitalhub_runtime_python.entities.run.guardrail_serve.spec import RunSpecGuardrailRunServe
 from digitalhub_runtime_python.entities.run.openinference_build.spec import RunSpecOpeninferenceRunBuild
 from digitalhub_runtime_python.entities.run.python_build.spec import RunSpecPythonRunBuild
@@ -68,7 +69,7 @@ def test_source_export_restores_base64_when_export_raises(monkeypatch, tmp_path)
 
 
 def test_python_builder_routes_top_level_source_arguments():
-    builder = FunctionPythonBuilder()
+    builder = registry.get_entity_builder(EntityKinds.FUNCTION_PYTHON.value)
 
     function = builder.build(
         kind=builder.ENTITY_KIND,

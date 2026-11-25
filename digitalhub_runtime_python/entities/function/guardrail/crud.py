@@ -8,7 +8,7 @@ import typing
 
 from digitalhub.entities.function.crud import new_function
 
-from digitalhub_runtime_python.entities.function.guardrail.builder import FunctionGuardrailBuilder
+from digitalhub_runtime_python.entities._commons.enums import EntityKinds
 
 if typing.TYPE_CHECKING:
     from digitalhub_runtime_python.entities.function.guardrail.entity import FunctionGuardrail
@@ -58,7 +58,7 @@ def new_function_guardrail(
     return new_function(
         project=project,
         name=name,
-        kind=FunctionGuardrailBuilder.ENTITY_KIND,
+        kind=EntityKinds.FUNCTION_GUARDRAIL.value,
         uuid=uuid,
         version=version,
         description=description,
