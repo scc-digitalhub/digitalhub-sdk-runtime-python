@@ -9,7 +9,7 @@ import typing
 from digitalhub_runtime_python.entities.function._base.entity import FunctionBaseFunction
 
 if typing.TYPE_CHECKING:
-    from digitalhub.entities._base.entity.status import Status
+    from digitalhub.plugins import Status
 
     from digitalhub_runtime_python.entities.function.openinference.spec import FunctionSpecOpeninference
 

@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from digitalhub.entities.run._base.builder import RunBuilder
+from digitalhub.plugins import RunBuilder
 
 from digitalhub_runtime_python.entities._base.runtime_entity.builder import RuntimeEntityBuilderPython
 from digitalhub_runtime_python.entities._commons.enums import EntityKinds

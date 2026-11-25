@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import typing
 
-from digitalhub.entities.run._base.entity import LocalExecutionRunMixin
+from digitalhub.plugins import LocalExecutionRunMixin
 
 from digitalhub_runtime_python.entities.run._base.entity import RunBaseRun
 

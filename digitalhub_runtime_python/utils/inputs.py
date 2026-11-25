@@ -15,8 +15,7 @@ from digitalhub.factory.entity import entity_factory
 from digitalhub.utils.logger.logger import get_logger
 
 if typing.TYPE_CHECKING:
-    from digitalhub.entities._base.entity.entity import Entity
-    from digitalhub.entities.project._base.entity import Project
+    from digitalhub.plugins import ContextEntity, Project
     from nuclio_sdk import Context, Event
 
     from digitalhub_runtime_python.entities.run._base.entity import RunBaseRun
@@ -72,7 +71,7 @@ def get_run_(project_name: str) -> RunBaseRun:
         raise RuntimeError(msg)
 
 
-def get_entity_inputs(inputs: dict) -> dict[str, Entity]:
+def get_entity_inputs(inputs: dict) -> dict[str, ContextEntity]:
     """
     Set inputs.
 

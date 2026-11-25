@@ -10,13 +10,10 @@ from dataclasses import dataclass
 from typing import Any
 
 from digitalhub.context.api import get_context
-from digitalhub.entities._commons.enums import Relationship, State
-from digitalhub.entities.artifact._base.entity import Artifact
 from digitalhub.entities.artifact.artifact.crud import log_artifact
-from digitalhub.entities.dataitem._base.entity import Dataitem
 from digitalhub.entities.dataitem.table.crud import log_table
-from digitalhub.entities.model._base.entity import Model
 from digitalhub.factory.registry import registry
+from digitalhub.plugins import Artifact, Dataitem, Model, Relationship, State
 from digitalhub.utils.exceptions import EntityNotExistsError
 from digitalhub.utils.logger.logger import get_logger
 

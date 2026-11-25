@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from digitalhub.entities._mixin.execution.spec import ServeSpecMixin
+from digitalhub.plugins import ServeSpecMixin
 
 from digitalhub_runtime_python.entities.run._base.spec import RunSpecPython
 

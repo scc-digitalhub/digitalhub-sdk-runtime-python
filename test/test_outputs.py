@@ -2,7 +2,7 @@ from types import SimpleNamespace
 from unittest.mock import Mock
 
 from digitalhub.context.context import Context
-from digitalhub.entities._commons.enums import Relationship, State
+from digitalhub.plugins import Relationship, State
 
 import digitalhub_runtime_python.utils.outputs as outputs_module
 

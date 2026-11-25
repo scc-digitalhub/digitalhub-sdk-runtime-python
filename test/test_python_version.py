@@ -1,7 +1,7 @@
 import sys
 
 import pytest
-from digitalhub.entities._base.entity.spec import Spec
+from digitalhub.plugins import Spec
 
 from digitalhub_runtime_python.entities.function._base.entity import FunctionBaseFunction
 from digitalhub_runtime_python.entities.function._base.models import PythonSourceCode, PythonVersion

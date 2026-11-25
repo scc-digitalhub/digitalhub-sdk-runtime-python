@@ -3,8 +3,7 @@ from unittest.mock import Mock
 
 import digitalhub.entities._mixin.source.entity as source_entity_module
 import pytest
-from digitalhub.entities._constructors.spec import build_spec
-from digitalhub.entities.function._base.entity import Function
+from digitalhub.plugins import Function, build_spec
 from pydantic import ValidationError
 
 import digitalhub_runtime_python.entities.function._base.entity as function_entity_module

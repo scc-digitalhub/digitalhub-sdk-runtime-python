@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from digitalhub.entities.run._base.spec import RunSpecFunction
+from digitalhub.plugins import RunSpecFunction
 
 from digitalhub_runtime_python.entities.function._base.models import PythonVersion
 from digitalhub_runtime_python.entities.function.guardrail.models import ProcessingMode

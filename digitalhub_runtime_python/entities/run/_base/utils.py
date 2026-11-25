@@ -6,11 +6,11 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from digitalhub.entities._commons.enums import EntityTypes
 from digitalhub.entities.artifact.crud import get_artifact
 from digitalhub.entities.containerimage.crud import get_containerimage
 from digitalhub.entities.dataitem.crud import get_dataitem
 from digitalhub.entities.model.crud import get_model
+from digitalhub.plugins import EntityTypes
 
 
 def get_getters(entity_type: str) -> Callable:

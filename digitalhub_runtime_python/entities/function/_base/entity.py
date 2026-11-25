@@ -6,8 +6,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from digitalhub.entities._mixin.source.entity import SourceEntityMixin
-from digitalhub.entities.function._base.entity import Function
+from digitalhub.plugins import Function, SourceEntityMixin
 from digitalhub.utils.file_utils import eval_py_type
 from digitalhub.utils.generic_utils import decode_base64_string
 from digitalhub.utils.io_utils import write_text

@@ -4,8 +4,7 @@
 
 from __future__ import annotations
 
-from digitalhub.entities._mixin.execution.spec import BuildSpecMixin, ServeSpecMixin
-from digitalhub.entities.task._base.spec import TaskSpecFunction
+from digitalhub.plugins import BuildSpecMixin, ServeSpecMixin, TaskSpecFunction
 from pydantic import Field
 
 
