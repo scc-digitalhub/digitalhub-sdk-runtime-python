@@ -9,7 +9,7 @@ import typing
 from typing import Any
 
 from digitalhub.factory.entity import entity_factory
-from digitalhub.plugins import Relationship, Run, State, get_entity_type_from_key
+from digitalhub.plugins import EntityKey, EntityRef, Relationship, Run, State
 from digitalhub.utils.logger.logger import get_logger
 
 from digitalhub_runtime_python.entities._commons.enums import Actions
@@ -73,7 +73,7 @@ class RunBaseRun(Run):
         Run
             Run object.
         """
-        task_kind = self.spec.task.split("://")[0]
+        task_kind = EntityRef.parse(self.spec.task).kind
         action = entity_factory.get_action_from_task_kind(self.kind, task_kind)
 
         if action == Actions.SERVE.value:
@@ -130,7 +130,7 @@ class RunBaseRun(Run):
             return inputs
 
         for parameter, key in self.spec.inputs.items():
-            entity_type = get_entity_type_from_key(key)
+            entity_type = EntityKey.parse(key).entity_type
             entity = get_getters(entity_type)(key)
             if as_dict:
                 entity = entity.to_dict()
@@ -188,7 +188,7 @@ class RunBaseRun(Run):
             return outputs
 
         for parameter, key in self.status.outputs.items():
-            entity_type = get_entity_type_from_key(key)
+            entity_type = EntityKey.parse(key).entity_type
             entity = get_getters(entity_type)(key)
             if as_key:
                 entity = entity.key

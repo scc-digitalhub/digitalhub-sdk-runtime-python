@@ -13,7 +13,7 @@ from digitalhub.context.api import get_context
 from digitalhub.entities.artifact.artifact.crud import log_artifact
 from digitalhub.entities.dataitem.table.crud import log_table
 from digitalhub.factory.registry import registry
-from digitalhub.plugins import Artifact, Dataitem, Model, Relationship, State
+from digitalhub.plugins import Artifact, Dataitem, EntityKey, Model, Relationship, State
 from digitalhub.utils.exceptions import EntityNotExistsError
 from digitalhub.utils.logger.logger import get_logger
 
@@ -100,7 +100,7 @@ def _log_output(project_name: str, item: Any, output: OutputStruct) -> None:
 
 
 def _save_existing_object(obj: Dataitem | Artifact | Model, run_key: str) -> Dataitem | Artifact | Model:
-    dest = run_key + ":" + run_key.split("/")[-1]
+    dest = f"{run_key}:{EntityKey.parse(run_key).id}"
     obj.add_relationship(relation=Relationship.PRODUCEDBY.value, dest=dest)
 
     try:
