@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import typing
 
-from digitalhub.plugins import EntityIORunMixin, ResultsRunMixin, Run
+from digitalhub.plugins import BuildRunMixin, EntityIORunMixin, ResultsRunMixin, Run
 
 if typing.TYPE_CHECKING:
     from digitalhub_runtime_python.entities.run._base.spec import RunSpecBaseRun
@@ -25,19 +25,7 @@ class RunBaseRun(EntityIORunMixin, ResultsRunMixin, Run):
         self.status: RunStatusBaseRun
 
 
-class RunBaseBuildRun(RunBaseRun):
+class RunBaseBuildRun(BuildRunMixin, RunBaseRun):
     """
     RunBaseBuildRun class.
     """
-
-    @property
-    def image(self) -> str | None:
-        """
-        Get run's image.
-
-        Returns
-        -------
-        str | None
-            The image.
-        """
-        return self.status.outputs.get("image")
