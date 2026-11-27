@@ -11,7 +11,7 @@ from digitalhub.entities.function.crud import new_function
 from digitalhub_runtime_python.entities._commons.enums import EntityKinds
 
 if typing.TYPE_CHECKING:
-    from digitalhub_runtime_python.entities.function.guardrail.entity import FunctionGuardrail
+    from digitalhub_runtime_python.entities.function.python.entity import FunctionPython
 
 
 def new_function_guardrail(
@@ -33,7 +33,7 @@ def new_function_guardrail(
     description: str | None = None,
     labels: list[str] | None = None,
     embedded: bool = False,
-) -> FunctionGuardrail:
+) -> FunctionPython:
     """
     Create a guardrail function entity.
 

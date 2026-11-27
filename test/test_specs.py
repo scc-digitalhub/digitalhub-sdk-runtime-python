@@ -7,15 +7,15 @@ from digitalhub.factory.registry import registry
 from digitalhub.plugins import Function, build_spec
 from pydantic import ValidationError
 
-import digitalhub_runtime_python.entities.function._base.entity as function_entity_module
+import digitalhub_runtime_python.entities.function.python.entity as function_entity_module
 from digitalhub_runtime_python.entities._commons.enums import EntityKinds
-from digitalhub_runtime_python.entities.function._base.entity import FunctionBaseFunction
 from digitalhub_runtime_python.entities.function._base.models import PythonSourceCode
 from digitalhub_runtime_python.entities.function._base.spec import FunctionBaseSpec
 from digitalhub_runtime_python.entities.function.guardrail.models import ProcessingMode
 from digitalhub_runtime_python.entities.function.guardrail.spec import FunctionSpecGuardrail
 from digitalhub_runtime_python.entities.function.openinference.models import TensorSpec
 from digitalhub_runtime_python.entities.function.openinference.spec import FunctionSpecOpeninference
+from digitalhub_runtime_python.entities.function.python.entity import FunctionPython
 from digitalhub_runtime_python.entities.run.guardrail_serve.spec import RunSpecGuardrailRunServe
 from digitalhub_runtime_python.entities.run.openinference_build.spec import RunSpecOpeninferenceRunBuild
 from digitalhub_runtime_python.entities.run.python_build.spec import RunSpecPythonRunBuild
@@ -56,7 +56,7 @@ def test_function_specs_validate_action_fields_and_roundtrip():
 
 def test_source_export_restores_base64_when_export_raises(monkeypatch, tmp_path):
     source = PythonSourceCode(source="source.py", handler="predict", base64="c2NyaXB0")
-    function = object.__new__(FunctionBaseFunction)
+    function = object.__new__(FunctionPython)
     function.spec = SimpleNamespace(source=source)
     function._context = Mock(return_value=SimpleNamespace(root=tmp_path, ensure_root=Mock(return_value=tmp_path)))
     monkeypatch.setattr(source_entity_module, "has_local_scheme", lambda _: True)
@@ -87,7 +87,7 @@ def test_python_builder_routes_top_level_source_arguments():
 
 def test_function_export_omits_config_base64_without_mutating_original(monkeypatch, tmp_path):
     original_config = {"base64": "c2VjcmV0", "path": "config.yaml"}
-    function = object.__new__(FunctionBaseFunction)
+    function = object.__new__(FunctionPython)
     function.spec = SimpleNamespace(
         config=original_config,
         source=PythonSourceCode(source="remote-source", handler="predict"),
@@ -108,7 +108,7 @@ def test_function_export_omits_config_base64_without_mutating_original(monkeypat
 
 def test_function_export_restores_original_config_when_write_fails(monkeypatch, tmp_path):
     original_config = {"base64": "c2VjcmV0", "path": "config.yaml"}
-    function = object.__new__(FunctionBaseFunction)
+    function = object.__new__(FunctionPython)
     function.spec = SimpleNamespace(
         config=original_config,
         source=PythonSourceCode(source="remote-source", handler="predict"),

@@ -20,10 +20,8 @@ from digitalhub.plugins import (
 from digitalhub_runtime_python.entities._commons.enums import Actions, EntityKinds
 from digitalhub_runtime_python.entities.function._base.spec import FunctionBaseSpec
 from digitalhub_runtime_python.entities.function.guardrail.crud import new_function_guardrail
-from digitalhub_runtime_python.entities.function.guardrail.entity import FunctionGuardrail
 from digitalhub_runtime_python.entities.function.guardrail.spec import FunctionSpecGuardrail
 from digitalhub_runtime_python.entities.function.openinference.crud import new_function_openinference
-from digitalhub_runtime_python.entities.function.openinference.entity import FunctionOpeninference
 from digitalhub_runtime_python.entities.function.openinference.spec import FunctionSpecOpeninference
 from digitalhub_runtime_python.entities.function.python.crud import new_function_python
 from digitalhub_runtime_python.entities.function.python.entity import FunctionPython
@@ -50,7 +48,7 @@ RUNTIME_PYTHON_JOB_BUILDER = "digitalhub_runtime_python.runtimes.builder:Runtime
 guardrail = ExecFamily(
     executable=BuilderDef(
         EntityKinds.FUNCTION_GUARDRAIL,
-        FunctionGuardrail,
+        FunctionPython,
         FunctionSpecGuardrail,
         Status,
         base=FunctionBuilder,
@@ -85,7 +83,7 @@ guardrail = ExecFamily(
 openinference = ExecFamily(
     executable=BuilderDef(
         EntityKinds.FUNCTION_OPENINFERENCE,
-        FunctionOpeninference,
+        FunctionPython,
         FunctionSpecOpeninference,
         Status,
         base=FunctionBuilder,

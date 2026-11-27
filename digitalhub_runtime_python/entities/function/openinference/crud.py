@@ -11,7 +11,7 @@ from digitalhub.entities.function.crud import new_function
 from digitalhub_runtime_python.entities._commons.enums import EntityKinds
 
 if typing.TYPE_CHECKING:
-    from digitalhub_runtime_python.entities.function.openinference.entity import FunctionOpeninference
+    from digitalhub_runtime_python.entities.function.python.entity import FunctionPython
 
 
 def new_function_openinference(
@@ -35,7 +35,7 @@ def new_function_openinference(
     description: str | None = None,
     labels: list[str] | None = None,
     embedded: bool = False,
-) -> FunctionOpeninference:
+) -> FunctionPython:
     """
     Create an OpenInference function entity.
 

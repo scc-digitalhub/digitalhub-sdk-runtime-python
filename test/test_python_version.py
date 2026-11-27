@@ -3,7 +3,6 @@ import sys
 import pytest
 from digitalhub.plugins import Spec
 
-from digitalhub_runtime_python.entities.function._base.entity import FunctionBaseFunction
 from digitalhub_runtime_python.entities.function._base.models import PythonSourceCode, PythonVersion
 from digitalhub_runtime_python.entities.function._base.spec import FunctionBaseSpec
 from digitalhub_runtime_python.entities.function.guardrail.models import ProcessingMode
@@ -11,6 +10,7 @@ from digitalhub_runtime_python.entities.function.guardrail.spec import FunctionS
 from digitalhub_runtime_python.entities.function.openinference.spec import (
     FunctionSpecOpeninference,
 )
+from digitalhub_runtime_python.entities.function.python.entity import FunctionPython
 
 CURRENT_PYTHON_VERSION = f"PYTHON{sys.version_info.major}_{sys.version_info.minor}"
 
@@ -63,7 +63,7 @@ def test_function_base_spec_is_a_pydantic_spec():
 
 
 def test_pre_save_hook_defaults_python_version_to_current():
-    function = object.__new__(FunctionBaseFunction)
+    function = object.__new__(FunctionPython)
     function.spec = FunctionBaseSpec(
         source=PythonSourceCode(source="source.py", handler="predict"),
         requirements=[],
@@ -76,7 +76,7 @@ def test_pre_save_hook_defaults_python_version_to_current():
 
 def test_local_execution_rejects_mismatched_python_version_from_spec():
     mismatch = next(version.value for version in PythonVersion if version.value != CURRENT_PYTHON_VERSION)
-    function = object.__new__(FunctionBaseFunction)
+    function = object.__new__(FunctionPython)
     function.spec = FunctionBaseSpec(
         source=PythonSourceCode(source="source.py", handler="predict"),
         python_version=mismatch,
