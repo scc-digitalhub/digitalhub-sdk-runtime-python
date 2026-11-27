@@ -6,20 +6,19 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from digitalhub.plugins import Function, SourceEntityMixin
+from digitalhub.plugins import ExecutableBuildMixin, Function, SourceEntityMixin
 from digitalhub.utils.file_utils import eval_py_type
 from digitalhub.utils.generic_utils import decode_base64_string
 from digitalhub.utils.io_utils import write_text
 from pydantic import BaseModel
 
-from digitalhub_runtime_python.entities._commons.enums import Actions
 from digitalhub_runtime_python.entities.function._base.utils import get_current_python_version
 
 if TYPE_CHECKING:
     from digitalhub_runtime_python.entities.function._base.spec import FunctionBaseSpec
 
 
-class FunctionBaseFunction(SourceEntityMixin, Function):
+class FunctionBaseFunction(SourceEntityMixin, ExecutableBuildMixin, Function):
     """
     Base class for runtime Python functions.
     """
@@ -78,51 +77,16 @@ class FunctionBaseFunction(SourceEntityMixin, Function):
     def _is_inlineable_source(self, path: str) -> bool:
         return eval_py_type(path)
 
-    def build(
-        self,
-        wait: bool = True,
-        log_info: bool = True,
-        extensions: list[dict] | None = None,
-        **kwargs,
-    ):
-        """
-        Build the function using the build action.
-
-        Parameters
-        ----------
-        wait : bool
-            Whether to wait for the build to complete.
-        log_info : bool
-            Whether to log information while waiting.
-        extensions : list[dict] | None
-            List of extensions to apply.
-        **kwargs : dict
-            Keyword arguments passed to the run builder.
-
-        Returns
-        -------
-        Run
-            Build run instance.
-        """
-        return super().run(
-            Actions.BUILD.value,
-            wait=wait,
-            log_info=log_info,
-            extensions=extensions,
-            **kwargs,
-        )
-
     def run(
         self,
         action: str,
         wait: bool = False,
         log_info: bool = True,
         extensions: list[dict] | None = None,
-        auto_build: bool = False,
         **kwargs,
     ):
         """
-        Run the function, building it first when no image is available.
+        Run the function, checking the Python version of a local run first.
 
         Parameters
         ----------
@@ -134,8 +98,6 @@ class FunctionBaseFunction(SourceEntityMixin, Function):
             Whether to log information while waiting.
         extensions : list[dict] | None
             List of extensions to apply.
-        auto_build : bool
-            Whether to build the function when ``spec.image`` is ``None``.
         **kwargs : dict
             Keyword arguments passed to the run builder.
 
@@ -146,9 +108,6 @@ class FunctionBaseFunction(SourceEntityMixin, Function):
         """
         if kwargs.get("local_execution", False):
             self._check_python_version()
-
-        if auto_build and self.spec.image is None:
-            self.build(wait=True, log_info=log_info)
 
         return super().run(
             action,

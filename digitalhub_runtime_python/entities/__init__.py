@@ -7,6 +7,7 @@ from digitalhub.plugins import (
     BuilderDef,
     CrudPlugin,
     ExecFamily,
+    ExecutableActions,
     FunctionBuilder,
     RunBuilder,
     SourceBuilderMixin,
@@ -57,7 +58,7 @@ guardrail = ExecFamily(
         shortcuts=(CrudPlugin(new_function_guardrail),),
     ),
     actions={
-        Actions.BUILD: Action(
+        ExecutableActions.BUILD: Action(
             task=BuilderDef(EntityKinds.TASK_GUARDRAIL_BUILD, Task, TaskSpecBuild, Status, base=TaskBuilder),
             run=BuilderDef(
                 EntityKinds.RUN_GUARDRAIL_BUILD,
@@ -92,7 +93,7 @@ openinference = ExecFamily(
         shortcuts=(CrudPlugin(new_function_openinference),),
     ),
     actions={
-        Actions.BUILD: Action(
+        ExecutableActions.BUILD: Action(
             task=BuilderDef(EntityKinds.TASK_OPENINFERENCE_BUILD, Task, TaskSpecBuild, Status, base=TaskBuilder),
             run=BuilderDef(
                 EntityKinds.RUN_OPENINFERENCE_BUILD,
@@ -134,7 +135,7 @@ python = ExecFamily(
             ),
             runtime_builder=RUNTIME_PYTHON_JOB_BUILDER,
         ),
-        Actions.BUILD: Action(
+        ExecutableActions.BUILD: Action(
             task=BuilderDef(EntityKinds.TASK_PYTHON_BUILD, Task, TaskSpecBuild, Status, base=TaskBuilder),
             run=BuilderDef(
                 EntityKinds.RUN_PYTHON_BUILD,
