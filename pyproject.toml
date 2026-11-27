@@ -26,9 +26,6 @@ dependencies = [
     "digitalhub[full]>=0.16.0, <0.17",
     "nuclio-sdk",
     "msgpack",
-    "pip",
-    "tomli; python_version < '3.11'",
-    "pyyaml",
 ]
 
 [project.optional-dependencies]

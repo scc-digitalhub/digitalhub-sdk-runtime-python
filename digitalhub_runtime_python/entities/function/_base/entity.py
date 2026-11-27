@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from digitalhub.plugins import ExecutableBuildMixin, Function, SourceEntityMixin
+from digitalhub.plugins import ExecutableBuildMixin, Function, SourceEntityMixin, parse_requirements
 from digitalhub.utils.file_utils import eval_py_type
 from digitalhub.utils.generic_utils import decode_base64_string
 from digitalhub.utils.io_utils import write_text
@@ -36,13 +36,11 @@ class FunctionBaseFunction(SourceEntityMixin, ExecutableBuildMixin, Function):
         None
             This method updates the function requirements in place.
         """
-        from digitalhub_runtime_python.entities._commons.requirement_parser.parser import RequirementParser
-
         try:
             self.spec.python_version = self.spec.python_version or get_current_python_version()
         except AttributeError:
             pass
-        self.spec.requirements = RequirementParser().parse(self.spec.requirements)
+        self.spec.requirements = parse_requirements(self.spec.requirements)
 
     def export(self) -> str:
         """
