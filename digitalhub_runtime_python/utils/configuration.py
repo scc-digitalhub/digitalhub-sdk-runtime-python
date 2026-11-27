@@ -7,23 +7,10 @@ from __future__ import annotations
 from collections.abc import Callable
 from pathlib import Path
 
-from digitalhub.stores.data.api import get_store
-from digitalhub.utils.generic_utils import (
-    decode_base64_string,
-    extract_archive,
-    import_function,
-    requests_chunk_download,
-)
-from digitalhub.utils.git_utils import clone_repository
+from digitalhub.plugins import fetch_source
+from digitalhub.utils.generic_utils import decode_base64_string, import_function
 from digitalhub.utils.logger.logger import get_logger
-from digitalhub.utils.uri_utils import (
-    get_filename_from_uri,
-    has_git_scheme,
-    has_local_scheme,
-    has_remote_scheme,
-    has_s3_scheme,
-    has_zip_scheme,
-)
+from digitalhub.utils.uri_utils import has_local_scheme
 
 logger = get_logger(__file__)
 DEFAULT_PY_FILE = "main.py"
@@ -71,124 +58,6 @@ def _get_function_path(source_path: Path, handler: str) -> tuple[Path, str]:
         handler_path = Path(DEFAULT_PY_FILE)
     function_path = (source_path / handler_path).with_suffix(".py")
     return function_path, function_name
-
-
-def _download_and_extract_archive(source: str, path: Path) -> None:
-    """
-    Download and extract an archive from a URL or S3.
-
-    Parameters
-    ----------
-    source : str
-        Source URL (with zip+ scheme).
-    path : Path
-        Destination path.
-    """
-    clean_source = source.removeprefix("zip+")
-    filename = path / get_filename_from_uri(source)
-
-    if has_s3_scheme(clean_source):
-        store = get_store(clean_source)
-        store.get_s3_source(source, filename)
-    else:
-        requests_chunk_download(clean_source, filename)
-
-    extract_archive(path, filename)
-    filename.unlink()
-
-
-def _save_base64_source(path: Path, base64_content: str) -> Path:
-    """
-    Save base64-encoded source to file.
-
-    Parameters
-    ----------
-    path : Path
-        Destination directory.
-    base64_content : str
-        Base64-encoded source code.
-
-    Returns
-    -------
-    Path
-        Path to the saved file (directory/main.py).
-    """
-    path.mkdir(parents=True, exist_ok=True)
-    file_path = path / DEFAULT_PY_FILE
-    file_path.write_text(decode_base64_string(base64_content))
-    return path
-
-
-def _download_remote_source(path: Path, source: str) -> Path:
-    """
-    Download source from remote URL (http/https).
-
-    Parameters
-    ----------
-    path : Path
-        Destination directory.
-    source : str
-        Remote source URL.
-
-    Returns
-    -------
-    Path
-        Path to the destination directory.
-    """
-    path.mkdir(parents=True, exist_ok=True)
-
-    if has_zip_scheme(source):
-        _download_and_extract_archive(source, path)
-    else:
-        filename = path / get_filename_from_uri(source)
-        requests_chunk_download(source, filename)
-
-    return path
-
-
-def _download_s3_source(path: Path, source: str) -> Path:
-    """
-    Download source from S3.
-
-    Parameters
-    ----------
-    path : Path
-        Destination directory.
-    source : str
-        S3 source URL (must be zip+s3:// scheme).
-
-    Returns
-    -------
-    Path
-        Path to the destination directory.
-    """
-    if not has_zip_scheme(source):
-        raise RuntimeError("S3 source must be a zip file with scheme zip+s3://.")
-
-    path.mkdir(parents=True, exist_ok=True)
-    _download_and_extract_archive(source, path)
-    return path
-
-
-def _clone_git_source(path: Path, source: str) -> Path:
-    """
-    Clone git repository.
-
-    Parameters
-    ----------
-    path : Path
-        Destination directory.
-    source : str
-        Git repository URL.
-
-    Returns
-    -------
-    Path
-        Path to the destination directory.
-    """
-    path.mkdir(parents=True, exist_ok=True)
-    clone_repository(path, source)
-    return path
 
 
 def _import_function_from_path(function_path: Path, function_name: str) -> Callable:
@@ -257,25 +126,15 @@ def save_function_source(path: Path, source_spec: dict) -> Path:
 
     # Base64-encoded source
     if base64 is not None:
-        return _save_base64_source(path, base64)
+        path.mkdir(parents=True, exist_ok=True)
+        (path / DEFAULT_PY_FILE).write_text(decode_base64_string(base64))
+        return path
 
     if source is None:
         raise RuntimeError("Function source not found in spec.")
 
-    # Git repository
-    if has_git_scheme(source):
-        return _clone_git_source(path, source)
-
-    # Remote HTTP(S) source
-    if has_remote_scheme(source):
-        return _download_remote_source(path, source)
-
-    # S3 source
-    if has_s3_scheme(source):
-        return _download_s3_source(path, source)
-
-    # Unsupported scheme
-    raise RuntimeError(f"Unable to collect source from: {source}")
+    fetch_source(path, source)
+    return path
 
 
 def _get_function_to_import(handler: str, source_code: str | None, root_path: Path) -> tuple[Path, str]:
