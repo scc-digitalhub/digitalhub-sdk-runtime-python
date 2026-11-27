@@ -5,20 +5,15 @@
 from __future__ import annotations
 
 import typing
-from typing import Any
 
-from digitalhub.plugins import EntityKey, Relationship, Run
-
-from digitalhub_runtime_python.entities.run._base.utils import get_getters
+from digitalhub.plugins import EntityIORunMixin, ResultsRunMixin, Run
 
 if typing.TYPE_CHECKING:
-    from digitalhub.plugins import ContextEntity
-
     from digitalhub_runtime_python.entities.run._base.spec import RunSpecBaseRun
     from digitalhub_runtime_python.entities.run._base.status import RunStatusBaseRun
 
 
-class RunBaseRun(Run):
+class RunBaseRun(EntityIORunMixin, ResultsRunMixin, Run):
     """
     RunPythonRun class.
     """
@@ -28,137 +23,6 @@ class RunBaseRun(Run):
 
         self.spec: RunSpecBaseRun
         self.status: RunStatusBaseRun
-
-    def _setup_execution(self) -> None:
-        """
-        Setup run execution.
-        """
-        self.refresh()
-        inputs = self.inputs(as_dict=True)
-        if self.local_execution():
-            for v in inputs.values():
-                self.add_relationship(
-                    relation=Relationship.CONSUMES.value,
-                    dest=v.get("key"),
-                )
-            self.update()
-        self.spec.inputs = inputs
-
-    def inputs(self, as_dict: bool = False) -> dict:
-        """
-        Get inputs passed in spec as objects or as dictionaries.
-
-        Parameters
-        ----------
-        as_dict : bool
-            If True, return inputs as dictionaries.
-
-        Returns
-        -------
-        dict
-            Inputs.
-        """
-        inputs = {}
-        if self.spec.inputs is None:
-            return inputs
-
-        for parameter, key in self.spec.inputs.items():
-            entity_type = EntityKey.parse(key).entity_type
-            entity = get_getters(entity_type)(key)
-            if as_dict:
-                entity = entity.to_dict()
-            inputs[parameter] = entity
-
-        return inputs
-
-    def output(
-        self,
-        output_name: str,
-        as_key: bool = False,
-        as_dict: bool = False,
-    ) -> ContextEntity | dict | str | None:
-        """
-        Get run's output by name.
-
-        Parameters
-        ----------
-        output_name : str
-            Key of the result.
-        as_key : bool
-            If True, return result as key.
-        as_dict : bool
-            If True, return result as dictionary.
-
-        Returns
-        -------
-        Entity | dict | str | None
-            Result.
-        """
-        return self.outputs(as_key=as_key, as_dict=as_dict).get(output_name)
-
-    def outputs(
-        self,
-        as_key: bool = False,
-        as_dict: bool = False,
-    ) -> ContextEntity | dict | str | None:
-        """
-        Get run's outputs.
-
-        Parameters
-        ----------
-        as_key : bool
-            If True, return results as keys.
-        as_dict : bool
-            If True, return results as dictionaries.
-
-        Returns
-        -------
-        dict
-            List of output objects.
-        """
-        outputs = {}
-        if self.status.outputs is None:
-            return outputs
-
-        for parameter, key in self.status.outputs.items():
-            entity_type = EntityKey.parse(key).entity_type
-            entity = get_getters(entity_type)(key)
-            if as_key:
-                entity = entity.key
-            if as_dict:
-                entity = entity.to_dict()
-            outputs[parameter] = entity
-
-        return outputs
-
-    def result(self, result_name: str) -> Any:
-        """
-        Get result by name.
-
-        Parameters
-        ----------
-        result_name : str
-            Name of the result.
-
-        Returns
-        -------
-        Any
-            The result.
-        """
-        return self.results().get(result_name)
-
-    def results(self) -> dict:
-        """
-        Get results.
-
-        Returns
-        -------
-        dict
-            The results.
-        """
-        if self.status.results is None:
-            return {}
-        return self.status.results
 
 
 class RunBaseBuildRun(RunBaseRun):
