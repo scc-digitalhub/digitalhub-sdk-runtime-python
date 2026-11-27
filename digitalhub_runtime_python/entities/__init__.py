@@ -27,7 +27,7 @@ from digitalhub_runtime_python.entities.function.openinference.entity import Fun
 from digitalhub_runtime_python.entities.function.openinference.spec import FunctionSpecOpeninference
 from digitalhub_runtime_python.entities.function.python.crud import new_function_python
 from digitalhub_runtime_python.entities.function.python.entity import FunctionPython
-from digitalhub_runtime_python.entities.run._base.entity import RunBaseBuildRun, RunBaseRun
+from digitalhub_runtime_python.entities.run._base.entity import RunBaseBuildRun
 from digitalhub_runtime_python.entities.run._base.status import RunStatusBaseRun
 from digitalhub_runtime_python.entities.run.guardrail_build.spec import RunSpecGuardrailRunBuild
 from digitalhub_runtime_python.entities.run.guardrail_serve.spec import RunSpecGuardrailRunServe
@@ -68,11 +68,11 @@ guardrail = ExecFamily(
                 base=RunBuilder,
             ),
         ),
-        Actions.SERVE: Action(
+        ExecutableActions.SERVE: Action(
             task=BuilderDef(EntityKinds.TASK_GUARDRAIL_SERVE, Task, TaskSpecServe, Status, base=TaskBuilder),
             run=BuilderDef(
                 EntityKinds.RUN_GUARDRAIL_SERVE,
-                RunBaseRun,
+                RunPythonRunServe,
                 RunSpecGuardrailRunServe,
                 RunStatusBaseRun,
                 base=RunBuilder,
@@ -103,11 +103,11 @@ openinference = ExecFamily(
                 base=RunBuilder,
             ),
         ),
-        Actions.SERVE: Action(
+        ExecutableActions.SERVE: Action(
             task=BuilderDef(EntityKinds.TASK_OPENINFERENCE_SERVE, Task, TaskSpecServe, Status, base=TaskBuilder),
             run=BuilderDef(
                 EntityKinds.RUN_OPENINFERENCE_SERVE,
-                RunBaseRun,
+                RunPythonRunServe,
                 RunSpecOpeninferenceRunServe,
                 RunStatusBaseRun,
                 base=RunBuilder,
@@ -145,7 +145,7 @@ python = ExecFamily(
                 base=RunBuilder,
             ),
         ),
-        Actions.SERVE: Action(
+        ExecutableActions.SERVE: Action(
             task=BuilderDef(EntityKinds.TASK_PYTHON_SERVE, Task, TaskSpecServe, Status, base=TaskBuilder),
             run=BuilderDef(
                 EntityKinds.RUN_PYTHON_SERVE,
